@@ -4,7 +4,7 @@
     android:versionCode="163"
     android:versionName="1.6.3"
     >
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="14" />
     <permission
         android:name="com.jemoji.permission.JPUSH_MESSAGE"
         android:protectionLevel="signature" />
@@ -36,7 +36,8 @@
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name="com.jemoji.ExampleApplication">
+        android:name="com.jemoji.ExampleApplication"
+        android:theme="@style/AppTheme">
         
         
         <!-- For test only 测试的主程序-->
