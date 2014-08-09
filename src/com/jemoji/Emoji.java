@@ -67,4 +67,17 @@ public class Emoji {
 			}
 		});
 	}
+	
+	public void send(final String user){
+		new FileUploader().send(this);
+		
+		String body = "00000000000";
+		String content = String.format("{\"message\":\" %s\"}", body);
+		GKHttpInterface.pushMessage(user, content, new GKJsonResponseHandler() {
+			@Override
+			public void onResponse(int code, Object json, Throwable error) {
+				System.out.println(String.format(" onResponse json %s   user:[%s] ", json, user));
+			}
+		});
+	}
 }

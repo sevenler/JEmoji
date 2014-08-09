@@ -64,6 +64,16 @@ public class TestCast3 extends AndroidTestCase {
 			}
 		});
 		finishResponse();*/
+		
+		
+		preRequest();
+		GKHttpInterface.pushMessage("18511557126", "00000000000000000000", new GKJsonResponseHandler() {
+			@Override
+			public void onResponse(int code, Object json, Throwable error) {
+				checkResponse(code, json, error);
+			}
+		});
+		finishResponse();
 	}
 
 }

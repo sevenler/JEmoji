@@ -33,6 +33,8 @@ import com.jemoji.utils.ImageDecoder.ImageScaleType;
 import com.jemoji.utils.ImageSize;
 
 public class HomeActivity extends BaseActivity {
+	Emoji mEmoji;
+	String user;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,14 +45,34 @@ public class HomeActivity extends BaseActivity {
 		WebPageFragment mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
+		
+		String url = URLs.getAbsoluteUrl("/1407549723664.amr");
+		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
+				+ File.separator
+				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
+		mEmoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
+		
+		user = (String)HomeActivity.pokeValus("user");
+		setTag(user);
 	}
 
 	@Override
 	public void onReceiveMessage(String values) {
 		super.onReceiveMessage(values);
+		
+		String url = URLs.getAbsoluteUrl("/1407549723664.amr");
+		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
+				+ File.separator
+				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
+		Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
+		emoji.setImage("http://emoji.b0.upaiyun.com/test/1407524257043.jpg");
+			
+		EmojiActivity.putValus("emoji", emoji);
+		openActivity(EmojiActivity.class, null);
 	}
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -67,7 +89,7 @@ public class HomeActivity extends BaseActivity {
 			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
-//					mEmoji.setImage(EmojiSelector.instance().getEmoji(arg0));
+					mEmoji.setImage(EmojiSelector.instance().getEmoji(arg0));
 				}
 				
 				@Override
@@ -95,22 +117,16 @@ public class HomeActivity extends BaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			String url = URLs.getAbsoluteUrl("/1407549723664.amr");
-			String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
-					+ File.separator
-					+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
-			Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
+			
 			
 			switch (v.getId()) {
 				case R.id.send:
-					new FileUploader().send(emoji);
+					String friend = "18511557126";
+					mEmoji.send(friend);
 					break;
 				case R.id.recive:
 					
-					emoji.setImage("http://emoji.b0.upaiyun.com/test/1407524257043.jpg");
-						
-					EmojiActivity.putValus("emoji", emoji);
-					openActivity(EmojiActivity.class, null);
+					
 					break;
 			}
 		}
