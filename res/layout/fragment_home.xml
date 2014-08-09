@@ -11,5 +11,11 @@
         android:layout_width="100dp"
         android:layout_height="40dp" >
     </Button>
+    
+    <Button
+        android:id="@+id/recive"
+        android:layout_width="100dp"
+        android:layout_height="40dp" >
+    </Button>
 
 </LinearLayout>

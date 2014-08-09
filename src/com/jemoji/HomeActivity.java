@@ -35,11 +35,12 @@ public class HomeActivity extends BaseActivity {
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 			Button send = (Button)rootView.findViewById(R.id.send);
 			send.setOnClickListener(this);
+			Button recive = (Button)rootView.findViewById(R.id.recive);
+			recive.setOnClickListener(this);
 			return rootView;
 		}
 
@@ -51,6 +52,8 @@ public class HomeActivity extends BaseActivity {
 							+ File.separator
 							+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 					new FileUploader().send(new Emoji("sdcard/emojis/IMG_0286.JPG", voice));
+					break;
+				case R.id.recive:
 					break;
 			}
 		}
