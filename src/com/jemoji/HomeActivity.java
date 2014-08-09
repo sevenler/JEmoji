@@ -117,11 +117,11 @@ public class HomeActivity extends BaseActivity {
 				@Override
 				public void onRecored(boolean isFinish, int time, String file) {
 					System.out.println(String.format(" file:%s ", file));
+					mEmoji.setVoice(file);
 				}
 				
 				@Override
 				public void onPlay(boolean isFinish) {
-					
 				}
 			});
 			buttonPressToSpeak.setOnTouchListener(voiceHandler);
@@ -129,7 +129,7 @@ public class HomeActivity extends BaseActivity {
 			play.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					voiceHandler.playOrStop();
+					voiceHandler.playOrStop(mEmoji.getVoice());
 				}
 			});
 			

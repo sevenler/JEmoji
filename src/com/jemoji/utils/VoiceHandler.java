@@ -203,11 +203,11 @@ public class VoiceHandler implements OnTouchListener{
 		return false;
 	}
 	
-	public void playOrStop(){
+	public void playOrStop(String voice){
 		if (!playState) {
 			try {
 				mediaPlayer = new MediaPlayer();
-				mediaPlayer.setDataSource(recordFile);
+				mediaPlayer.setDataSource(voice);
 				mediaPlayer.prepare();
 				mediaPlayer.start();
 				if (mOnHandListener != null) mOnHandListener.onPlay(false);
