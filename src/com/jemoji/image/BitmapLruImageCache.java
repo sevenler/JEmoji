@@ -1,4 +1,4 @@
-package com.jemoji.utils;
+package com.jemoji.image;
 
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 

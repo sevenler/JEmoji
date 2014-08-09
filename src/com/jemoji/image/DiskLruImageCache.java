@@ -1,4 +1,4 @@
-package com.jemoji.utils;
+package com.jemoji.image;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

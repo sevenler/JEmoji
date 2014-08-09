@@ -1,4 +1,4 @@
-package com.jemoji.utils;
+package com.jemoji.image;
 
 public class ImageSize {
 

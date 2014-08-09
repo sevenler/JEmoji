@@ -1,6 +1,7 @@
 
-package com.jemoji;
+package com.jemoji.models;
 
+import com.jemoji.FileUploader;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 

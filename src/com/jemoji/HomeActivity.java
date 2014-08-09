@@ -28,9 +28,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.jemoji.http.URLs;
-import com.jemoji.utils.FileImageDecoder;
-import com.jemoji.utils.ImageDecoder.ImageScaleType;
-import com.jemoji.utils.ImageSize;
+import com.jemoji.image.FileImageDecoder;
+import com.jemoji.image.ImageSize;
+import com.jemoji.image.ImageDecoder.ImageScaleType;
+import com.jemoji.models.Emoji;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 

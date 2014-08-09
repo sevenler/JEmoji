@@ -1,4 +1,4 @@
-package com.jemoji.utils;
+package com.jemoji.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;

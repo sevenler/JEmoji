@@ -1,5 +1,5 @@
 
-package com.jemoji.utils;
+package com.jemoji.image;
 
 import java.io.File;
 import java.io.FileInputStream;

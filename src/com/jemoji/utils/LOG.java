@@ -1,4 +1,4 @@
-package com.jemoji;
+package com.jemoji.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

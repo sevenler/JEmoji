@@ -5,9 +5,9 @@ import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 import cn.jpush.android.api.JPushInterface;
 
-import com.jemoji.utils.ImageCacheManager;
-import com.jemoji.utils.ImageCacheManager.CacheType;
-import com.jemoji.utils.RequestManager;
+import com.jemoji.image.ImageCacheManager;
+import com.jemoji.image.RequestManager;
+import com.jemoji.image.ImageCacheManager.CacheType;
 
 /**
  * For developer startup JPush SDK

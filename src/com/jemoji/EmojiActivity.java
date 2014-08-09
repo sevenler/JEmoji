@@ -11,7 +11,8 @@ import android.view.ViewGroup;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.jemoji.utils.ImageCacheManager;
+import com.jemoji.image.ImageCacheManager;
+import com.jemoji.models.Emoji;
 
 public class EmojiActivity extends BaseActivity {
 	Emoji emoji;

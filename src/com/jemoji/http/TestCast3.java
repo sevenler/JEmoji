@@ -5,8 +5,8 @@ import java.util.concurrent.CountDownLatch;
 
 import android.test.AndroidTestCase;
 
-import com.jemoji.LOG;
-import com.jemoji.utils.RequestManager;
+import com.jemoji.image.RequestManager;
+import com.jemoji.utils.LOG;
 
 public class TestCast3 extends AndroidTestCase {
 	// //////////////////////////////////////////////////////////////////////////////////////////

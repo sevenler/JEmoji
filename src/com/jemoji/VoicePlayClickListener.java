@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
+import com.jemoji.models.Emoji;
 
 public class VoicePlayClickListener implements View.OnClickListener {
 	Activity activity;

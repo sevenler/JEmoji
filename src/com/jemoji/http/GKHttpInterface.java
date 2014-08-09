@@ -13,7 +13,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.jemoji.LOG;
+import com.jemoji.utils.LOG;
 import com.jemoji.utils.StringUtils;
 import com.jemoji.utils.Utility;
 import com.loopj.android.http.RequestParams;

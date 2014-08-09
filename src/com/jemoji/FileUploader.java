@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
+import com.jemoji.models.Emoji;
 import com.upyun.api.Uploader;
 import com.upyun.api.utils.UpYunException;
 import com.upyun.api.utils.UpYunUtils;

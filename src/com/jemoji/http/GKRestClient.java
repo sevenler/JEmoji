@@ -10,8 +10,8 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.jemoji.LOG;
-import com.jemoji.utils.RequestManager;
+import com.jemoji.image.RequestManager;
+import com.jemoji.utils.LOG;
 import com.loopj.android.http.RequestParams;
 
 public class GKRestClient {
