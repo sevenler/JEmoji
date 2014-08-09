@@ -48,6 +48,10 @@ public class VoiceHandler implements OnTouchListener{
 		mOnHandListener = onHandListener;
 	}
 	
+	public boolean isVoicePlaying(){
+		return playState;
+	}
+	
 	void showVoiceDialog(Context context) {
 		dialog = new Dialog(context, R.style.DialogStyle);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

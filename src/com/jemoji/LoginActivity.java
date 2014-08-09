@@ -1,7 +1,5 @@
 package com.jemoji;
 
-import com.jemoji.utils.PreferManager;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +10,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.jemoji.models.User;
+import com.jemoji.models.UserCenter;
+import com.jemoji.utils.PreferManager;
 
 public class LoginActivity extends BaseActivity {
 	@Override
@@ -36,10 +38,14 @@ public class LoginActivity extends BaseActivity {
 		}
 	}
 
-	public void redirect(String user){
-		System.out.println(String.format("user: %s ", user));
-		HomeActivity.putValus("user", user);
-		openActivity(HomeActivity.class, null);
+	public void redirect(String name){
+		System.out.println(String.format("user: %s ", name));
+		
+		User user = UserCenter.instance().get(name);
+		if (user != null) {
+			HomeActivity.putValus("user", user);
+			openActivity(HomeActivity.class, null);
+		}
 	}
 	
 	class WebPageFragment extends Fragment implements OnClickListener {

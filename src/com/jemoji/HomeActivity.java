@@ -24,20 +24,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
+import com.dd.CircularProgressButton;
+import com.jemoji.WaveView.OnWaveListener;
 import com.jemoji.http.URLs;
 import com.jemoji.image.FileImageDecoder;
-import com.jemoji.image.ImageSize;
 import com.jemoji.image.ImageDecoder.ImageScaleType;
+import com.jemoji.image.ImageSize;
 import com.jemoji.models.Emoji;
+import com.jemoji.models.User;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity {
 	Emoji mEmoji;
-	String user;
+	User user;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,8 +57,8 @@ public class HomeActivity extends BaseActivity {
 				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 		mEmoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
 		
-		user = (String)HomeActivity.pokeValus("user");
-		setTag(user);
+		user = (User)HomeActivity.pokeValus("user");
+		setTag(user.getUsername());
 	}
 
 	@Override
@@ -79,12 +81,14 @@ public class HomeActivity extends BaseActivity {
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
 		VoiceHandler voiceHandler;
+		WaveView mWaveView;
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-			Button send = (Button)rootView.findViewById(R.id.send);
-			send.setOnClickListener(this);
+			CircleImageView header = (CircleImageView)rootView.findViewById(R.id.send);
+			header.setOnClickListener(this);
+			header.setImageResource(user.getHeader());
 			
 			ControlScrollViewPager mViewPager;
 			mViewPager = (ControlScrollViewPager)rootView.findViewById(R.id.face_pager);
@@ -123,13 +127,29 @@ public class HomeActivity extends BaseActivity {
 				}
 			});
 			buttonPressToSpeak.setOnTouchListener(voiceHandler);
-			View play = rootView.findViewById(R.id.play);
-			play.setOnClickListener(new OnClickListener() {
+			
+			ImageView wave1 = (ImageView) rootView.findViewById(R.id.wave1);
+			ImageView wave2 = (ImageView) rootView.findViewById(R.id.wave2);
+			ImageView wave3 = (ImageView) rootView.findViewById(R.id.wave3);
+			final CircularProgressButton pay = (CircularProgressButton) rootView.findViewById(R.id.pay);
+			mWaveView = new WaveView(new OnWaveListener() {
 				@Override
-				public void onClick(View v) {
-					voiceHandler.playOrStop(mEmoji.getVoice());
+				public void onStop() {
+					pay.setProgress(0);
+					if (voiceHandler.isVoicePlaying()) voiceHandler.playOrStop(mEmoji.getVoice());
 				}
-			});
+
+				@Override
+				public int onStart() {
+					voiceHandler.playOrStop(mEmoji.getVoice());
+					return 1000 * 4;
+				}
+
+				@Override
+				public void onWaiting() {
+				}
+			}, pay, wave1, wave2, wave3);
+			
 			
 			return rootView;
 		}
