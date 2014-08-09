@@ -15,10 +15,6 @@ import com.jemoji.utils.RequestManager;
 import com.loopj.android.http.RequestParams;
 
 public class GKRestClient {
-    private static String getAbsoluteUrl(String relativeUrl) {
-        return URLs.getBaseUrl() + relativeUrl;
-    }
-    
     private static GKRestClient instance;
     
     public static GKRestClient instance(){
@@ -32,7 +28,7 @@ public class GKRestClient {
     public String get(String url,final String type, RequestParams params,final MyAsyncHttpResponseHandler responseHandler){
 		RequestQueue mQueue = RequestManager.getAPIRequestQueue();
 		
-		String full = String.format("%s?%s", getAbsoluteUrl(url), params.toString());
+		String full = String.format("%s?%s", URLs.getAbsoluteUrl(url), params.toString());
 		LOG.d(LOG.TAG_API, full);
 		
 		FileRequest request = new FileRequest(full, new Listener<File>() {
@@ -66,7 +62,7 @@ public class GKRestClient {
     public String post(String url, MyRequestParams params,final MyAsyncHttpResponseHandler responseHandler){
 		RequestQueue mQueue = RequestManager.getAPIRequestQueue();
 		
-		url = getAbsoluteUrl(url);
+		url = URLs.getAbsoluteUrl(url);
 		String message = String.format("%s and postted %s", url, params.toString());
 		LOG.d(LOG.TAG_API, message);
 		

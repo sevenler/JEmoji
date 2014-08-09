@@ -1,5 +1,8 @@
 package com.jemoji;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -78,4 +81,26 @@ public class BaseActivity extends FragmentActivity{
 		}
 		startActivity(intent);
 	}
+	
+	
+	
+	private static Map<String, Object> mValues = new LinkedHashMap<String, Object>();//用于传递数据，static变量，记得一定要清理哦！！
+    public static void putValus(String key, Object values){
+    	mValues.put(key, values);
+    }
+    
+    /**
+     * 默认阅后即焚哦
+     * @param key
+     * @return
+     */
+    public static Object pokeValus(String key){
+    	return getValus(key, true);
+    }
+    
+    private static Object getValus(String key, boolean isNeedDelete){
+    	Object values = mValues.get(key);
+    	if(isNeedDelete)mValues.remove(key);
+    	return values;
+    }
 }

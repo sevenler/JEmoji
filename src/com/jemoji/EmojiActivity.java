@@ -14,6 +14,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.jemoji.utils.ImageCacheManager;
 
 public class EmojiActivity extends BaseActivity {
+	Emoji emoji;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,6 +26,8 @@ public class EmojiActivity extends BaseActivity {
 		WebPageFragment mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
+		
+		emoji = (Emoji)EmojiActivity.pokeValus("emoji");
 	}
 
 	class WebPageFragment extends Fragment  implements OnClickListener{
@@ -35,10 +39,10 @@ public class EmojiActivity extends BaseActivity {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_emoji, container, false);
 			NetworkImageView image = (NetworkImageView)rootView.findViewById(R.id.image);
-			
+
 			ImageLoader loder = ImageCacheManager.instance().getImageLoader();
-			image.setImageUrl("http://emoji.b0.upaiyun.com/test/1407524257043.jpg", loder);
-			image.setOnClickListener(this);
+			image.setImageUrl(emoji.getImage(), loder);
+			image.setOnClickListener(new VoicePlayClickListener(getActivity(), emoji));
 			return rootView;
 		}
 		

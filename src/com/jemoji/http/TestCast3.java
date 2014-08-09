@@ -51,8 +51,11 @@ public class TestCast3 extends AndroidTestCase {
 	public void testCase() throws Throwable {
 		RequestManager.init(getContext());
 		URLs.changeEnvoriment(URLs.ENVORIMENT_FORMAL);
+		
+		String ur = URLs.getAbsoluteUrl(" http://www.baidu.com");
+		System.out.println(String.format(" =========== %s   %s", ur, ur.trim().indexOf("http")));
 
-		String IMG = "/1407549723664.amr";
+		/*String IMG = "/1407549723664.amr";
 		preRequest();
 		GKHttpInterface.genFile(IMG, "amr", new GKJsonResponseHandler() {
 			@Override
@@ -60,7 +63,7 @@ public class TestCast3 extends AndroidTestCase {
 				checkResponse(code, json, error);
 			}
 		});
-		finishResponse();
+		finishResponse();*/
 	}
 
 }

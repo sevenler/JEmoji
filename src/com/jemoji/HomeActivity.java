@@ -3,6 +3,8 @@ package com.jemoji;
 
 import java.io.File;
 
+import com.jemoji.http.URLs;
+
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -30,7 +32,6 @@ public class HomeActivity extends BaseActivity {
 	@Override
 	public void onReceiveMessage(String values) {
 		super.onReceiveMessage(values);
-		System.out.println(String.format(" ==========  %s ============== ", values));
 	}
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
@@ -46,14 +47,22 @@ public class HomeActivity extends BaseActivity {
 
 		@Override
 		public void onClick(View v) {
+			String url = URLs.getAbsoluteUrl("/1407549723664.amr");
+			String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
+					+ File.separator
+					+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
+			Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
+			
 			switch (v.getId()) {
 				case R.id.send:
-					String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
-							+ File.separator
-							+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
-					new FileUploader().send(new Emoji("sdcard/emojis/IMG_0286.JPG", voice));
+					new FileUploader().send(emoji);
 					break;
 				case R.id.recive:
+					
+					emoji.setImage("http://emoji.b0.upaiyun.com/test/1407524257043.jpg");
+						
+					EmojiActivity.putValus("emoji", emoji);
+					openActivity(EmojiActivity.class, null);
 					break;
 			}
 		}
