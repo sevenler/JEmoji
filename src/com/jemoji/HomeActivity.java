@@ -57,24 +57,20 @@ public class HomeActivity extends BaseActivity {
 		user = (String)HomeActivity.pokeValus("user");
 		setTag(user);
 	}
-	
-	public static boolean isExitsSdcard() {
-		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
-			return true;
-		else
-			return false;
-	}
 
 	@Override
 	public void onReceiveMessage(String values) {
 		super.onReceiveMessage(values);
 		
-		String url = URLs.getAbsoluteUrl("/1407549723664.amr");
+		String[] messages = values.split(",");
+		System.out.println(String.format("[%s,%s,%s]", values, messages[0], messages[1]));
+		
+		String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
 		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
 				+ File.separator
 				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
-		Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
-		emoji.setImage("http://emoji.b0.upaiyun.com/test/1407524257043.jpg");
+		Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
+		emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
 			
 		EmojiActivity.putValus("emoji", emoji);
 		openActivity(EmojiActivity.class, null);
@@ -155,23 +151,8 @@ public class HomeActivity extends BaseActivity {
 					break;
 			}
 		}
-		
-		private void saveVoice(String filePath, int length) {
-			System.out.println(String.format(" filePath:%s ", filePath));
-			if (!(new File(filePath).exists())) {
-				return;
-			}
-		}
 	}
 }
-
-
-
-
-
-
-
-
 
 class MyPagerAdapter extends PagerAdapter {
 

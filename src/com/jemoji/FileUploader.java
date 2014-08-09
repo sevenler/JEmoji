@@ -2,6 +2,8 @@ package com.jemoji;
 
 import java.io.File;
 
+import com.jemoji.http.GKHttpInterface;
+import com.jemoji.http.GKJsonResponseHandler;
 import com.upyun.api.Uploader;
 import com.upyun.api.utils.UpYunException;
 import com.upyun.api.utils.UpYunUtils;
@@ -16,13 +18,13 @@ public  class FileUploader {
 	}
 	
 	private String sendFile(String file, String type){
-		String result = null;
+		String result = System.currentTimeMillis() + "." + type;
 		try {
 			// 设置服务器上保存文件的目录和文件名，如果服务器上同目录下已经有同名文件会被自动覆盖的。
-			result = File.separator + "test" + File.separator + System.currentTimeMillis() + "." + type;
+			String path = File.separator + "test" + File.separator + result;
 
 			// 取得base64编码后的policy
-			String policy = UpYunUtils.makePolicy(result, EXPIRATION, BUCKET);
+			String policy = UpYunUtils.makePolicy(path, EXPIRATION, BUCKET);
 
 			// 根据表单api签名密钥对policy进行签名
 			// 通常我们建议这一步在用户自己的服务器上进行，并通过http请求取得签名后的结果。
@@ -43,14 +45,26 @@ public  class FileUploader {
 		return result;
 	}
 	
-	public void send(final Emoji emoji){
+	public void send(final Emoji emoji, final String user){
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				String result = sendFile(emoji.getImage(), "jpg");
 				System.out.println(String.format(" ===== %s ", result));
+				emoji.setImageUrl(result);
 				String result1 = sendFile(emoji.getVoice(), "amr");
 				System.out.println(String.format(" ===== %s ", result1));
+				emoji.setVoiceUrl(result1);
+				
+				String voice = result1;
+				String img = result;
+				String content = String.format("{\"message\":\"%s,%s\"}", voice, img);
+				GKHttpInterface.pushMessage(user, content, new GKJsonResponseHandler() {
+					@Override
+					public void onResponse(int code, Object json, Throwable error) {
+						System.out.println(String.format(" onResponse json %s   user:[%s] ", json, user));
+					}
+				});
 			}
 		}).start();
 	}

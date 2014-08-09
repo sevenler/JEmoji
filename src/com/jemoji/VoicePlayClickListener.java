@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.jemoji.http.GKJsonResponseHandler;
+import com.jemoji.http.URLs;
 
 public class VoicePlayClickListener implements View.OnClickListener {
 	Activity activity;
@@ -70,10 +71,11 @@ public class VoicePlayClickListener implements View.OnClickListener {
 				playVoice(emoji.getVoice());
 				break;
 			case Emoji.STATUS_REMOTE:
-//				Toast.makeText(activity, "正在下载", Toast.LENGTH_SHORT).show();
+				Toast.makeText(activity, "正在下载", Toast.LENGTH_SHORT).show();
 				emoji.download(new GKJsonResponseHandler() {
 					@Override
-					public void onResponse(int code, Object json, Throwable error) {
+					public void onResponse(int code, Object file, Throwable error) {
+						emoji.setVoice((String)file);
 						playVoice(emoji.getVoice());
 					}
 				});

@@ -6,6 +6,7 @@ import com.jemoji.http.GKJsonResponseHandler;
 
 public class Emoji {
 	String image;
+	String imageUrl;
 	String mVoice;
 	String mVoiceUrl;
 	int mVoiceStatus = STATUS_REMOTE;
@@ -31,6 +32,14 @@ public class Emoji {
 
 	public String getImage() {
 		return image;
+	}
+	
+	public void setImageUrl(String image) {
+		this.imageUrl = image;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
 	}
 
 	public String getVoice() {
@@ -61,23 +70,14 @@ public class Emoji {
 		setVoiceStatus(Emoji.STATUS_DOWNLOADING);
 		GKHttpInterface.genFile(getVoiceUrl(), "amr", new GKJsonResponseHandler() {
 			@Override
-			public void onResponse(int code, Object json, Throwable error) {
+			public void onResponse(int code, Object file, Throwable error) {
 				setVoiceStatus(Emoji.STATUS_LOCAL);
-				handler.onResponse(code, json, error);
+				handler.onResponse(code, file, error);
 			}
 		});
 	}
 	
 	public void send(final String user){
-		new FileUploader().send(this);
-		
-		String body = "00000000000";
-		String content = String.format("{\"message\":\" %s\"}", body);
-		GKHttpInterface.pushMessage(user, content, new GKJsonResponseHandler() {
-			@Override
-			public void onResponse(int code, Object json, Throwable error) {
-				System.out.println(String.format(" onResponse json %s   user:[%s] ", json, user));
-			}
-		});
+		new FileUploader().send(this, user);
 	}
 }

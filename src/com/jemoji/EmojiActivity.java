@@ -33,6 +33,8 @@ public class EmojiActivity extends BaseActivity {
 	class WebPageFragment extends Fragment  implements OnClickListener{
 		public WebPageFragment() {
 		}
+		
+		VoicePlayClickListener mVoicePlayClickListener;
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,11 +43,20 @@ public class EmojiActivity extends BaseActivity {
 			NetworkImageView image = (NetworkImageView)rootView.findViewById(R.id.image);
 
 			ImageLoader loder = ImageCacheManager.instance().getImageLoader();
-			image.setImageUrl(emoji.getImage(), loder);
-			image.setOnClickListener(new VoicePlayClickListener(getActivity(), emoji));
+			image.setImageUrl(emoji.getImageUrl(), loder);
+			mVoicePlayClickListener = new VoicePlayClickListener(getActivity(), emoji); 
+			image.setOnClickListener(mVoicePlayClickListener);
 			return rootView;
 		}
 		
+		
+		@Override
+		public void onStart() {
+			super.onStart();
+			
+			mVoicePlayClickListener.onClick(null);
+		}
+
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
