@@ -31,6 +31,8 @@ import com.jemoji.http.URLs;
 import com.jemoji.utils.FileImageDecoder;
 import com.jemoji.utils.ImageDecoder.ImageScaleType;
 import com.jemoji.utils.ImageSize;
+import com.jemoji.utils.VoiceHandler;
+import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity {
 	Emoji mEmoji;
@@ -55,6 +57,13 @@ public class HomeActivity extends BaseActivity {
 		user = (String)HomeActivity.pokeValus("user");
 		setTag(user);
 	}
+	
+	public static boolean isExitsSdcard() {
+		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
+			return true;
+		else
+			return false;
+	}
 
 	@Override
 	public void onReceiveMessage(String values) {
@@ -72,14 +81,13 @@ public class HomeActivity extends BaseActivity {
 	}
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
+		VoiceHandler voiceHandler;
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 			Button send = (Button)rootView.findViewById(R.id.send);
 			send.setOnClickListener(this);
-			Button recive = (Button)rootView.findViewById(R.id.recive);
-			recive.setOnClickListener(this);
 			
 			ControlScrollViewPager mViewPager;
 			mViewPager = (ControlScrollViewPager)rootView.findViewById(R.id.face_pager);
@@ -102,6 +110,29 @@ public class HomeActivity extends BaseActivity {
 			});
 //			mViewPager.setScrollable(false);
 			
+			
+			View buttonPressToSpeak = rootView.findViewById(R.id.btn_press_to_speak);
+			voiceHandler = new VoiceHandler();
+			voiceHandler.setOnHandListener(new OnHandListener() {
+				@Override
+				public void onRecored(boolean isFinish, int time, String file) {
+					System.out.println(String.format(" file:%s ", file));
+				}
+				
+				@Override
+				public void onPlay(boolean isFinish) {
+					
+				}
+			});
+			buttonPressToSpeak.setOnTouchListener(voiceHandler);
+			View play = rootView.findViewById(R.id.play);
+			play.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					voiceHandler.playOrStop();
+				}
+			});
+			
 			return rootView;
 		}
 		
@@ -117,17 +148,18 @@ public class HomeActivity extends BaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			
-			
 			switch (v.getId()) {
 				case R.id.send:
 					String friend = "18511557126";
 					mEmoji.send(friend);
 					break;
-				case R.id.recive:
-					
-					
-					break;
+			}
+		}
+		
+		private void saveVoice(String filePath, int length) {
+			System.out.println(String.format(" filePath:%s ", filePath));
+			if (!(new File(filePath).exists())) {
+				return;
 			}
 		}
 	}

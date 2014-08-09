@@ -6,7 +6,7 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -17,7 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#e2e2e2" />
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/play"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:text="播放" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,14 +34,13 @@
         <Button
             android:id="@+id/send"
             android:layout_width="200dp"
-            android:text="发送"
-            android:layout_height="80dp" >
-        </Button>
+            android:layout_height="80dp"
+            android:text="发送" />
 
         <Button
-            android:id="@+id/recive"
-            android:layout_width="100dp"
-            android:layout_height="40dp" >
+            android:id="@+id/btn_press_to_speak"
+            android:layout_width="200dp"
+            android:layout_height="80dp" >
         </Button>
     </LinearLayout>
 
