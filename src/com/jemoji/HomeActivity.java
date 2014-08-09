@@ -109,6 +109,7 @@ public class HomeActivity extends BaseActivity {
 			
 			
 			View buttonPressToSpeak = rootView.findViewById(R.id.btn_press_to_speak);
+			rootView.findViewById(R.id.settings).setOnClickListener(this);;
 			voiceHandler = new VoiceHandler();
 			voiceHandler.setOnHandListener(new OnHandListener() {
 				@Override
@@ -149,6 +150,9 @@ public class HomeActivity extends BaseActivity {
 				case R.id.send:
 					String friend = "18511557126";
 					mEmoji.send(friend);
+					break;
+				case R.id.settings:
+					openActivity(SettingsActivity.class, null);
 					break;
 			}
 		}
