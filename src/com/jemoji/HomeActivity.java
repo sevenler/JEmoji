@@ -2,19 +2,35 @@
 package com.jemoji;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import com.jemoji.http.URLs;
-
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import com.jemoji.http.URLs;
+import com.jemoji.utils.FileImageDecoder;
+import com.jemoji.utils.ImageDecoder.ImageScaleType;
+import com.jemoji.utils.ImageSize;
 
 public class HomeActivity extends BaseActivity {
 	@Override
@@ -42,7 +58,39 @@ public class HomeActivity extends BaseActivity {
 			send.setOnClickListener(this);
 			Button recive = (Button)rootView.findViewById(R.id.recive);
 			recive.setOnClickListener(this);
+			
+			ControlScrollViewPager mViewPager;
+			mViewPager = (ControlScrollViewPager)rootView.findViewById(R.id.face_pager);
+			MyPagerAdapter emojiAdapter = new MyPagerAdapter(getActivity());
+			emojiAdapter.setData(initEmojiData(new ArrayList<Map<?, ?>>()));
+			mViewPager.setAdapter(emojiAdapter);
+			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+				@Override
+				public void onPageSelected(int arg0) {
+//					mEmoji.setImage(EmojiSelector.instance().getEmoji(arg0));
+				}
+				
+				@Override
+				public void onPageScrolled(int arg0, float arg1, int arg2) {
+				}
+				
+				@Override
+				public void onPageScrollStateChanged(int arg0) {
+				}
+			});
+//			mViewPager.setScrollable(false);
+			
 			return rootView;
+		}
+		
+		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {
+			EmojiSelector selector = EmojiSelector.instance();
+			for (int i = 0; i < selector.size(); i++) {
+				Map<Object, Object> map = new HashMap<Object, Object>();
+				map.put("emoji", selector.getEmoji(i));
+				list.add(map);
+			}
+			return list;
 		}
 
 		@Override
@@ -66,5 +114,133 @@ public class HomeActivity extends BaseActivity {
 					break;
 			}
 		}
+	}
+}
+
+
+
+
+
+
+
+
+
+class MyPagerAdapter extends PagerAdapter {
+
+	private List<Map<?, ?>> list = new ArrayList<Map<?, ?>>();
+
+	private Activity mContext;
+
+	public MyPagerAdapter(Context context) {
+		mContext = (Activity) context;
+	}
+
+	public void setData(List<Map<?, ?>> list) {
+		this.list.clear();
+		this.list.addAll(list);
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public int getCount() {
+		return list.size();
+	}
+
+	@Override
+	public boolean isViewFromObject(View arg0, Object arg1) {
+		return arg0 == arg1;
+	}
+
+	@Override
+	public void destroyItem(View arg0, int arg1, Object arg2) {
+		((ViewPager) arg0).removeView((View) arg2);
+	}
+
+	@Override
+	public Object instantiateItem(ViewGroup arg0, int arg1) {
+		View rootview = LayoutInflater.from(mContext).inflate(R.layout.image_item, null, true);
+		ImageView imageView = (ImageView) rootview.findViewById(R.id.imageView);
+		
+		
+		FileImageDecoder decoder = new FileImageDecoder(new File((String) list.get(arg1).get("emoji")));
+		try {
+			Bitmap bitmap = decoder.decode(new ImageSize(510,  510), ImageScaleType.POWER_OF_2);
+			imageView.setImageBitmap(bitmap);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		arg0.addView(rootview);
+		
+		return rootview;
+	}
+}
+
+class EmojiSelector {
+	private static EmojiSelector instance;
+
+	public static EmojiSelector instance() {
+		if (instance == null)
+			instance = new EmojiSelector();
+		return instance;
+	}
+
+	public List<String> emojis = new LinkedList<String>();
+
+	public EmojiSelector() {
+		emojis.add("001.png");
+		emojis.add("IMG_0259.JPG");
+
+		emojis.add("IMG_0267.JPG");
+		emojis.add("IMG_0272.JPG");
+		emojis.add("IMG_0278.JPG");
+		emojis.add("IMG_0284.JPG");
+
+		emojis.add("IMG_0291.JPG");
+		emojis.add("002.png");
+
+		emojis.add("despicable-me-2-Minion-icon-5.png");
+		emojis.add("IMG_0262.JPG");
+		emojis.add("IMG_0268.JPG");
+
+		emojis.add("IMG_0273.JPG");
+		emojis.add("IMG_0279.JPG");
+		emojis.add("IMG_0279.JPG");
+
+		emojis.add("IMG_0285.JPG");
+		emojis.add("IMG_0292.PNG");
+		emojis.add("IMG_0297.PNG");
+
+		emojis.add("IMG_0256.PNG");
+		emojis.add("IMG_0263.JPG");
+
+		emojis.add("IMG_0269.JPG");
+		emojis.add("IMG_0274.JPG");
+		emojis.add("IMG_0281.JPG");
+
+		emojis.add("IMG_0286.JPG");
+		emojis.add("IMG_0264.JPG");
+
+		emojis.add("IMG_0270.JPG");
+		emojis.add("IMG_0275.JPG");
+		emojis.add("IMG_0282.JPG");
+
+		emojis.add("IMG_0288.JPG");
+		
+		emojis.add("IMG_0258.JPG");
+		emojis.add("IMG_0266.JPG");
+
+		emojis.add("IMG_0271.JPG");
+		emojis.add("IMG_0277.JPG");
+		emojis.add("IMG_0283.JPG");
+
+		emojis.add("IMG_0289.JPG");
+	}
+
+	public String getEmoji(int index) {
+		return String.format("%s/%s", "/sdcard/emojis", emojis.get(index));
+	}
+
+	public int size() {
+		return emojis.size();
 	}
 }

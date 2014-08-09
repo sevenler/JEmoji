@@ -19,6 +19,9 @@
 # view res/layout/fragment_emoji.xml #generated:8
 -keep class com.android.volley.toolbox.NetworkImageView { <init>(...); }
 
+# view res/layout/fragment_home.xml #generated:15
+-keep class com.jemoji.ControlScrollViewPager { <init>(...); }
+
 # view AndroidManifest.xml #generated:56
 -keep class com.jemoji.EmojiActivity { <init>(...); }
 

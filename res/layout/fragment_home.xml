@@ -6,16 +6,36 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/send"
-        android:layout_width="100dp"
-        android:layout_height="40dp" >
-    </Button>
-    
-    <Button
-        android:id="@+id/recive"
-        android:layout_width="100dp"
-        android:layout_height="40dp" >
-    </Button>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <com.jemoji.ControlScrollViewPager
+            android:id="@+id/face_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#e2e2e2" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/send"
+            android:layout_width="100dp"
+            android:layout_height="40dp" >
+        </Button>
+
+        <Button
+            android:id="@+id/recive"
+            android:layout_width="100dp"
+            android:layout_height="40dp" >
+        </Button>
+    </LinearLayout>
 
 </LinearLayout>
