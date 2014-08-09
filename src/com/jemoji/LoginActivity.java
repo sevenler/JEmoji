@@ -1,5 +1,7 @@
 package com.jemoji;
 
+import com.jemoji.utils.PreferManager;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,13 +19,29 @@ public class LoginActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_fragment_container);
 
+		checkLogin();
+		
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		WebPageFragment mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
 	}
+	
+	public static final String KEY_USER_NAME = "KEY_USER_NAME";
+	public void checkLogin(){
+		String user = PreferManager.instance().getStringFromPrefs(this, KEY_USER_NAME, null);
+		if(user != null){
+			redirect(user);
+		}
+	}
 
+	public void redirect(String user){
+		System.out.println(String.format("user: %s ", user));
+		HomeActivity.putValus("user", user);
+		openActivity(HomeActivity.class, null);
+	}
+	
 	class WebPageFragment extends Fragment implements OnClickListener {
 		public WebPageFragment() {
 		}
@@ -45,9 +63,8 @@ public class LoginActivity extends BaseActivity {
 			switch (v.getId()) {
 				case R.id.login:
 					String user = username.getText().toString();
-					System.out.println(String.format("user: %s ", user));
-					HomeActivity.putValus("user", user);
-					openActivity(HomeActivity.class, null);
+					PreferManager.instance().setStringToPrefs(getActivity(), KEY_USER_NAME, user);
+					redirect(user);
 					break;
 			}
 		}
