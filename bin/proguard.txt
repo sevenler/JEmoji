@@ -19,13 +19,13 @@
 # view res/layout/fragment_emoji.xml #generated:8
 -keep class com.android.volley.toolbox.NetworkImageView { <init>(...); }
 
-# view res/layout/fragment_home.xml #generated:70
+# view res/layout/fragment_home.xml #generated:71
 -keep class com.dd.CircularProgressButton { <init>(...); }
 
-# view res/layout/fragment_home.xml #generated:108
+# view res/layout/fragment_home.xml #generated:109
 -keep class com.jemoji.CircleImageView { <init>(...); }
 
-# view res/layout/fragment_home.xml #generated:20
+# view res/layout/fragment_home.xml #generated:21
 -keep class com.jemoji.ControlScrollViewPager { <init>(...); }
 
 # view AndroidManifest.xml #generated:54

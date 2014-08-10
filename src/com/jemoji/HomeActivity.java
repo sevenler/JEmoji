@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +34,11 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.dd.CircularProgressButton;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
+import com.facebook.rebound.SpringUtil;
 import com.jemoji.WaveView.OnWaveListener;
 import com.jemoji.http.URLs;
 import com.jemoji.image.FileImageDecoder;
@@ -48,8 +54,13 @@ public class HomeActivity extends BaseActivity {
 	Emoji mEmoji;
 	User user;
 	ImageView image;
+	View panel_main;
 	TextView unread_msg_number;
-	
+	private Spring mSpring;
+
+	private static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig
+			.fromOrigamiTensionAndFriction(200, 4.3);
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,39 +71,45 @@ public class HomeActivity extends BaseActivity {
 		WebPageFragment mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
-		
+
 		String url = URLs.getAbsoluteUrl("/1407549723664.amr");
 		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
 				+ File.separator
 				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 		mEmoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
-		
+
 		user = (User)HomeActivity.pokeValus("user");
 		setTag(user.getUsername());
+
+		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG)
+				.addListener(new SimpleSpringListener() {
+					@Override
+					public void onSpringUpdate(Spring spring) {
+						render();
+					}
+				});
 	}
 
 	@Override
 	public void onReceiveMessage(String values) {
 		super.onReceiveMessage(values);
-		
+
 		String[] messages = values.split(",");
 		System.out.println(String.format("[%s,%s,%s]", values, messages[0], messages[1]));
-		
+
 		String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
 		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
 				+ File.separator
 				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 		final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
 		emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
-			
-/*		EmojiActivity.putValus("emoji", emoji);
-		openActivity(EmojiActivity.class, null);*/
-		
+
 		ImageLoader loder = ImageCacheManager.instance().getImageLoader();
 		loder.get(emoji.getImageUrl(), new ImageListener() {
 			@Override
-			public void onErrorResponse(VolleyError arg0) {}
-			
+			public void onErrorResponse(VolleyError arg0) {
+			}
+
 			@Override
 			public void onResponse(ImageContainer arg0, boolean arg1) {
 				emoji.setVoiceStatus(Emoji.STATUS_MEMORY);
@@ -104,39 +121,49 @@ public class HomeActivity extends BaseActivity {
 			}
 		});
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if(image.getVisibility() == View.VISIBLE){
-				showEmoji(false, null);
+			if (mSpring.getEndValue() == 1) {
+				mSpring.setEndValue(0);
+				image.setOnClickListener(null);
+				image.setClickable(false);
+				return true;
 			}
-			return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
-	private void showEmoji(boolean visiable, Emoji emoji){
-		if(visiable){
-			image.setVisibility(View.VISIBLE);
-			VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(this, emoji); 
-			image.setOnClickListener(mVoicePlayClickListener);
-		}else{
-			image.setVisibility(View.INVISIBLE);
-		}
+
+	private void render() {
+		double value = mSpring.getCurrentValue();
+
+		float selectedPhotoScale = (float)SpringUtil.mapValueFromRangeToRange(value, 0, 1, 0, 1);
+		selectedPhotoScale = Math.max(selectedPhotoScale, 0);
+		image.setScaleX(selectedPhotoScale);
+		image.setScaleY(selectedPhotoScale);
+
+		float gridAlpha = (float)SpringUtil.mapValueFromRangeToRange(value, 0, 1, 1, 0);
+		panel_main.setAlpha(gridAlpha);
+
+		float gridScale = (float)SpringUtil.mapValueFromRangeToRange(value, 0, 1, 1, 0.95);
+		gridScale = Math.max(gridScale, 0);
+		panel_main.setScaleX(gridScale);
+		panel_main.setScaleY(gridScale);
 	}
-	
+
 	class WebPageFragment extends Fragment implements OnClickListener {
 		VoiceHandler voiceHandler;
 		WaveView mWaveView;
-		
+
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 			CircleImageView header = (CircleImageView)rootView.findViewById(R.id.send);
 			header.setOnClickListener(this);
 			header.setImageResource(user.getHeader());
-			
+
 			ControlScrollViewPager mViewPager;
 			mViewPager = (ControlScrollViewPager)rootView.findViewById(R.id.face_pager);
 			MyPagerAdapter emojiAdapter = new MyPagerAdapter(getActivity());
@@ -147,24 +174,50 @@ public class HomeActivity extends BaseActivity {
 				public void onPageSelected(int arg0) {
 					mEmoji.setImage(EmojiSelector.instance().getEmoji(arg0));
 				}
-				
+
 				@Override
 				public void onPageScrolled(int arg0, float arg1, int arg2) {
 				}
-				
+
 				@Override
 				public void onPageScrollStateChanged(int arg0) {
 				}
 			});
-//			mViewPager.setScrollable(false);
-			
+			// mViewPager.setScrollable(false);
+
 			image = (ImageView)rootView.findViewById(R.id.image);
+			panel_main = rootView.findViewById(R.id.panel_main);
+			panel_main.getViewTreeObserver().addOnGlobalLayoutListener(
+					new ViewTreeObserver.OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							render();
+							panel_main.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+						}
+					});
 			unread_msg_number = (TextView)rootView.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setVisibility(View.GONE);
 			unread_msg_number.setOnClickListener(this);
-			
+
+			unread_msg_number.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					if (mSpring.getEndValue() == 0) {
+						mSpring.setEndValue(1);
+						
+						Emoji emoji = (Emoji)arg0.getTag();
+						VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(HomeActivity.this, emoji);
+						image.setOnClickListener(mVoicePlayClickListener);
+					} else {
+						mSpring.setEndValue(0);
+						image.setOnClickListener(null);
+						image.setClickable(false);
+					}
+				}
+			});
+
 			View buttonPressToSpeak = rootView.findViewById(R.id.btn_press_to_speak);
-			rootView.findViewById(R.id.settings).setOnClickListener(this);;
+			rootView.findViewById(R.id.settings).setOnClickListener(this);
 			voiceHandler = new VoiceHandler();
 			voiceHandler.setOnHandListener(new OnHandListener() {
 				@Override
@@ -172,17 +225,18 @@ public class HomeActivity extends BaseActivity {
 					System.out.println(String.format(" file:%s ", file));
 					mEmoji.setVoice(file);
 				}
-				
+
 				@Override
 				public void onPlay(boolean isFinish) {
 				}
 			});
 			buttonPressToSpeak.setOnTouchListener(voiceHandler);
-			
-			ImageView wave1 = (ImageView) rootView.findViewById(R.id.wave1);
-			ImageView wave2 = (ImageView) rootView.findViewById(R.id.wave2);
-			ImageView wave3 = (ImageView) rootView.findViewById(R.id.wave3);
-			final CircularProgressButton pay = (CircularProgressButton) rootView.findViewById(R.id.pay);
+
+			ImageView wave1 = (ImageView)rootView.findViewById(R.id.wave1);
+			ImageView wave2 = (ImageView)rootView.findViewById(R.id.wave2);
+			ImageView wave3 = (ImageView)rootView.findViewById(R.id.wave3);
+			final CircularProgressButton pay = (CircularProgressButton)rootView
+					.findViewById(R.id.pay);
 			mWaveView = new WaveView(new OnWaveListener() {
 				@Override
 				public void onStop() {
@@ -200,11 +254,10 @@ public class HomeActivity extends BaseActivity {
 				public void onWaiting() {
 				}
 			}, pay, wave1, wave2, wave3);
-			
-			
+
 			return rootView;
 		}
-		
+
 		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {
 			EmojiSelector selector = EmojiSelector.instance();
 			for (int i = 0; i < selector.size(); i++) {
@@ -225,10 +278,6 @@ public class HomeActivity extends BaseActivity {
 				case R.id.settings:
 					openActivity(SettingsActivity.class, null);
 					break;
-				case R.id.unread_msg_number:
-					Emoji emoji = (Emoji)v.getTag();
-					showEmoji(true, emoji);
-					break;
 			}
 		}
 	}
@@ -241,7 +290,7 @@ class MyPagerAdapter extends PagerAdapter {
 	private Activity mContext;
 
 	public MyPagerAdapter(Context context) {
-		mContext = (Activity) context;
+		mContext = (Activity)context;
 	}
 
 	public void setData(List<Map<?, ?>> list) {
@@ -262,24 +311,24 @@ class MyPagerAdapter extends PagerAdapter {
 
 	@Override
 	public void destroyItem(View arg0, int arg1, Object arg2) {
-		((ViewPager) arg0).removeView((View) arg2);
+		((ViewPager)arg0).removeView((View)arg2);
 	}
 
 	@Override
 	public Object instantiateItem(ViewGroup arg0, int arg1) {
 		View rootview = LayoutInflater.from(mContext).inflate(R.layout.image_item, null, true);
-		ImageView imageView = (ImageView) rootview.findViewById(R.id.imageView);
-		
-		
-		FileImageDecoder decoder = new FileImageDecoder(new File((String) list.get(arg1).get("emoji")));
+		ImageView imageView = (ImageView)rootview.findViewById(R.id.imageView);
+
+		FileImageDecoder decoder = new FileImageDecoder(new File((String)list.get(arg1)
+				.get("emoji")));
 		try {
-			Bitmap bitmap = decoder.decode(new ImageSize(510,  510), ImageScaleType.POWER_OF_2);
+			Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);
 			imageView.setImageBitmap(bitmap);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		arg0.addView(rootview);
-		
+
 		return rootview;
 	}
 }
@@ -288,8 +337,7 @@ class EmojiSelector {
 	private static EmojiSelector instance;
 
 	public static EmojiSelector instance() {
-		if (instance == null)
-			instance = new EmojiSelector();
+		if (instance == null) instance = new EmojiSelector();
 		return instance;
 	}
 
@@ -334,7 +382,7 @@ class EmojiSelector {
 		emojis.add("IMG_0282.JPG");
 
 		emojis.add("IMG_0288.JPG");
-		
+
 		emojis.add("IMG_0258.JPG");
 		emojis.add("IMG_0266.JPG");
 
