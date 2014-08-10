@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -31,7 +30,7 @@ public class EmojiActivity extends BaseActivity {
 		emoji = (Emoji)EmojiActivity.pokeValus("emoji");
 	}
 
-	class WebPageFragment extends Fragment  implements OnClickListener{
+	class WebPageFragment extends Fragment{
 		public WebPageFragment() {
 		}
 		
@@ -57,14 +56,5 @@ public class EmojiActivity extends BaseActivity {
 			
 			mVoicePlayClickListener.onClick(null);
 		}
-
-		@Override
-		public void onClick(View v) {
-			switch (v.getId()) {
-				case R.id.image:
-					break;
-			}
-		}
-
 	}
 }

@@ -20,16 +20,23 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageLoader.ImageContainer;
+import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.dd.CircularProgressButton;
 import com.jemoji.WaveView.OnWaveListener;
 import com.jemoji.http.URLs;
 import com.jemoji.image.FileImageDecoder;
+import com.jemoji.image.ImageCacheManager;
 import com.jemoji.image.ImageDecoder.ImageScaleType;
 import com.jemoji.image.ImageSize;
 import com.jemoji.models.Emoji;
@@ -40,6 +47,9 @@ import com.jemoji.utils.VoiceHandler.OnHandListener;
 public class HomeActivity extends BaseActivity {
 	Emoji mEmoji;
 	User user;
+	ImageView image;
+	TextView unread_msg_number;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,11 +82,48 @@ public class HomeActivity extends BaseActivity {
 		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
 				+ File.separator
 				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
-		Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
+		final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
 		emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
 			
-		EmojiActivity.putValus("emoji", emoji);
-		openActivity(EmojiActivity.class, null);
+/*		EmojiActivity.putValus("emoji", emoji);
+		openActivity(EmojiActivity.class, null);*/
+		
+		ImageLoader loder = ImageCacheManager.instance().getImageLoader();
+		loder.get(emoji.getImageUrl(), new ImageListener() {
+			@Override
+			public void onErrorResponse(VolleyError arg0) {}
+			
+			@Override
+			public void onResponse(ImageContainer arg0, boolean arg1) {
+				emoji.setVoiceStatus(Emoji.STATUS_MEMORY);
+				emoji.setBitmap(arg0.getBitmap());
+				unread_msg_number.setVisibility(View.VISIBLE);
+				unread_msg_number.setText("1");
+				image.setImageBitmap(arg0.getBitmap());
+				unread_msg_number.setTag(emoji);
+			}
+		});
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if(image.getVisibility() == View.VISIBLE){
+				showEmoji(false, null);
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	private void showEmoji(boolean visiable, Emoji emoji){
+		if(visiable){
+			image.setVisibility(View.VISIBLE);
+			VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(this, emoji); 
+			image.setOnClickListener(mVoicePlayClickListener);
+		}else{
+			image.setVisibility(View.INVISIBLE);
+		}
 	}
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
@@ -111,6 +158,10 @@ public class HomeActivity extends BaseActivity {
 			});
 //			mViewPager.setScrollable(false);
 			
+			image = (ImageView)rootView.findViewById(R.id.image);
+			unread_msg_number = (TextView)rootView.findViewById(R.id.unread_msg_number);
+			unread_msg_number.setVisibility(View.GONE);
+			unread_msg_number.setOnClickListener(this);
 			
 			View buttonPressToSpeak = rootView.findViewById(R.id.btn_press_to_speak);
 			rootView.findViewById(R.id.settings).setOnClickListener(this);;
@@ -173,6 +224,10 @@ public class HomeActivity extends BaseActivity {
 					break;
 				case R.id.settings:
 					openActivity(SettingsActivity.class, null);
+					break;
+				case R.id.unread_msg_number:
+					Emoji emoji = (Emoji)v.getTag();
+					showEmoji(true, emoji);
 					break;
 			}
 		}

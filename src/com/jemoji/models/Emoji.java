@@ -1,6 +1,8 @@
 
 package com.jemoji.models;
 
+import android.graphics.Bitmap;
+
 import com.jemoji.FileUploader;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
@@ -8,6 +10,7 @@ import com.jemoji.http.GKJsonResponseHandler;
 public class Emoji {
 	String image;
 	String imageUrl;
+	Bitmap imageBitmap;
 	String mVoice;
 	String mVoiceUrl;
 	int mVoiceStatus = STATUS_REMOTE;
@@ -15,6 +18,7 @@ public class Emoji {
 	public static final int STATUS_REMOTE = 0;
 	public static final int STATUS_DOWNLOADING = 1;
 	public static final int STATUS_LOCAL = 2;
+	public static final int STATUS_MEMORY = 3;
 
 	public Emoji() {
 		super();
@@ -33,6 +37,14 @@ public class Emoji {
 
 	public String getImage() {
 		return image;
+	}
+	
+	public void setBitmap(Bitmap image) {
+		this.imageBitmap = image;
+	}
+
+	public Bitmap getImageBitmap() {
+		return imageBitmap;
 	}
 	
 	public void setImageUrl(String image) {
