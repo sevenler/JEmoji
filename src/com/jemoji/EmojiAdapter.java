@@ -11,6 +11,7 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import com.jemoji.image.FileImageDecoder;
 import com.jemoji.image.ImageDecoder.ImageScaleType;
 import com.jemoji.image.ImageSize;
+import com.jemoji.models.Emoji;
 
 public class EmojiAdapter extends PagerAdapter {
 
@@ -80,60 +82,84 @@ class EmojiSelector {
 		return instance;
 	}
 
-	public List<String> emojis = new LinkedList<String>();
+	public List<Emoji> emojis = new LinkedList<Emoji>();
 
 	public EmojiSelector() {
-		emojis.add("001.png");
-		emojis.add("IMG_0259.JPG");
+		emojis.add(new Emoji("001.png", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0259.JPG", Color.parseColor("#ffffff")));
 
-		emojis.add("IMG_0267.JPG");
-		emojis.add("IMG_0272.JPG");
-		emojis.add("IMG_0278.JPG");
-		emojis.add("IMG_0284.JPG");
+		emojis.add(new Emoji("IMG_0272.JPG", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0278.JPG", Color.parseColor("#FEFFBB")));
+		emojis.add(new Emoji("IMG_0284.JPG", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("#ffffff")));
 
-		emojis.add("IMG_0291.JPG");
-		emojis.add("002.png");
+		emojis.add(new Emoji("IMG_0291.JPG", Color.parseColor("#AADFFF")));
+		emojis.add(new Emoji("IMG_0273.JPG", Color.parseColor("#ffffff")));
 
-		emojis.add("despicable-me-2-Minion-icon-5.png");
-		emojis.add("IMG_0262.JPG");
-		emojis.add("IMG_0268.JPG");
-
-		emojis.add("IMG_0273.JPG");
+		emojis.add(new Emoji("despicable-me-2-Minion-icon-5.png", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0262.JPG", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0268.JPG", Color.parseColor("#ffffff")));
+		
+/*		emojis.add("IMG_0273.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0279.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0279.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
 		emojis.add("IMG_0285.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0292.PNG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0297.PNG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
 		emojis.add("IMG_0256.PNG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0263.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));*/
 
-		emojis.add("IMG_0269.JPG");
+/*		emojis.add("IMG_0269.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0274.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0281.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
 		emojis.add("IMG_0286.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0264.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
 		emojis.add("IMG_0270.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0275.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0282.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
 		emojis.add("IMG_0288.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
 		emojis.add("IMG_0258.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0266.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
+		
 		emojis.add("IMG_0271.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0277.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 		emojis.add("IMG_0283.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));
 
 		emojis.add("IMG_0289.JPG");
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("")));*/
 	}
 
 	public String getEmoji(int index) {
-		return String.format("%s/%s", "/sdcard/emojis", emojis.get(index));
+		return String.format("%s/%s", "/sdcard/emojis", emojis.get(index).getImage());
 	}
 
 	public int size() {

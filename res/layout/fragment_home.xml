@@ -43,48 +43,26 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
 
-            <RelativeLayout
-                android:layout_width="160dp"
-                android:layout_height="160dp" >
+            <LinearLayout
+                android:id="@+id/iv_voice_panel"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/vioce_player_selector"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp" >
 
                 <ImageView
-                    android:id="@+id/wave1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentTop="true"
-                    android:background="@drawable/wave" />
-
-                <ImageView
-                    android:id="@+id/wave2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentTop="true"
-                    android:background="@drawable/wave" />
-
-                <ImageView
-                    android:id="@+id/wave3"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentTop="true"
-                    android:background="@drawable/wave" />
-
-                <com.dd.CircularProgressButton
-                    android:id="@+id/pay"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentTop="true"
-                    android:textColor="@color/white"
-                    android:textSize="16dp"
-                    app:cpb_colorIndicator="@color/gray_black"
-                    app:cpb_colorIndicatorBackground="@color/blue"
-                    app:cpb_colorProgress="@color/blue"
-                    app:cpb_cornerRadius="60dp"
-                    app:cpb_selectorComplete="@drawable/complete_state_selector"
-                    app:cpb_selectorIdle="@drawable/idle_state_selector"
-                    app:cpb_textComplete="播放"
-                    app:cpb_textIdle="播放"
-                    app:cpb_textProgress="播放" />
-            </RelativeLayout>
+                    android:id="@+id/iv_voice"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/chatfrom_voice_playing" />
+            </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout
@@ -139,7 +117,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#C9E9FE"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_launcher"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </RelativeLayout>

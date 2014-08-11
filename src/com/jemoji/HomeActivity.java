@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,13 +28,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
-import com.dd.CircularProgressButton;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
-import com.jemoji.WaveView.OnWaveListener;
 import com.jemoji.http.URLs;
 import com.jemoji.image.ImageCacheManager;
 import com.jemoji.models.Emoji;
@@ -82,9 +82,12 @@ public class HomeActivity extends BaseActivity {
 	class WebPageFragment extends Fragment implements OnClickListener {
 		private ImageView image;
 		private TextView unread_msg_number;
+		ValueAnimator voicePlayAnimation;
+		VoiceHandler voicePlayHandler;
 
 		private Spring mSpring;
-		
+
+		// 大图动画回调
 		private void render() {
 			double value = mSpring.getCurrentValue();
 
@@ -95,6 +98,7 @@ public class HomeActivity extends BaseActivity {
 			image.setScaleY(selectedPhotoScale);
 		}
 
+		// 接收消息回调
 		public void onReceiveMessage(String values) {
 			String[] messages = values.split(",");
 			String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
@@ -123,6 +127,7 @@ public class HomeActivity extends BaseActivity {
 			});
 		}
 
+		// 拦截back键
 		public boolean interaptBack() {
 			if (mSpring.getEndValue() == 1) {
 				mSpring.setEndValue(0);
@@ -132,13 +137,13 @@ public class HomeActivity extends BaseActivity {
 			} else return false;
 		}
 
-		private void initView(View rootview){
-			//初始化头像
+		private void initView(View rootview) {
+			// 初始化头像
 			CircleImageView header = (CircleImageView)rootview.findViewById(R.id.send);
 			header.setOnClickListener(this);
 			header.setImageResource(user.getHeader());
-			
-			//初始化表情列表
+
+			// 初始化表情列表
 			rootview.findViewById(R.id.settings).setOnClickListener(this);
 			ControlScrollViewPager mViewPager;
 			mViewPager = (ControlScrollViewPager)rootview.findViewById(R.id.face_pager);
@@ -160,11 +165,12 @@ public class HomeActivity extends BaseActivity {
 				}
 			});
 			// mViewPager.setScrollable(false);
-			
-			//初始化表情大图View
+
+			// 初始化表情大图View
 			image = (ImageView)rootview.findViewById(R.id.image);
 			final View panel_main = rootview.findViewById(R.id.panel_main);
-			mSpring = SpringSystem.create().createSpring().setSpringConfig(SpringConfig.fromOrigamiTensionAndFriction(200, 4.3))
+			mSpring = SpringSystem.create().createSpring()
+					.setSpringConfig(SpringConfig.fromOrigamiTensionAndFriction(200, 4.3))
 					.addListener(new SimpleSpringListener() {
 						@Override
 						public void onSpringUpdate(Spring spring) {
@@ -182,11 +188,11 @@ public class HomeActivity extends BaseActivity {
 			unread_msg_number = (TextView)rootview.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setVisibility(View.GONE);
 			unread_msg_number.setOnClickListener(this);
-			
-			//初始化录音按钮
+
+			// 初始化录音按钮
 			View buttonPressToSpeak = rootview.findViewById(R.id.btn_press_to_speak);
-			final VoiceHandler voiceHandler = new VoiceHandler();
-			voiceHandler.setOnHandListener(new OnHandListener() {
+			voicePlayHandler = new VoiceHandler();
+			voicePlayHandler.setOnHandListener(new OnHandListener() {
 				@Override
 				public void onRecored(boolean isFinish, int time, String file) {
 					mEmoji.setVoice(file);
@@ -196,31 +202,40 @@ public class HomeActivity extends BaseActivity {
 				public void onPlay(boolean isFinish) {
 				}
 			});
-			buttonPressToSpeak.setOnTouchListener(voiceHandler);
-			
-			//初始化播放按钮
-			ImageView wave1 = (ImageView)rootview.findViewById(R.id.wave1);
-			ImageView wave2 = (ImageView)rootview.findViewById(R.id.wave2);
-			ImageView wave3 = (ImageView)rootview.findViewById(R.id.wave3);
-			final CircularProgressButton pay = (CircularProgressButton)rootview
-					.findViewById(R.id.pay);
-			WaveView mWaveView = new WaveView(new OnWaveListener() {
-				@Override
-				public void onStop() {
-					pay.setProgress(0);
-					if (voiceHandler.isVoicePlaying()) voiceHandler.playOrStop(mEmoji.getVoice());
-				}
+			buttonPressToSpeak.setOnTouchListener(voicePlayHandler);
 
-				@Override
-				public int onStart() {
-					voiceHandler.playOrStop(mEmoji.getVoice());
-					return 1000 * 4;
-				}
-
-				@Override
-				public void onWaiting() {}
-			}, pay, wave1, wave2, wave3);
+			// 初始化播放按钮
+			rootview.findViewById(R.id.iv_voice_panel).setOnClickListener(this);
 		}
+
+		private void startVioceAnimation(final ImageView iv_voice, int length) {
+			voicePlayAnimation = ValueAnimator.ofInt(1, 100);
+			voicePlayAnimation.setDuration(length);
+			voicePlayAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+			voicePlayAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+				@Override
+				public void onAnimationUpdate(ValueAnimator animation) {
+					Integer value = (Integer)animation.getAnimatedValue();
+					if (value % 21 == 0) {
+						iv_voice.setImageResource(R.drawable.chatfrom_voice_playing_f1);
+					} else if (value % 21 == 7) {
+						iv_voice.setImageResource(R.drawable.chatfrom_voice_playing_f2);
+					} else if (value % 21 == 14) {
+						iv_voice.setImageResource(R.drawable.chatfrom_voice_playing_f3);
+					}
+					if (value == 100) {
+						iv_voice.setImageResource(R.drawable.chatfrom_voice_playing);
+					}
+				}
+			});
+			voicePlayAnimation.start();
+		}
+		
+		private void stopVioceAnimation(final ImageView iv_voice){
+			if (voicePlayAnimation != null) voicePlayAnimation.cancel();
+			iv_voice.setImageResource(R.drawable.chatfrom_voice_playing);
+		}
+
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -259,6 +274,12 @@ public class HomeActivity extends BaseActivity {
 								HomeActivity.this, emoji);
 						image.setOnClickListener(mVoicePlayClickListener);
 					}
+					break;
+				case R.id.iv_voice_panel:
+					ImageView image = (ImageView)v.findViewById(R.id.iv_voice);
+					if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
+					else startVioceAnimation(image, 1000 * 4);
+					voicePlayHandler.playOrStop(mEmoji.getVoice());
 					break;
 			}
 		}

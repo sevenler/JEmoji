@@ -14,6 +14,7 @@ public class Emoji {
 	String mVoice;
 	String mVoiceUrl;
 	int mVoiceStatus = STATUS_REMOTE;
+	int background = -1;
 	
 	public static final int STATUS_REMOTE = 0;
 	public static final int STATUS_DOWNLOADING = 1;
@@ -24,6 +25,12 @@ public class Emoji {
 		super();
 	}
 
+	public Emoji(String image, int background) {
+		super();
+		this.image = image;
+		this.background = background;
+	}
+	
 	public Emoji(String image, String voice, String voiceUrl) {
 		super();
 		this.image = image;
@@ -41,6 +48,14 @@ public class Emoji {
 	
 	public void setBitmap(Bitmap image) {
 		this.imageBitmap = image;
+	}
+	
+	public int getBackground() {
+		return background;
+	}
+	
+	public void setBackground(int background) {
+		this.background = background;
 	}
 
 	public Bitmap getImageBitmap() {

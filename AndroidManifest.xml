@@ -51,7 +51,6 @@
             android:label="@string/appcation_name"
             android:screenOrientation="portrait" >
         </activity>
-        <activity android:name="com.jemoji.EmojiActivity" android:label="@string/appcation_name" android:screenOrientation="portrait"></activity>
         <activity android:name="com.jemoji.SettingsActivity" android:label="@string/appcation_name" android:screenOrientation="portrait"></activity>
         <activity android:name="com.jemoji.LoginActivity" android:label="@string/appcation_name" android:screenOrientation="portrait" android:noHistory="true">
             <intent-filter>

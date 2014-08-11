@@ -1,35 +1,26 @@
 # view AndroidManifest.xml #generated:38
 -keep class android.test.InstrumentationTestRunner { <init>(...); }
 
-# view AndroidManifest.xml #generated:121
+# view AndroidManifest.xml #generated:120
 -keep class cn.jpush.android.service.AlarmReceiver { <init>(...); }
 
-# view AndroidManifest.xml #generated:78
+# view AndroidManifest.xml #generated:77
 -keep class cn.jpush.android.service.DownloadService { <init>(...); }
 
-# view AndroidManifest.xml #generated:100
+# view AndroidManifest.xml #generated:99
 -keep class cn.jpush.android.service.PushReceiver { <init>(...); }
 
-# view AndroidManifest.xml #generated:86
+# view AndroidManifest.xml #generated:85
 -keep class cn.jpush.android.service.PushService { <init>(...); }
 
-# view AndroidManifest.xml #generated:67
+# view AndroidManifest.xml #generated:66
 -keep class cn.jpush.android.ui.PushActivity { <init>(...); }
 
-# view res/layout/fragment_emoji.xml #generated:8
--keep class com.android.volley.toolbox.NetworkImageView { <init>(...); }
-
-# view res/layout/fragment_home.xml #generated:71
--keep class com.dd.CircularProgressButton { <init>(...); }
-
-# view res/layout/fragment_home.xml #generated:109
+# view res/layout/fragment_home.xml #generated:84
 -keep class com.jemoji.CircleImageView { <init>(...); }
 
 # view res/layout/fragment_home.xml #generated:21
 -keep class com.jemoji.ControlScrollViewPager { <init>(...); }
-
-# view AndroidManifest.xml #generated:54
--keep class com.jemoji.EmojiActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:43
 -keep class com.jemoji.ExampleApplication { <init>(...); }
@@ -37,12 +28,12 @@
 # view AndroidManifest.xml #generated:49
 -keep class com.jemoji.HomeActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:56
+# view AndroidManifest.xml #generated:55
 -keep class com.jemoji.LoginActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:124
+# view AndroidManifest.xml #generated:123
 -keep class com.jemoji.MyReceiver { <init>(...); }
 
-# view AndroidManifest.xml #generated:55
+# view AndroidManifest.xml #generated:54
 -keep class com.jemoji.SettingsActivity { <init>(...); }
 
