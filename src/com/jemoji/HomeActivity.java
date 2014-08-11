@@ -2,23 +2,16 @@
 package com.jemoji;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,10 +34,7 @@ import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
 import com.jemoji.WaveView.OnWaveListener;
 import com.jemoji.http.URLs;
-import com.jemoji.image.FileImageDecoder;
 import com.jemoji.image.ImageCacheManager;
-import com.jemoji.image.ImageDecoder.ImageScaleType;
-import com.jemoji.image.ImageSize;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.User;
 import com.jemoji.utils.VoiceHandler;
@@ -53,13 +43,8 @@ import com.jemoji.utils.VoiceHandler.OnHandListener;
 public class HomeActivity extends BaseActivity {
 	Emoji mEmoji;
 	User user;
-	ImageView image;
-	View panel_main;
-	TextView unread_msg_number;
-	private Spring mSpring;
 
-	private static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig
-			.fromOrigamiTensionAndFriction(200, 4.3);
+	WebPageFragment mWebPageFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +53,7 @@ public class HomeActivity extends BaseActivity {
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		WebPageFragment mWebPageFragment = new WebPageFragment();
+		mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
 
@@ -80,93 +65,84 @@ public class HomeActivity extends BaseActivity {
 
 		user = (User)HomeActivity.pokeValus("user");
 		setTag(user.getUsername());
-
-		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG)
-				.addListener(new SimpleSpringListener() {
-					@Override
-					public void onSpringUpdate(Spring spring) {
-						render();
-					}
-				});
-	}
-
-	@Override
-	public void onReceiveMessage(String values) {
-		super.onReceiveMessage(values);
-
-		String[] messages = values.split(",");
-		System.out.println(String.format("[%s,%s,%s]", values, messages[0], messages[1]));
-
-		String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
-		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
-				+ File.separator
-				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
-		final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
-		emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
-
-		ImageLoader loder = ImageCacheManager.instance().getImageLoader();
-		loder.get(emoji.getImageUrl(), new ImageListener() {
-			@Override
-			public void onErrorResponse(VolleyError arg0) {
-			}
-
-			@Override
-			public void onResponse(ImageContainer arg0, boolean arg1) {
-				emoji.setVoiceStatus(Emoji.STATUS_MEMORY);
-				emoji.setBitmap(arg0.getBitmap());
-				unread_msg_number.setVisibility(View.VISIBLE);
-				unread_msg_number.setText("1");
-				image.setImageBitmap(arg0.getBitmap());
-				unread_msg_number.setTag(emoji);
-			}
-		});
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (mWebPageFragment.interaptBack()) return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	public void onReceiveMessage(String values) {
+		mWebPageFragment.onReceiveMessage(values);
+	}
+
+	class WebPageFragment extends Fragment implements OnClickListener {
+		private ImageView image;
+		private TextView unread_msg_number;
+
+		private Spring mSpring;
+		
+		private void render() {
+			double value = mSpring.getCurrentValue();
+
+			float selectedPhotoScale = (float)SpringUtil
+					.mapValueFromRangeToRange(value, 0, 1, 0, 1);
+			selectedPhotoScale = Math.max(selectedPhotoScale, 0);
+			image.setScaleX(selectedPhotoScale);
+			image.setScaleY(selectedPhotoScale);
+		}
+
+		public void onReceiveMessage(String values) {
+			String[] messages = values.split(",");
+			String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
+			String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
+					+ File.separator
+					+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
+			final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
+			emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
+
+			// 收到消息就开始下载
+			ImageLoader loder = ImageCacheManager.instance().getImageLoader();
+			loder.get(emoji.getImageUrl(), new ImageListener() {
+				@Override
+				public void onErrorResponse(VolleyError arg0) {
+				}
+
+				@Override
+				public void onResponse(ImageContainer arg0, boolean arg1) {
+					emoji.setVoiceStatus(Emoji.STATUS_MEMORY);
+					emoji.setBitmap(arg0.getBitmap());
+					unread_msg_number.setVisibility(View.VISIBLE);
+					unread_msg_number.setText("1");
+					image.setImageBitmap(arg0.getBitmap());
+					unread_msg_number.setTag(emoji);
+				}
+			});
+		}
+
+		public boolean interaptBack() {
 			if (mSpring.getEndValue() == 1) {
 				mSpring.setEndValue(0);
 				image.setOnClickListener(null);
 				image.setClickable(false);
 				return true;
-			}
+			} else return false;
 		}
-		return super.onKeyDown(keyCode, event);
-	}
 
-	private void render() {
-		double value = mSpring.getCurrentValue();
-
-		float selectedPhotoScale = (float)SpringUtil.mapValueFromRangeToRange(value, 0, 1, 0, 1);
-		selectedPhotoScale = Math.max(selectedPhotoScale, 0);
-		image.setScaleX(selectedPhotoScale);
-		image.setScaleY(selectedPhotoScale);
-
-		float gridAlpha = (float)SpringUtil.mapValueFromRangeToRange(value, 0, 1, 1, 0);
-		panel_main.setAlpha(gridAlpha);
-
-		float gridScale = (float)SpringUtil.mapValueFromRangeToRange(value, 0, 1, 1, 0.95);
-		gridScale = Math.max(gridScale, 0);
-		panel_main.setScaleX(gridScale);
-		panel_main.setScaleY(gridScale);
-	}
-
-	class WebPageFragment extends Fragment implements OnClickListener {
-		VoiceHandler voiceHandler;
-		WaveView mWaveView;
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-			CircleImageView header = (CircleImageView)rootView.findViewById(R.id.send);
+		private void initView(View rootview){
+			//初始化头像
+			CircleImageView header = (CircleImageView)rootview.findViewById(R.id.send);
 			header.setOnClickListener(this);
 			header.setImageResource(user.getHeader());
-
+			
+			//初始化表情列表
+			rootview.findViewById(R.id.settings).setOnClickListener(this);
 			ControlScrollViewPager mViewPager;
-			mViewPager = (ControlScrollViewPager)rootView.findViewById(R.id.face_pager);
-			MyPagerAdapter emojiAdapter = new MyPagerAdapter(getActivity());
+			mViewPager = (ControlScrollViewPager)rootview.findViewById(R.id.face_pager);
+			EmojiAdapter emojiAdapter = new EmojiAdapter(getActivity());
 			emojiAdapter.setData(initEmojiData(new ArrayList<Map<?, ?>>()));
 			mViewPager.setAdapter(emojiAdapter);
 			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
@@ -184,9 +160,17 @@ public class HomeActivity extends BaseActivity {
 				}
 			});
 			// mViewPager.setScrollable(false);
-
-			image = (ImageView)rootView.findViewById(R.id.image);
-			panel_main = rootView.findViewById(R.id.panel_main);
+			
+			//初始化表情大图View
+			image = (ImageView)rootview.findViewById(R.id.image);
+			final View panel_main = rootview.findViewById(R.id.panel_main);
+			mSpring = SpringSystem.create().createSpring().setSpringConfig(SpringConfig.fromOrigamiTensionAndFriction(200, 4.3))
+					.addListener(new SimpleSpringListener() {
+						@Override
+						public void onSpringUpdate(Spring spring) {
+							render();
+						}
+					});
 			panel_main.getViewTreeObserver().addOnGlobalLayoutListener(
 					new ViewTreeObserver.OnGlobalLayoutListener() {
 						@Override
@@ -195,34 +179,16 @@ public class HomeActivity extends BaseActivity {
 							panel_main.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 						}
 					});
-			unread_msg_number = (TextView)rootView.findViewById(R.id.unread_msg_number);
+			unread_msg_number = (TextView)rootview.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setVisibility(View.GONE);
 			unread_msg_number.setOnClickListener(this);
-
-			unread_msg_number.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					if (mSpring.getEndValue() == 0) {
-						mSpring.setEndValue(1);
-						
-						Emoji emoji = (Emoji)arg0.getTag();
-						VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(HomeActivity.this, emoji);
-						image.setOnClickListener(mVoicePlayClickListener);
-					} else {
-						mSpring.setEndValue(0);
-						image.setOnClickListener(null);
-						image.setClickable(false);
-					}
-				}
-			});
-
-			View buttonPressToSpeak = rootView.findViewById(R.id.btn_press_to_speak);
-			rootView.findViewById(R.id.settings).setOnClickListener(this);
-			voiceHandler = new VoiceHandler();
+			
+			//初始化录音按钮
+			View buttonPressToSpeak = rootview.findViewById(R.id.btn_press_to_speak);
+			final VoiceHandler voiceHandler = new VoiceHandler();
 			voiceHandler.setOnHandListener(new OnHandListener() {
 				@Override
 				public void onRecored(boolean isFinish, int time, String file) {
-					System.out.println(String.format(" file:%s ", file));
 					mEmoji.setVoice(file);
 				}
 
@@ -231,13 +197,14 @@ public class HomeActivity extends BaseActivity {
 				}
 			});
 			buttonPressToSpeak.setOnTouchListener(voiceHandler);
-
-			ImageView wave1 = (ImageView)rootView.findViewById(R.id.wave1);
-			ImageView wave2 = (ImageView)rootView.findViewById(R.id.wave2);
-			ImageView wave3 = (ImageView)rootView.findViewById(R.id.wave3);
-			final CircularProgressButton pay = (CircularProgressButton)rootView
+			
+			//初始化播放按钮
+			ImageView wave1 = (ImageView)rootview.findViewById(R.id.wave1);
+			ImageView wave2 = (ImageView)rootview.findViewById(R.id.wave2);
+			ImageView wave3 = (ImageView)rootview.findViewById(R.id.wave3);
+			final CircularProgressButton pay = (CircularProgressButton)rootview
 					.findViewById(R.id.pay);
-			mWaveView = new WaveView(new OnWaveListener() {
+			WaveView mWaveView = new WaveView(new OnWaveListener() {
 				@Override
 				public void onStop() {
 					pay.setProgress(0);
@@ -251,9 +218,14 @@ public class HomeActivity extends BaseActivity {
 				}
 
 				@Override
-				public void onWaiting() {
-				}
+				public void onWaiting() {}
 			}, pay, wave1, wave2, wave3);
+		}
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+			initView(rootView);
 
 			return rootView;
 		}
@@ -278,126 +250,17 @@ public class HomeActivity extends BaseActivity {
 				case R.id.settings:
 					openActivity(SettingsActivity.class, null);
 					break;
+				case R.id.unread_msg_number:
+					if (mSpring.getEndValue() == 0) {
+						mSpring.setEndValue(1);
+
+						Emoji emoji = (Emoji)v.getTag();
+						VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(
+								HomeActivity.this, emoji);
+						image.setOnClickListener(mVoicePlayClickListener);
+					}
+					break;
 			}
 		}
-	}
-}
-
-class MyPagerAdapter extends PagerAdapter {
-
-	private List<Map<?, ?>> list = new ArrayList<Map<?, ?>>();
-
-	private Activity mContext;
-
-	public MyPagerAdapter(Context context) {
-		mContext = (Activity)context;
-	}
-
-	public void setData(List<Map<?, ?>> list) {
-		this.list.clear();
-		this.list.addAll(list);
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public int getCount() {
-		return list.size();
-	}
-
-	@Override
-	public boolean isViewFromObject(View arg0, Object arg1) {
-		return arg0 == arg1;
-	}
-
-	@Override
-	public void destroyItem(View arg0, int arg1, Object arg2) {
-		((ViewPager)arg0).removeView((View)arg2);
-	}
-
-	@Override
-	public Object instantiateItem(ViewGroup arg0, int arg1) {
-		View rootview = LayoutInflater.from(mContext).inflate(R.layout.image_item, null, true);
-		ImageView imageView = (ImageView)rootview.findViewById(R.id.imageView);
-
-		FileImageDecoder decoder = new FileImageDecoder(new File((String)list.get(arg1)
-				.get("emoji")));
-		try {
-			Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);
-			imageView.setImageBitmap(bitmap);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		arg0.addView(rootview);
-
-		return rootview;
-	}
-}
-
-class EmojiSelector {
-	private static EmojiSelector instance;
-
-	public static EmojiSelector instance() {
-		if (instance == null) instance = new EmojiSelector();
-		return instance;
-	}
-
-	public List<String> emojis = new LinkedList<String>();
-
-	public EmojiSelector() {
-		emojis.add("001.png");
-		emojis.add("IMG_0259.JPG");
-
-		emojis.add("IMG_0267.JPG");
-		emojis.add("IMG_0272.JPG");
-		emojis.add("IMG_0278.JPG");
-		emojis.add("IMG_0284.JPG");
-
-		emojis.add("IMG_0291.JPG");
-		emojis.add("002.png");
-
-		emojis.add("despicable-me-2-Minion-icon-5.png");
-		emojis.add("IMG_0262.JPG");
-		emojis.add("IMG_0268.JPG");
-
-		emojis.add("IMG_0273.JPG");
-		emojis.add("IMG_0279.JPG");
-		emojis.add("IMG_0279.JPG");
-
-		emojis.add("IMG_0285.JPG");
-		emojis.add("IMG_0292.PNG");
-		emojis.add("IMG_0297.PNG");
-
-		emojis.add("IMG_0256.PNG");
-		emojis.add("IMG_0263.JPG");
-
-		emojis.add("IMG_0269.JPG");
-		emojis.add("IMG_0274.JPG");
-		emojis.add("IMG_0281.JPG");
-
-		emojis.add("IMG_0286.JPG");
-		emojis.add("IMG_0264.JPG");
-
-		emojis.add("IMG_0270.JPG");
-		emojis.add("IMG_0275.JPG");
-		emojis.add("IMG_0282.JPG");
-
-		emojis.add("IMG_0288.JPG");
-
-		emojis.add("IMG_0258.JPG");
-		emojis.add("IMG_0266.JPG");
-
-		emojis.add("IMG_0271.JPG");
-		emojis.add("IMG_0277.JPG");
-		emojis.add("IMG_0283.JPG");
-
-		emojis.add("IMG_0289.JPG");
-	}
-
-	public String getEmoji(int index) {
-		return String.format("%s/%s", "/sdcard/emojis", emojis.get(index));
-	}
-
-	public int size() {
-		return emojis.size();
 	}
 }
