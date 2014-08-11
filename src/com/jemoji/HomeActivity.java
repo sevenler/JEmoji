@@ -307,7 +307,12 @@ class EmojiSelector {
 
 	public EmojiSelector() {
 		emojis.add(new Emoji("001.png", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("IMG_0259.JPG", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("1002.gif", Color.parseColor("#ffffff")));
+		
+		emojis.add(new Emoji("1001.gif", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("1003.png", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("1004.gif", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("1005.gif", Color.parseColor("#ffffff")));
 
 		emojis.add(new Emoji("IMG_0272.JPG", Color.parseColor("#ffffff")));
 		emojis.add(new Emoji("IMG_0278.JPG", Color.parseColor("#FEFFBB")));

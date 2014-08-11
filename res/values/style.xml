@@ -13,6 +13,7 @@
 		<item name="android:hint">@string/tag_hint</item>
 		<item name="android:textSize">14sp</item>
 	</style>
+	<style name="Widget.GifMoviewView" parent="@android:style/Widget"></style>
 	
 	<style name="AppBaseTheme" parent="android:Theme.Light">
         <!--

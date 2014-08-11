@@ -4,14 +4,12 @@ package com.jemoji;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -19,10 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.hipmob.gifanimationdrawable.GifAnimationDrawable;
 import com.jemoji.image.FileImageDecoder;
 import com.jemoji.image.ImageDecoder.ImageScaleType;
 import com.jemoji.image.ImageSize;
-import com.jemoji.models.Emoji;
 
 public class EmojiAdapter extends PagerAdapter {
 
@@ -64,12 +62,25 @@ public class EmojiAdapter extends PagerAdapter {
 		int background = (Integer)map.get("background");
 		rootview.setBackgroundColor(background);
 		
-		FileImageDecoder decoder = new FileImageDecoder(new File((String)map.get("emoji")));
-		try {
-			Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);
-			imageView.setImageBitmap(bitmap);
-		} catch (IOException e) {
-			e.printStackTrace();
+		String filename = (String)map.get("emoji");
+		FileImageDecoder decoder = new FileImageDecoder(new File(filename));
+
+		System.out.println(String.format(" %s ", filename.endsWith(".gif")));
+		if(filename.endsWith(".gif")){
+			try {
+				GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);
+				little.setOneShot(false);
+				imageView.setImageDrawable(little);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else{
+			try {
+				Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);
+				imageView.setImageBitmap(bitmap);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		arg0.addView(rootview);
 
