@@ -153,7 +153,7 @@ public class HomeActivity extends BaseActivity {
 			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
-					mEmoji.setImage(EmojiSelector.instance().getEmoji(arg0));
+					mEmoji.setImage(EmojiSelector.instance().getEmojiName(arg0));
 				}
 
 				@Override
@@ -249,7 +249,8 @@ public class HomeActivity extends BaseActivity {
 			EmojiSelector selector = EmojiSelector.instance();
 			for (int i = 0; i < selector.size(); i++) {
 				Map<Object, Object> map = new HashMap<Object, Object>();
-				map.put("emoji", selector.getEmoji(i));
+				map.put("emoji", selector.getEmojiName(i));
+				map.put("background", selector.getEmojiBackground(i));
 				list.add(map);
 			}
 			return list;

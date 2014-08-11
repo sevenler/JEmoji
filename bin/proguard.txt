@@ -16,7 +16,7 @@
 # view AndroidManifest.xml #generated:66
 -keep class cn.jpush.android.ui.PushActivity { <init>(...); }
 
-# view res/layout/fragment_home.xml #generated:84
+# view res/layout/fragment_home.xml #generated:87
 -keep class com.jemoji.CircleImageView { <init>(...); }
 
 # view res/layout/fragment_home.xml #generated:21
