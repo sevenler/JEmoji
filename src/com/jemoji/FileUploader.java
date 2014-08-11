@@ -51,15 +51,13 @@ public  class FileUploader {
 			@Override
 			public void run() {
 				String result = sendFile(emoji.getImage(), "jpg");
-				System.out.println(String.format(" ===== %s ", result));
 				emoji.setImageUrl(result);
 				String result1 = sendFile(emoji.getVoice(), "amr");
-				System.out.println(String.format(" ===== %s ", result1));
 				emoji.setVoiceUrl(result1);
 				
 				String voice = result1;
 				String img = result;
-				String content = String.format("{\"message\":\"%s,%s\"}", voice, img);
+				String content = String.format("{\"message\":\"%s,%s,%s\"}", voice, img, emoji.getBackground());
 				GKHttpInterface.pushMessage(user, content, new GKJsonResponseHandler() {
 					@Override
 					public void onResponse(int code, Object json, Throwable error) {

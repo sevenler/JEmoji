@@ -4,10 +4,12 @@ package com.jemoji;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import android.animation.ValueAnimator;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -80,8 +82,8 @@ public class HomeActivity extends BaseActivity {
 	}
 
 	class WebPageFragment extends Fragment implements OnClickListener {
-		private ImageView image;
-		private TextView unread_msg_number;
+		private ImageView emojiImage;//表情大图
+		private TextView unread_msg_number;//未读消息数量
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
 
@@ -94,8 +96,8 @@ public class HomeActivity extends BaseActivity {
 			float selectedPhotoScale = (float)SpringUtil
 					.mapValueFromRangeToRange(value, 0, 1, 0, 1);
 			selectedPhotoScale = Math.max(selectedPhotoScale, 0);
-			image.setScaleX(selectedPhotoScale);
-			image.setScaleY(selectedPhotoScale);
+			emojiImage.setScaleX(selectedPhotoScale);
+			emojiImage.setScaleY(selectedPhotoScale);
 		}
 
 		// 接收消息回调
@@ -107,6 +109,7 @@ public class HomeActivity extends BaseActivity {
 					+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 			final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
 			emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
+			emoji.setBackground(Integer.parseInt(messages[2]));
 
 			// 收到消息就开始下载
 			ImageLoader loder = ImageCacheManager.instance().getImageLoader();
@@ -119,9 +122,11 @@ public class HomeActivity extends BaseActivity {
 				public void onResponse(ImageContainer arg0, boolean arg1) {
 					emoji.setVoiceStatus(Emoji.STATUS_MEMORY);
 					emoji.setBitmap(arg0.getBitmap());
+					
+					emojiImage.setImageBitmap(arg0.getBitmap());
+					emojiImage.setBackgroundColor(emoji.getBackground());
 					unread_msg_number.setVisibility(View.VISIBLE);
 					unread_msg_number.setText("1");
-					image.setImageBitmap(arg0.getBitmap());
 					unread_msg_number.setTag(emoji);
 				}
 			});
@@ -131,8 +136,8 @@ public class HomeActivity extends BaseActivity {
 		public boolean interaptBack() {
 			if (mSpring.getEndValue() == 1) {
 				mSpring.setEndValue(0);
-				image.setOnClickListener(null);
-				image.setClickable(false);
+				emojiImage.setOnClickListener(null);
+				emojiImage.setClickable(false);
 				return true;
 			} else return false;
 		}
@@ -154,6 +159,7 @@ public class HomeActivity extends BaseActivity {
 				@Override
 				public void onPageSelected(int arg0) {
 					mEmoji.setImage(EmojiSelector.instance().getEmojiName(arg0));
+					mEmoji.setBackground(EmojiSelector.instance().getEmojiBackground(arg0));
 				}
 
 				@Override
@@ -167,7 +173,7 @@ public class HomeActivity extends BaseActivity {
 			// mViewPager.setScrollable(false);
 
 			// 初始化表情大图View
-			image = (ImageView)rootview.findViewById(R.id.image);
+			emojiImage = (ImageView)rootview.findViewById(R.id.image);
 			final View panel_main = rootview.findViewById(R.id.panel_main);
 			mSpring = SpringSystem.create().createSpring()
 					.setSpringConfig(SpringConfig.fromOrigamiTensionAndFriction(200, 4.3))
@@ -273,7 +279,7 @@ public class HomeActivity extends BaseActivity {
 						Emoji emoji = (Emoji)v.getTag();
 						VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(
 								HomeActivity.this, emoji);
-						image.setOnClickListener(mVoicePlayClickListener);
+						emojiImage.setOnClickListener(mVoicePlayClickListener);
 					}
 					break;
 				case R.id.iv_voice_panel:
@@ -284,5 +290,88 @@ public class HomeActivity extends BaseActivity {
 					break;
 			}
 		}
+	}
+}
+
+
+
+class EmojiSelector {
+	private static EmojiSelector instance;
+
+	public static EmojiSelector instance() {
+		if (instance == null) instance = new EmojiSelector();
+		return instance;
+	}
+
+	public List<Emoji> emojis = new LinkedList<Emoji>();
+
+	public EmojiSelector() {
+		emojis.add(new Emoji("001.png", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0259.JPG", Color.parseColor("#ffffff")));
+
+		emojis.add(new Emoji("IMG_0272.JPG", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0278.JPG", Color.parseColor("#FEFFBB")));
+		emojis.add(new Emoji("IMG_0284.JPG", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("#ffffff")));
+
+		emojis.add(new Emoji("IMG_0291.JPG", Color.parseColor("#AADFFF")));
+		emojis.add(new Emoji("IMG_0273.JPG", Color.parseColor("#ffffff")));
+
+		emojis.add(new Emoji("despicable-me-2-Minion-icon-5.png", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0262.JPG", Color.parseColor("#ffffff")));
+		emojis.add(new Emoji("IMG_0268.JPG", Color.parseColor("#ffffff")));
+
+		/*
+		 * emojis.add("IMG_0273.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0279.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0279.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0285.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0292.PNG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0297.PNG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0256.PNG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0263.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 */
+
+		/*
+		 * emojis.add("IMG_0269.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0274.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0281.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0286.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0264.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0270.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0275.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0282.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0288.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0258.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0266.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0271.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0277.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor(""))); emojis.add("IMG_0283.JPG"); emojis.add(new
+		 * Emoji("IMG_0267.JPG", Color.parseColor("")));
+		 * emojis.add("IMG_0289.JPG"); emojis.add(new Emoji("IMG_0267.JPG",
+		 * Color.parseColor("")));
+		 */
+	}
+
+	public String getEmojiName(int index) {
+		return String.format("%s/%s", "/sdcard/emojis", emojis.get(index).getImage());
+	}
+	
+	public int getEmojiBackground(int index) {
+		return emojis.get(index).getBackground();
+	}
+
+	public int size() {
+		return emojis.size();
 	}
 }
