@@ -3,6 +3,7 @@ package com.jemoji;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,12 +45,14 @@ import com.jemoji.http.URLs;
 import com.jemoji.image.ImageCacheManager;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.User;
+import com.jemoji.models.UserCenter;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity {
 	Emoji mEmoji;
-	User user;
+	User me;
+	User toChat;
 
 	WebPageFragment mWebPageFragment;
 
@@ -70,8 +73,8 @@ public class HomeActivity extends BaseActivity {
 				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 		mEmoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
 
-		user = (User)HomeActivity.pokeValus("user");
-		setTag(user.getUsername());
+		me = (User)HomeActivity.pokeValus("user");
+		setTag(me.getUsername());
 	}
 
 	@Override
@@ -159,7 +162,7 @@ public class HomeActivity extends BaseActivity {
 			} else return false;
 		}
 		
-		private void initUserHeaders(View rootview){
+		private void initContactHeaders(View rootview){
 			Context context = rootview.getContext();
 			LayoutInflater LayoutInflater = (LayoutInflater)context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE); 
@@ -170,24 +173,25 @@ public class HomeActivity extends BaseActivity {
 					changeChatUser(user);
 				}
 			};
-			
-			LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1);
-			View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
-			ImageView image = (ImageView)header.findViewById(R.id.header);
-			TextView message = (TextView)header.findViewById(R.id.header_unread_msg_number);
-			message.setVisibility(View.INVISIBLE);
-			image.setImageResource(user.getHeader());
-			header.setTag(R.id.tag_key_header_user, user);
-			header.setTag(R.id.tag_key_header_view, new HeaderViewHolder(image, message));
-			header.setOnClickListener(listener);
-			layout1.addView(header);
-			userHeaders.add(header);
-			
-			//TODOHAND 适配多个用户
+			Collection<User> users = UserCenter.instance().getAll();
+			for(User user : users){
+				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1);
+				View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
+				ImageView image = (ImageView)header.findViewById(R.id.header);
+				TextView message = (TextView)header.findViewById(R.id.header_unread_msg_number);
+				message.setVisibility(View.INVISIBLE);
+				image.setImageResource(user.getHeader());
+				header.setTag(R.id.tag_key_header_user, user);
+				header.setTag(R.id.tag_key_header_view, new HeaderViewHolder(image, message));
+				header.setOnClickListener(listener);
+				layout1.addView(header);
+				userHeaders.add(header);
+			}
 		}
 
 		private void initView(View rootview) {
-			initUserHeaders(rootview);
+			//初始化联系人头像
+			initContactHeaders(rootview);
 
 			// 初始化表情列表
 			rootview.findViewById(R.id.settings).setOnClickListener(this);
@@ -243,7 +247,7 @@ public class HomeActivity extends BaseActivity {
 				@Override
 				public void onRecored(boolean isFinish, int time, String file) {
 					mEmoji.setVoice(file);
-					sendMessage();
+					sendMessage(toChat, mEmoji);
 				}
 
 				@Override
@@ -263,18 +267,18 @@ public class HomeActivity extends BaseActivity {
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
 			
 			to_chat_user_header.setImageResource(user.getHeader());
-			notice_message.setText(String.format("发送给 %s",user.getUsername()));
+			notice_message.setText(String.format("发送给 %s",user.getNickname()));
+			toChat = user;
 		}
 		
 		//发送消息
-		private void sendMessage(){
-			String friend = "18511557126";
-			mEmoji.send(friend);
+		private void sendMessage(User user, Emoji emoji){
+			emoji.send(user.getUsername());
 			
 			BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.SlideOutUp.getAnimator()));
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
 			
-			notice_message.setText(String.format("已经发送给 %s",user.getUsername()));
+			notice_message.setText(String.format("已经发送给 %s", user.getNickname()));
 			notice_message.postDelayed(new Runnable() {
 				@Override
 				public void run() {
