@@ -100,7 +100,6 @@ public class HomeActivity extends BaseActivity {
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
 		private ImageView emojiImage;//表情大图
-		private TextView unread_msg_number;//未读消息数量
 		private CircleImageView to_chat_user_header;//对话的好友头像
 		private TextView notice_message;//提示文字
 		private Map<String, HeaderViewHolder> userHeaders = new LinkedHashMap<String, HeaderViewHolder>();//用户的头像列表
@@ -145,9 +144,6 @@ public class HomeActivity extends BaseActivity {
 					
 					emojiImage.setImageBitmap(arg0.getBitmap());
 					emojiImage.setBackgroundColor(emoji.getBackground());
-					unread_msg_number.setVisibility(View.VISIBLE);
-					unread_msg_number.setText("1");
-					unread_msg_number.setTag(emoji);
 				}
 			});
 			
@@ -166,15 +162,32 @@ public class HomeActivity extends BaseActivity {
 			} else return false;
 		}
 		
+//		private void showBigImage(){
+//			if (mSpring.getEndValue() == 0) {
+//				mSpring.setEndValue(1);
+//				Emoji emoji = (Emoji)v.getTag();
+//				VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(HomeActivity.this, emoji);
+//				emojiImage.setOnClickListener(mVoicePlayClickListener);
+//			}
+//		}
+		
+		//初始化联系人头像
 		private void initContactHeaders(View rootview){
 			Context context = rootview.getContext();
 			LayoutInflater LayoutInflater = (LayoutInflater)context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE); 
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			OnClickListener listener = new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					User user = (User)v.getTag(R.id.tag_key_header_user);
-					changeChatUser(user);
+					
+					HeaderViewHolder holder = userHeaders.get(user.getUsername());
+					int visibility = holder.unreadMessageView.getVisibility();
+					if(visibility == View.VISIBLE){//读取消息
+						
+					}else{//选中头像发送消息
+						changeChatUser(user);
+					}
 				}
 			};
 			Collection<User> users = UserCenter.instance().getAll();
@@ -239,9 +252,6 @@ public class HomeActivity extends BaseActivity {
 							panel_main.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 						}
 					});
-			unread_msg_number = (TextView)rootview.findViewById(R.id.unread_msg_number);
-			unread_msg_number.setVisibility(View.GONE);
-			unread_msg_number.setOnClickListener(this);
 
 			// 初始化录音按钮
 			View buttonPressToSpeak = rootview.findViewById(R.id.btn_press_to_speak);
@@ -343,16 +353,6 @@ public class HomeActivity extends BaseActivity {
 			switch (v.getId()) {
 				case R.id.settings:
 					openActivity(SettingsActivity.class, null);
-					break;
-				case R.id.unread_msg_number:
-					if (mSpring.getEndValue() == 0) {
-						mSpring.setEndValue(1);
-
-						Emoji emoji = (Emoji)v.getTag();
-						VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(
-								HomeActivity.this, emoji);
-						emojiImage.setOnClickListener(mVoicePlayClickListener);
-					}
 					break;
 				case R.id.iv_voice_panel:
 					ImageView image = (ImageView)v.findViewById(R.id.iv_voice);
