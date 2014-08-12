@@ -88,6 +88,7 @@ public class HomeActivity extends BaseActivity {
 		private ImageView emojiImage;//表情大图
 		private TextView unread_msg_number;//未读消息数量
 		private CircleImageView to_chat_user_header;//对话的好友头像
+		private TextView notice_message;//提示文字
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
 
@@ -151,7 +152,7 @@ public class HomeActivity extends BaseActivity {
 			CircleImageView header = (CircleImageView)rootview.findViewById(R.id.send);
 			header.setOnClickListener(this);
 			header.setImageResource(user.getHeader());
-			header.setTag(user.getHeader());
+			header.setTag(user);
 
 			// 初始化表情列表
 			rootview.findViewById(R.id.settings).setOnClickListener(this);
@@ -219,13 +220,15 @@ public class HomeActivity extends BaseActivity {
 			// 初始化播放按钮
 			rootview.findViewById(R.id.iv_voice_panel).setOnClickListener(this);
 			to_chat_user_header = (CircleImageView)rootview.findViewById(R.id.to_chat_user_header);
+			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
 		}
 		
-		private void changeChatUser(int header){
+		private void changeChatUser(User user){
 			BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceInUp.getAnimator()));
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
 			
-			to_chat_user_header.setImageResource(header);
+			to_chat_user_header.setImageResource(user.getHeader());
+			notice_message.setText(String.format("发送给 %s",user.getUsername()));
 		}
 		
 		//发送消息
@@ -235,6 +238,14 @@ public class HomeActivity extends BaseActivity {
 			
 			BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.SlideOutUp.getAnimator()));
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
+			
+			notice_message.setText(String.format("已经发送给 %s",user.getUsername()));
+			notice_message.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					notice_message.setText("");
+				}
+			}, 1000 * 5);
 		}
 
 		private void startVioceAnimation(final ImageView iv_voice, int length) {
@@ -289,8 +300,8 @@ public class HomeActivity extends BaseActivity {
 		public void onClick(View v) {
 			switch (v.getId()) {
 				case R.id.send:
-					int header = (Integer)v.getTag();
-					changeChatUser(header);
+					User user = (User)v.getTag();
+					changeChatUser(user);
 					break;
 				case R.id.settings:
 					openActivity(SettingsActivity.class, null);

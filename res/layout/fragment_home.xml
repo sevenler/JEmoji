@@ -43,6 +43,13 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
 
+            <TextView
+                android:id="@+id/notice_message"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center" />
+
             <com.jemoji.CircleImageView
                 android:id="@+id/to_chat_user_header"
                 android:layout_width="30dp"
