@@ -39,11 +39,9 @@ public class LoginActivity extends BaseActivity {
 	}
 
 	public void redirect(String name){
-		System.out.println(String.format("user: %s ", name));
-		
 		User user = UserCenter.instance().get(name);
 		if (user != null) {
-			HomeActivity.putValus("user", user);
+			UserCenter.instance().setMe(user);
 			openActivity(HomeActivity.class, null);
 		}
 	}

@@ -5,6 +5,7 @@ import java.io.File;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.models.Emoji;
+import com.jemoji.models.UserCenter;
 import com.upyun.api.Uploader;
 import com.upyun.api.utils.UpYunException;
 import com.upyun.api.utils.UpYunUtils;
@@ -46,7 +47,7 @@ public  class FileUploader {
 		return result;
 	}
 	
-	public void send(final Emoji emoji, final String user){
+	public void send(final Emoji emoji, final String toChatUser){
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -57,11 +58,12 @@ public  class FileUploader {
 				
 				String voice = result1;
 				String img = result;
-				String content = String.format("{\"message\":\"%s,%s,%s\"}", voice, img, emoji.getBackground());
-				GKHttpInterface.pushMessage(user, content, new GKJsonResponseHandler() {
+				String me = UserCenter.instance().getMe().getUsername();
+				String content = String.format("{\"message\":\"%s,%s,%s,%s\"}", voice, img, emoji.getBackground(), me);
+				GKHttpInterface.pushMessage(toChatUser, content, new GKJsonResponseHandler() {
 					@Override
 					public void onResponse(int code, Object json, Throwable error) {
-						System.out.println(String.format(" onResponse json %s   user:[%s] ", json, user));
+						System.out.println(String.format(" onResponse json %s   user:[%s] ", json, toChatUser));
 					}
 				});
 			}

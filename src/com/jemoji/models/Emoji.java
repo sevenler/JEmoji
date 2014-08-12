@@ -105,7 +105,7 @@ public class Emoji {
 		});
 	}
 	
-	public void send(final String user){
-		new FileUploader().send(this, user);
+	public void send(final String toChatUser){
+		new FileUploader().send(this, toChatUser);
 	}
 }

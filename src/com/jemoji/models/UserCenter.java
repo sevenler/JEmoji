@@ -20,6 +20,7 @@ public class UserCenter {
 	}
 	
 	private HashMap<String, User> users;
+	private User me;
 	
 	public User get(String name){
 		return users.get(name);
@@ -27,5 +28,13 @@ public class UserCenter {
 	
 	public Collection<User> getAll(){
 		return users.values();
+	}
+	
+	public User getMe(){
+		return me;
+	}
+	
+	public void setMe(User me){
+		this.me = me;
 	}
 }

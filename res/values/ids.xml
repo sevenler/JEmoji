@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item name="tag_key_header_view" type="id"/>
     <item name="tag_key_header_user" type="id"/>
 
 </resources>

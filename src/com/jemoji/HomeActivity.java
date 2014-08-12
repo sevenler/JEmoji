@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,6 @@ import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity {
 	Emoji mEmoji;
-	User me;
 	User toChat;
 
 	WebPageFragment mWebPageFragment;
@@ -73,7 +73,7 @@ public class HomeActivity extends BaseActivity {
 				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 		mEmoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
 
-		me = (User)HomeActivity.pokeValus("user");
+		User me = UserCenter.instance().getMe();
 		setTag(me.getUsername());
 	}
 
@@ -103,7 +103,7 @@ public class HomeActivity extends BaseActivity {
 		private TextView unread_msg_number;//未读消息数量
 		private CircleImageView to_chat_user_header;//对话的好友头像
 		private TextView notice_message;//提示文字
-		private List<View> userHeaders = new LinkedList<View>();//用户的头像列表
+		private Map<String, HeaderViewHolder> userHeaders = new LinkedHashMap<String, HeaderViewHolder>();//用户的头像列表
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
 
@@ -150,6 +150,10 @@ public class HomeActivity extends BaseActivity {
 					unread_msg_number.setTag(emoji);
 				}
 			});
+			
+			String user = messages[3];
+			HeaderViewHolder holder = userHeaders.get(user);
+			holder.unreadMessageView.setVisibility(View.VISIBLE);
 		}
 
 		// 拦截back键
@@ -182,10 +186,9 @@ public class HomeActivity extends BaseActivity {
 				message.setVisibility(View.INVISIBLE);
 				image.setImageResource(user.getHeader());
 				header.setTag(R.id.tag_key_header_user, user);
-				header.setTag(R.id.tag_key_header_view, new HeaderViewHolder(image, message));
 				header.setOnClickListener(listener);
 				layout1.addView(header);
-				userHeaders.add(header);
+				userHeaders.put(user.getUsername(), new HeaderViewHolder(image, message));
 			}
 		}
 
@@ -262,23 +265,23 @@ public class HomeActivity extends BaseActivity {
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
 		}
 		
-		private void changeChatUser(User user){
+		private void changeChatUser(User toUser){
 			BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceInUp.getAnimator()));
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
 			
-			to_chat_user_header.setImageResource(user.getHeader());
-			notice_message.setText(String.format("发送给 %s",user.getNickname()));
-			toChat = user;
+			to_chat_user_header.setImageResource(toUser.getHeader());
+			notice_message.setText(String.format("发送给 %s",toUser.getNickname()));
+			toChat = toUser;
 		}
 		
 		//发送消息
-		private void sendMessage(User user, Emoji emoji){
-			emoji.send(user.getUsername());
+		private void sendMessage(User toChat, Emoji emoji){
+			emoji.send(toChat.getUsername());
 			
 			BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.SlideOutUp.getAnimator()));
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
 			
-			notice_message.setText(String.format("已经发送给 %s", user.getNickname()));
+			notice_message.setText(String.format("已经发送给 %s", toChat.getNickname()));
 			notice_message.postDelayed(new Runnable() {
 				@Override
 				public void run() {
