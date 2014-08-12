@@ -7,7 +7,6 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" 
-        android:background="@drawable/gif_image_shape_background"/>
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

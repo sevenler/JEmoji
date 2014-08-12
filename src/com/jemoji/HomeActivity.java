@@ -105,6 +105,10 @@ public class HomeActivity extends BaseActivity {
 		private Map<String, HeaderViewHolder> userHeaders = new LinkedHashMap<String, HeaderViewHolder>();//用户的头像列表
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
+		
+		View showMessagePanel;//接收消息显示图片
+		ImageView showMessageImageView;
+		ImageView showMessageCloseView;
 
 		private Spring mSpring;
 
@@ -141,6 +145,9 @@ public class HomeActivity extends BaseActivity {
 				public void onResponse(ImageContainer arg0, boolean arg1) {
 					emoji.setVoiceStatus(Emoji.STATUS_MEMORY);
 					emoji.setBitmap(arg0.getBitmap());
+					
+					showMessageImageView.setImageBitmap(arg0.getBitmap());
+					showMessageImageView.setBackgroundColor(emoji.getBackground());
 					
 					emojiImage.setImageBitmap(arg0.getBitmap());
 					emojiImage.setBackgroundColor(emoji.getBackground());
@@ -184,7 +191,7 @@ public class HomeActivity extends BaseActivity {
 					HeaderViewHolder holder = userHeaders.get(user.getUsername());
 					int visibility = holder.unreadMessageView.getVisibility();
 					if(visibility == View.VISIBLE){//读取消息
-						
+						showMessagePanel.setVisibility(View.VISIBLE);
 					}else{//选中头像发送消息
 						changeChatUser(user);
 					}
@@ -273,6 +280,11 @@ public class HomeActivity extends BaseActivity {
 			rootview.findViewById(R.id.iv_voice_panel).setOnClickListener(this);
 			to_chat_user_header = (CircleImageView)rootview.findViewById(R.id.to_chat_user_header);
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
+			
+			showMessagePanel = rootview.findViewById(R.id.show_message_panel);
+			showMessageImageView = (ImageView)showMessagePanel.findViewById(R.id.show_message_image);
+			showMessageCloseView = (ImageView)showMessagePanel.findViewById(R.id.show_message_close);
+			showMessageCloseView.setOnClickListener(this);
 		}
 		
 		private void changeChatUser(User toUser){
@@ -359,6 +371,9 @@ public class HomeActivity extends BaseActivity {
 					if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
 					else startVioceAnimation(image, 1000 * 4);
 					voicePlayHandler.playOrStop(mEmoji.getVoice());
+					break;
+				case R.id.show_message_close:
+					showMessagePanel.setVisibility(View.GONE);
 					break;
 			}
 		}
