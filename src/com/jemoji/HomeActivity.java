@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +26,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -84,11 +86,21 @@ public class HomeActivity extends BaseActivity {
 		mWebPageFragment.onReceiveMessage(values);
 	}
 
+	public static class HeaderViewHolder{
+		public ImageView headerView;
+		public TextView unreadMessageView;
+		public HeaderViewHolder(ImageView headerView, TextView unreadMessageView) {
+			this.headerView = headerView;
+			this.unreadMessageView = unreadMessageView;
+		}
+	}
+	
 	class WebPageFragment extends Fragment implements OnClickListener {
 		private ImageView emojiImage;//表情大图
 		private TextView unread_msg_number;//未读消息数量
 		private CircleImageView to_chat_user_header;//对话的好友头像
 		private TextView notice_message;//提示文字
+		private List<View> userHeaders = new LinkedList<View>();//用户的头像列表
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
 
@@ -146,13 +158,36 @@ public class HomeActivity extends BaseActivity {
 				return true;
 			} else return false;
 		}
+		
+		private void initUserHeaders(View rootview){
+			Context context = rootview.getContext();
+			LayoutInflater LayoutInflater = (LayoutInflater)context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE); 
+			OnClickListener listener = new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					User user = (User)v.getTag(R.id.tag_key_header_user);
+					changeChatUser(user);
+				}
+			};
+			
+			LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1);
+			View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
+			ImageView image = (ImageView)header.findViewById(R.id.header);
+			TextView message = (TextView)header.findViewById(R.id.header_unread_msg_number);
+			message.setVisibility(View.INVISIBLE);
+			image.setImageResource(user.getHeader());
+			header.setTag(R.id.tag_key_header_user, user);
+			header.setTag(R.id.tag_key_header_view, new HeaderViewHolder(image, message));
+			header.setOnClickListener(listener);
+			layout1.addView(header);
+			userHeaders.add(header);
+			
+			//TODOHAND 适配多个用户
+		}
 
 		private void initView(View rootview) {
-			// 初始化头像
-			CircleImageView header = (CircleImageView)rootview.findViewById(R.id.send);
-			header.setOnClickListener(this);
-			header.setImageResource(user.getHeader());
-			header.setTag(user);
+			initUserHeaders(rootview);
 
 			// 初始化表情列表
 			rootview.findViewById(R.id.settings).setOnClickListener(this);
@@ -299,10 +334,6 @@ public class HomeActivity extends BaseActivity {
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
-				case R.id.send:
-					User user = (User)v.getTag();
-					changeChatUser(user);
-					break;
 				case R.id.settings:
 					openActivity(SettingsActivity.class, null);
 					break;

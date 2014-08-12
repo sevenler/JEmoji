@@ -94,15 +94,30 @@
                 android:orientation="vertical" >
 
                 <LinearLayout
+                    android:id="@+id/user_header_panel_1"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal"
                     android:padding="5dp" >
+                </LinearLayout>
 
-                    <com.jemoji.CircleImageView
-                        android:id="@+id/send"
-                        android:layout_width="80dip"
-                        android:layout_height="80dip" />
+                <LinearLayout
+                    android:id="@+id/user_header_panel_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/user_header_panel_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
                 </LinearLayout>
             </LinearLayout>
 
@@ -130,8 +145,7 @@
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_launcher" />
+            android:layout_height="match_parent" />
     </RelativeLayout>
 
 </RelativeLayout>
