@@ -2,6 +2,7 @@
 package com.jemoji;
 
 import java.io.File;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.BaseViewAnimator;
 import com.daimajia.androidanimations.library.Techniques;
@@ -42,11 +44,13 @@ import com.jemoji.models.Emoji;
 import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
+import com.jemoji.utils.ErrorCenter;
+import com.jemoji.utils.ErrorCenter.ErrorDelegate;
 import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements ErrorDelegate{
 	Emoji mEmoji = new Emoji("", "", "");
 	User toChat;
 
@@ -65,7 +69,27 @@ public class HomeActivity extends BaseActivity {
 
 		User me = UserCenter.instance().getMe();
 		setTag(me.getUsername());
+		
+		ErrorCenter.instance().regesterErrorDelegate(this);
 	}
+
+	@Override
+	public void onError(Exception ex) {
+			if(ex instanceof UnknownHostException){
+				runOnUiThread(new Runnable() {
+					public void run() {
+						Toast.makeText(HomeActivity.this, "发送失败，请先检查网络", Toast.LENGTH_LONG).show();
+					}
+				});
+			}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ErrorCenter.instance().unregesterErrorDelegate(this);
+	}
+
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -78,17 +102,17 @@ public class HomeActivity extends BaseActivity {
 	public void onReceiveMessage(String values) {
 		mWebPageFragment.onReceiveMessage(values);
 	}
-	
+
 	class WebPageFragment extends Fragment implements OnClickListener {
-		private ImageView emojiImage;//表情大图
-		private CircleImageView to_chat_user_header;//对话的好友头像
-		private TextView notice_message;//提示文字
-		private View unread_msg_number;//未读消息数量
-		
+		private ImageView emojiImage;// 表情大图
+		private CircleImageView to_chat_user_header;// 对话的好友头像
+		private TextView notice_message;// 提示文字
+		private View unread_msg_number;// 未读消息数量
+
 		ValueAnimator voicePlayAnimation;
 		ValueAnimator recevingMessageAnimation;
 		VoiceHandler voicePlayHandler;
-		
+
 		private Spring mSpring;
 
 		// 大图动画回调
@@ -118,20 +142,23 @@ public class HomeActivity extends BaseActivity {
 					+ File.separator + "emojis_download" + File.separator
 					+ System.currentTimeMillis() + "." + type;
 			System.out.println(String.format(" onReceiveMessage %s ", values));
-			
+
 			GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
 				@Override
 				public void onResponse(int code, Object file, Throwable error) {
 					System.out.println(String.format(" onResponse %s ", file));
 					emoji.setImage((String)file);
 					MessageCenter.instance().pushUnread(username, emoji);
-					
+
 					stopRecevingMessageAnimation(unread_msg_number);
 					unread_msg_number.setVisibility(View.VISIBLE);
-					
-					((TextView)unread_msg_number.findViewById(R.id.textview)).setText("" + MessageCenter.instance().getUnreadCount());
-					BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceIn.getAnimator()));
-					animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(unread_msg_number);
+
+					((TextView)unread_msg_number.findViewById(R.id.textview)).setText(""
+							+ MessageCenter.instance().getUnreadCount());
+					BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.BounceIn
+							.getAnimator()));
+					animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
+							.animate(unread_msg_number);
 				}
 			});
 		}
@@ -145,16 +172,16 @@ public class HomeActivity extends BaseActivity {
 				return true;
 			} else return false;
 		}
-		
-		//跳出大图动画
-		private void showBigImage(){
+
+		// 跳出大图动画
+		private void showBigImage() {
 			if (mSpring.getEndValue() == 0) {
 				mSpring.setEndValue(1);
 			}
 		}
-		
-		//初始化联系人头像
-		private void initContactHeaders(View rootview){
+
+		// 初始化联系人头像
+		private void initContactHeaders(View rootview) {
 			Context context = rootview.getContext();
 			LayoutInflater LayoutInflater = (LayoutInflater)context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -167,9 +194,10 @@ public class HomeActivity extends BaseActivity {
 			};
 			Collection<User> users = UserCenter.instance().getAll();
 			int i = 0;
-			for(User user : users){
+			for (User user : users) {
 				int res = i++ / 4;
-				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1 + res);
+				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1
+						+ res);
 				View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
 				ImageView image = (ImageView)header.findViewById(R.id.header);
 				TextView nickname = (TextView)header.findViewById(R.id.nickname);
@@ -180,9 +208,9 @@ public class HomeActivity extends BaseActivity {
 				layout1.addView(header);
 			}
 		}
-		
+
 		private void initView(View rootview) {
-			//初始化联系人头像
+			// 初始化联系人头像
 			initContactHeaders(rootview);
 
 			// 初始化表情列表
@@ -254,23 +282,25 @@ public class HomeActivity extends BaseActivity {
 			unread_msg_number = rootview.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setOnClickListener(this);
 		}
-		
-		private void changeChatUser(User toUser){
-			BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceInUp.getAnimator()));
-			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
-			
+
+		private void changeChatUser(User toUser) {
+			BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.BounceInUp.getAnimator()));
+			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
+					.animate(to_chat_user_header);
+
 			to_chat_user_header.setImageResource(toUser.getHeader());
-			notice_message.setText(String.format("发送给 %s",toUser.getNickname()));
+			notice_message.setText(String.format("发送给 %s", toUser.getNickname()));
 			toChat = toUser;
 		}
-		
-		//发送消息
-		private void sendMessage(User toChat, Emoji emoji){
+
+		// 发送消息
+		private void sendMessage(User toChat, Emoji emoji) {
 			emoji.send(toChat.getUsername());
-			
-			BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.SlideOutUp.getAnimator()));
-			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(to_chat_user_header);
-			
+
+			BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.SlideOutUp.getAnimator()));
+			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
+					.animate(to_chat_user_header);
+
 			notice_message.setText(String.format("已经发送给 %s", toChat.getNickname()));
 			notice_message.postDelayed(new Runnable() {
 				@Override
@@ -302,12 +332,12 @@ public class HomeActivity extends BaseActivity {
 			});
 			voicePlayAnimation.start();
 		}
-		
-		private void stopVioceAnimation(final ImageView iv_voice){
+
+		private void stopVioceAnimation(final ImageView iv_voice) {
 			if (voicePlayAnimation != null) voicePlayAnimation.cancel();
 			iv_voice.setImageResource(R.drawable.chatfrom_voice_playing);
 		}
-		
+
 		private void startRecevingMessageAnimation(final View view) {
 			recevingMessageAnimation = ValueAnimator.ofInt(1, 100 * 10000);
 			recevingMessageAnimation.setDuration(100 * 10000);
@@ -316,10 +346,11 @@ public class HomeActivity extends BaseActivity {
 				@Override
 				public void onAnimationUpdate(ValueAnimator animation) {
 					Integer value = (Integer)animation.getAnimatedValue();
-					
+
 					if (value % 10 == 0) {
-						((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle_little);
-					}else if(value % 10 == 5){
+						((ImageView)view.findViewById(R.id.imageview))
+								.setImageResource(R.drawable.red_circle_little);
+					} else if (value % 10 == 5) {
 						((ImageView)view.findViewById(R.id.imageview)).setImageBitmap(null);
 					}
 				}
@@ -328,15 +359,15 @@ public class HomeActivity extends BaseActivity {
 			unread_msg_number.setVisibility(View.VISIBLE);
 			unread_msg_number.setClickable(false);
 			((TextView)view.findViewById(R.id.textview)).setText("");
-			((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle_little);
+			((ImageView)view.findViewById(R.id.imageview))
+					.setImageResource(R.drawable.red_circle_little);
 		}
-		
-		private void stopRecevingMessageAnimation(final View view){
+
+		private void stopRecevingMessageAnimation(final View view) {
 			if (recevingMessageAnimation != null) recevingMessageAnimation.cancel();
 			((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle);
 			unread_msg_number.setClickable(true);
 		}
-		
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -350,10 +381,10 @@ public class HomeActivity extends BaseActivity {
 		@Override
 		public void onStart() {
 			super.onStart();
-			
+
 			int count = MessageCenter.instance().getUnreadCount();
 			((TextView)unread_msg_number.findViewById(R.id.textview)).setText("" + count);
-			if(count <=0 ){
+			if (count <= 0) {
 				unread_msg_number.setVisibility(View.GONE);
 				((TextView)unread_msg_number.findViewById(R.id.textview)).setText("");
 			}
@@ -378,7 +409,7 @@ public class HomeActivity extends BaseActivity {
 					break;
 				case R.id.iv_voice_panel:
 					String voice = mEmoji.getVoice();
-					if(!Utility.Strings.isEmptyString(voice)){
+					if (!Utility.Strings.isEmptyString(voice)) {
 						ImageView image = (ImageView)v.findViewById(R.id.iv_voice);
 						if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
 						else startVioceAnimation(image, 1000 * 4);

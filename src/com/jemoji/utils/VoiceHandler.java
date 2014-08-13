@@ -78,7 +78,7 @@ public class VoiceHandler implements OnTouchListener{
 		imageView.setImageResource(R.drawable.voice_to_short);
 
 		TextView mTv = new TextView(context);
-		mTv.setText("time is too shirt");
+		mTv.setText("说话时间太短");
 		mTv.setTextSize(14);
 		mTv.setTextColor(Color.WHITE);
 

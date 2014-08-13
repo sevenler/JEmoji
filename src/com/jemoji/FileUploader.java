@@ -58,8 +58,6 @@ public  class FileUploader {
 				String result1 = sendFile(emoji.getVoice(), "amr");
 				emoji.setVoiceUrl(result1);
 				
-				System.out.println(String.format(" ================ %s %s", emoji.getImage(), result));
-				
 				String voice = result1;
 				String img = result;
 				String me = UserCenter.instance().getMe().getUsername();
