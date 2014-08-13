@@ -66,8 +66,6 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/chatfrom_voice_playing" />
             </LinearLayout>
-            
-            <include layout="@layout/include_show_message"/>
         </RelativeLayout>
 
         <LinearLayout

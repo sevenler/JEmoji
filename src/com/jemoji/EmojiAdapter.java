@@ -65,7 +65,6 @@ public class EmojiAdapter extends PagerAdapter {
 		String filename = (String)map.get("emoji");
 		FileImageDecoder decoder = new FileImageDecoder(new File(filename));
 
-		System.out.println(String.format(" %s ", filename.endsWith(".gif")));
 		if(filename.endsWith(".gif")){
 			try {
 				GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);

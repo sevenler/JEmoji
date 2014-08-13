@@ -249,7 +249,11 @@ public class Utility {
 
 	public static class File {
 		public static boolean saveBitmap(java.io.File file, android.graphics.Bitmap bitmap)
-				throws FileNotFoundException {
+				throws IOException {
+			java.io.File path = file.getParentFile();
+			if(!path.exists()) path.mkdirs();
+			if(!file.exists()) file.createNewFile();
+			
 			OutputStream outStream = new FileOutputStream(file);
 			return bitmap.compress(CompressFormat.PNG, 75, outStream);
 		}

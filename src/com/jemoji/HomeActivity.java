@@ -2,17 +2,17 @@
 package com.jemoji;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -45,8 +45,10 @@ import com.facebook.rebound.SpringUtil;
 import com.jemoji.http.URLs;
 import com.jemoji.image.ImageCacheManager;
 import com.jemoji.models.Emoji;
+import com.jemoji.models.EmojiCenter;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
+import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
@@ -106,10 +108,6 @@ public class HomeActivity extends BaseActivity {
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
 		
-		View showMessagePanel;//接收消息显示图片
-		ImageView showMessageImageView;
-		ImageView showMessageCloseView;
-
 		private Spring mSpring;
 
 		// 大图动画回调
@@ -133,6 +131,7 @@ public class HomeActivity extends BaseActivity {
 			final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
 			emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
 			emoji.setBackground(Integer.parseInt(messages[2]));
+			final String username = messages[3];
 
 			// 收到消息就开始下载
 			ImageLoader loder = ImageCacheManager.instance().getImageLoader();
@@ -143,20 +142,25 @@ public class HomeActivity extends BaseActivity {
 
 				@Override
 				public void onResponse(ImageContainer arg0, boolean arg1) {
-					emoji.setVoiceStatus(Emoji.STATUS_MEMORY);
-					emoji.setBitmap(arg0.getBitmap());
-					
-					showMessageImageView.setImageBitmap(arg0.getBitmap());
-					showMessageImageView.setBackgroundColor(emoji.getBackground());
-					
-					emojiImage.setImageBitmap(arg0.getBitmap());
-					emojiImage.setBackgroundColor(emoji.getBackground());
+					String image = Environment.getExternalStorageDirectory().getAbsolutePath()
+							+ File.separator + "emojis_download" + File.separator
+							+ System.currentTimeMillis() + ".png";
+					try {
+						Bitmap bitmap = arg0.getBitmap();
+						if(bitmap != null){
+							Utility.File.saveBitmap(new File(image), bitmap);
+							emoji.setVoiceStatus(Emoji.STATUS_REMOTE);
+							emoji.setImage(image);
+							EmojiCenter.instance().pushUnread(username, emoji);
+							
+							HeaderViewHolder holder = userHeaders.get(username);
+							holder.unreadMessageView.setVisibility(View.VISIBLE);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			});
-			
-			String user = messages[3];
-			HeaderViewHolder holder = userHeaders.get(user);
-			holder.unreadMessageView.setVisibility(View.VISIBLE);
 		}
 
 		// 拦截back键
@@ -191,15 +195,20 @@ public class HomeActivity extends BaseActivity {
 					HeaderViewHolder holder = userHeaders.get(user.getUsername());
 					int visibility = holder.unreadMessageView.getVisibility();
 					if(visibility == View.VISIBLE){//读取消息
-						showMessagePanel.setVisibility(View.VISIBLE);
+						EmojiActivity.putValus("user", user);
+						openActivity(EmojiActivity.class, null);
+						
+						userHeaders.get(user.getUsername()).unreadMessageView.setVisibility(View.GONE);
 					}else{//选中头像发送消息
 						changeChatUser(user);
 					}
 				}
 			};
 			Collection<User> users = UserCenter.instance().getAll();
+			int i = 0;
 			for(User user : users){
-				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1);
+				int res = i++ / 4;
+				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1 + res);
 				View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
 				ImageView image = (ImageView)header.findViewById(R.id.header);
 				TextView message = (TextView)header.findViewById(R.id.header_unread_msg_number);
@@ -211,7 +220,7 @@ public class HomeActivity extends BaseActivity {
 				userHeaders.put(user.getUsername(), new HeaderViewHolder(image, message));
 			}
 		}
-
+		
 		private void initView(View rootview) {
 			//初始化联系人头像
 			initContactHeaders(rootview);
@@ -280,11 +289,6 @@ public class HomeActivity extends BaseActivity {
 			rootview.findViewById(R.id.iv_voice_panel).setOnClickListener(this);
 			to_chat_user_header = (CircleImageView)rootview.findViewById(R.id.to_chat_user_header);
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
-			
-			showMessagePanel = rootview.findViewById(R.id.show_message_panel);
-			showMessageImageView = (ImageView)showMessagePanel.findViewById(R.id.show_message_image);
-			showMessageCloseView = (ImageView)showMessagePanel.findViewById(R.id.show_message_close);
-			showMessageCloseView.setOnClickListener(this);
 		}
 		
 		private void changeChatUser(User toUser){
@@ -372,57 +376,7 @@ public class HomeActivity extends BaseActivity {
 					else startVioceAnimation(image, 1000 * 4);
 					voicePlayHandler.playOrStop(mEmoji.getVoice());
 					break;
-				case R.id.show_message_close:
-					showMessagePanel.setVisibility(View.GONE);
-					break;
 			}
 		}
-	}
-}
-
-
-
-class EmojiSelector {
-	private static EmojiSelector instance;
-
-	public static EmojiSelector instance() {
-		if (instance == null) instance = new EmojiSelector();
-		return instance;
-	}
-
-	public List<Emoji> emojis = new LinkedList<Emoji>();
-
-	public EmojiSelector() {
-		emojis.add(new Emoji("001.png", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("1002.gif", Color.parseColor("#ffffff")));
-		
-		emojis.add(new Emoji("1001.gif", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("1003.png", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("1004.gif", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("1005.gif", Color.parseColor("#ffffff")));
-
-		emojis.add(new Emoji("IMG_0272.JPG", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("IMG_0278.JPG", Color.parseColor("#FEFFBB")));
-		emojis.add(new Emoji("IMG_0284.JPG", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("IMG_0267.JPG", Color.parseColor("#ffffff")));
-
-		emojis.add(new Emoji("IMG_0291.JPG", Color.parseColor("#AADFFF")));
-		emojis.add(new Emoji("IMG_0273.JPG", Color.parseColor("#ffffff")));
-
-		emojis.add(new Emoji("despicable-me-2-Minion-icon-5.png", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("IMG_0262.JPG", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("IMG_0268.JPG", Color.parseColor("#ffffff")));
-	}
-
-	public String getEmojiName(int index) {
-		return String.format("%s/%s", "/sdcard/emojis", emojis.get(index).getImage());
-	}
-	
-	public int getEmojiBackground(int index) {
-		return emojis.get(index).getBackground();
-	}
-
-	public int size() {
-		return emojis.size();
 	}
 }
