@@ -104,6 +104,12 @@ public class EmojiActivity extends BaseActivity {
 			return rootView;
 		}
 		
+		@Override
+		public void onStart() {
+			super.onStart();
+			playVoice();//自动播放声音
+		}
+
 		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {
 			List<Emoji> emojis = MessageCenter.instance().pokeUnread(from.getUsername());
 			System.out.println(String.format(" size:%s ", emojis.size()));
@@ -151,27 +157,29 @@ public class EmojiActivity extends BaseActivity {
 			voicePlayHandler.playOrStop(voicePath);
 		}
 		
+		private void playVoice(){
+			String voicepath = mEmoji.getVoice();
+			if((voicepath !=null) && new File(voicepath).exists()){
+				playOrStopVoice(voicepath);
+			}else{
+				String voiceUrl = mEmoji.getVoiceUrl();
+				String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
+						+ "emojis" + File.separator + System.currentTimeMillis() +  ".amr";
+				GKHttpInterface.genFile(voiceUrl, "amr", path, new GKJsonResponseHandler() {
+					@Override
+					public void onResponse(int code, Object file, Throwable error) {
+						mEmoji.setVoice((String)file);
+						playOrStopVoice(mEmoji.getVoice());
+					}
+				});
+			}
+		}
+		
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
 				case R.id.iv_voice_panel:
-					
-					String voicepath = mEmoji.getVoice();
-					if((voicepath !=null) && new File(voicepath).exists()){
-						playOrStopVoice(voicepath);
-					}else{
-						String voiceUrl = mEmoji.getVoiceUrl();
-						String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
-								+ "emojis" + File.separator + System.currentTimeMillis() +  ".amr";
-						GKHttpInterface.genFile(voiceUrl, "amr", path, new GKJsonResponseHandler() {
-							@Override
-							public void onResponse(int code, Object file, Throwable error) {
-								mEmoji.setVoice((String)file);
-								playOrStopVoice(mEmoji.getVoice());
-							}
-						});
-					}
-					
+					playVoice();
 					break;
 				case R.id.close:
 					finish();

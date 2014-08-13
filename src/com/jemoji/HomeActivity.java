@@ -117,9 +117,12 @@ public class HomeActivity extends BaseActivity {
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
 					+ File.separator + "emojis_download" + File.separator
 					+ System.currentTimeMillis() + "." + type;
+			System.out.println(String.format(" onReceiveMessage %s ", values));
+			
 			GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
 				@Override
 				public void onResponse(int code, Object file, Throwable error) {
+					System.out.println(String.format(" onResponse %s ", file));
 					emoji.setImage((String)file);
 					MessageCenter.instance().pushUnread(username, emoji);
 					
@@ -169,6 +172,8 @@ public class HomeActivity extends BaseActivity {
 				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1 + res);
 				View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
 				ImageView image = (ImageView)header.findViewById(R.id.header);
+				TextView nickname = (TextView)header.findViewById(R.id.nickname);
+				nickname.setText(user.getNickname());
 				image.setImageResource(user.getHeader());
 				header.setTag(R.id.tag_key_header_user, user);
 				header.setOnClickListener(listener);
@@ -313,7 +318,6 @@ public class HomeActivity extends BaseActivity {
 				public void onAnimationUpdate(ValueAnimator animation) {
 					Integer value = (Integer)animation.getAnimatedValue();
 					
-					System.out.println(String.format(" value:%s ", value));
 					if (value % 10 == 0) {
 						((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle_little);
 					}else if(value % 10 == 5){

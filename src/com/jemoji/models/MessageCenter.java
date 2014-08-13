@@ -21,6 +21,7 @@ public class MessageCenter {
 	}
 
 	public void pushUnread(String user, Emoji emoji) {
+		System.out.println(String.format(" push message to %s ", user));
 		List<Emoji> message = emojis.get(user);
 		if(message == null) message = new LinkedList<Emoji>();
 		message.add(emoji);
@@ -33,6 +34,7 @@ public class MessageCenter {
 		for(List<Emoji> values : emojis.values()){
 			count += values.size();
 		}
+		System.out.println(String.format(" unread message count: %s ", count));
 		return count;
 	}
 	

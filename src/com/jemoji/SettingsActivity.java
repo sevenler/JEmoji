@@ -42,6 +42,7 @@ public class SettingsActivity extends BaseActivity {
 		public void onClick(View v) {
 			switch (v.getId()) {
 				case R.id.logout:
+					finish();
 					PreferManager.instance().setStringToPrefs(getActivity(), KEY_USER_NAME, null);
 					openActivity(LoginActivity.class, null);
 					break;
