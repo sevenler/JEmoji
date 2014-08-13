@@ -83,8 +83,10 @@ public class HomeActivity extends BaseActivity {
 		private ImageView emojiImage;//表情大图
 		private CircleImageView to_chat_user_header;//对话的好友头像
 		private TextView notice_message;//提示文字
-		private TextView unread_msg_number;//未读消息数量
+		private View unread_msg_number;//未读消息数量
+		
 		ValueAnimator voicePlayAnimation;
+		ValueAnimator recevingMessageAnimation;
 		VoiceHandler voicePlayHandler;
 		
 		private Spring mSpring;
@@ -110,6 +112,7 @@ public class HomeActivity extends BaseActivity {
 			emoji.setBackground(Integer.parseInt(messages[2]));
 			final String username = messages[3];
 
+			startRecevingMessageAnimation(unread_msg_number);
 			String type = name.substring(name.indexOf(".") + 1, name.length());
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
 					+ File.separator + "emojis_download" + File.separator
@@ -120,8 +123,10 @@ public class HomeActivity extends BaseActivity {
 					emoji.setImage((String)file);
 					MessageCenter.instance().pushUnread(username, emoji);
 					
+					stopRecevingMessageAnimation(unread_msg_number);
 					unread_msg_number.setVisibility(View.VISIBLE);
-					unread_msg_number.setText("" + MessageCenter.instance().getUnreadCount());
+					
+					((TextView)unread_msg_number.findViewById(R.id.textview)).setText("" + MessageCenter.instance().getUnreadCount());
 					BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceIn.getAnimator()));
 					animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(unread_msg_number);
 				}
@@ -241,8 +246,8 @@ public class HomeActivity extends BaseActivity {
 			rootview.findViewById(R.id.iv_voice_panel).setOnClickListener(this);
 			to_chat_user_header = (CircleImageView)rootview.findViewById(R.id.to_chat_user_header);
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
-			unread_msg_number = (TextView)rootview.findViewById(R.id.unread_msg_number);
-			unread_msg_number.setVisibility(View.GONE);
+			unread_msg_number = rootview.findViewById(R.id.unread_msg_number);
+//			unread_msg_number.setVisibility(View.GONE);
 			unread_msg_number.setOnClickListener(this);
 		}
 		
@@ -298,6 +303,35 @@ public class HomeActivity extends BaseActivity {
 			if (voicePlayAnimation != null) voicePlayAnimation.cancel();
 			iv_voice.setImageResource(R.drawable.chatfrom_voice_playing);
 		}
+		
+		private void startRecevingMessageAnimation(final View view) {
+			recevingMessageAnimation = ValueAnimator.ofInt(1, 100 * 10000);
+			recevingMessageAnimation.setDuration(100 * 10000);
+			recevingMessageAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+			recevingMessageAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+				@Override
+				public void onAnimationUpdate(ValueAnimator animation) {
+					Integer value = (Integer)animation.getAnimatedValue();
+					
+					System.out.println(String.format(" value:%s ", value));
+					if (value % 10 == 0) {
+						((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle_little);
+					}else if(value % 10 == 5){
+						((ImageView)view.findViewById(R.id.imageview)).setImageBitmap(null);
+					}
+				}
+			});
+			recevingMessageAnimation.start();
+			unread_msg_number.setVisibility(View.VISIBLE);
+			((TextView)view.findViewById(R.id.textview)).setText("");
+			((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle_little);
+		}
+		
+		private void stopRecevingMessageAnimation(final View view){
+			if (recevingMessageAnimation != null) recevingMessageAnimation.cancel();
+			((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle);
+		}
+		
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -313,8 +347,11 @@ public class HomeActivity extends BaseActivity {
 			super.onStart();
 			
 			int count = MessageCenter.instance().getUnreadCount();
-			unread_msg_number.setText("" + count);
-			if(count <=0 )unread_msg_number.setVisibility(View.GONE);
+			((TextView)unread_msg_number.findViewById(R.id.textview)).setText("" + count);
+			if(count <=0 ){
+				unread_msg_number.setVisibility(View.GONE);
+				((TextView)unread_msg_number.findViewById(R.id.textview)).setText("");
+			}
 		}
 
 		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {
