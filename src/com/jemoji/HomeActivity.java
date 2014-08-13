@@ -252,7 +252,6 @@ public class HomeActivity extends BaseActivity {
 			to_chat_user_header = (CircleImageView)rootview.findViewById(R.id.to_chat_user_header);
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
 			unread_msg_number = rootview.findViewById(R.id.unread_msg_number);
-//			unread_msg_number.setVisibility(View.GONE);
 			unread_msg_number.setOnClickListener(this);
 		}
 		
