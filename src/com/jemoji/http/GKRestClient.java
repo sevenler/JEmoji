@@ -25,13 +25,13 @@ public class GKRestClient {
     
     private GKRestClient(){}
     
-    public String get(String url,final String type, RequestParams params,final MyAsyncHttpResponseHandler responseHandler){
+    public String get(String url,final String type, final String file, RequestParams params,final MyAsyncHttpResponseHandler responseHandler){
 		RequestQueue mQueue = RequestManager.getAPIRequestQueue();
 		
 		String full = String.format("%s?%s", URLs.getAbsoluteUrl(url), params.toString());
 		LOG.d(LOG.TAG_API, full);
 		
-		FileRequest request = new FileRequest(full, new Listener<File>() {
+		FileRequest request = new FileRequest(full, file, new Listener<File>() {
 			@Override
 			public void onResponse(File file) {
 				responseHandler.onSuccess(200, file.getAbsolutePath());

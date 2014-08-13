@@ -1,7 +1,10 @@
 
 package com.jemoji.models;
 
+import java.io.File;
+
 import android.graphics.Bitmap;
+import android.os.Environment;
 
 import com.jemoji.FileUploader;
 import com.jemoji.http.GKHttpInterface;
@@ -96,7 +99,10 @@ public class Emoji {
 	
 	public void download(final GKJsonResponseHandler handler){
 		setVoiceStatus(Emoji.STATUS_DOWNLOADING);
-		GKHttpInterface.genFile(getVoiceUrl(), "amr", new GKJsonResponseHandler() {
+		
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
+				+ "emojis/johnnyxyz20140808T194607.amr";
+		GKHttpInterface.genFile(getVoiceUrl(), "amr", path, new GKJsonResponseHandler() {
 			@Override
 			public void onResponse(int code, Object file, Throwable error) {
 				setVoiceStatus(Emoji.STATUS_LOCAL);

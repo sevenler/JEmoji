@@ -41,6 +41,8 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
+import com.jemoji.http.GKHttpInterface;
+import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
 import com.jemoji.image.ImageCacheManager;
 import com.jemoji.models.Emoji;
@@ -118,39 +120,28 @@ public class HomeActivity extends BaseActivity {
 			String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
 					+ File.separator
 					+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
+			String name = messages[1];
 			final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
-			emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", messages[1]));
+			emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", name));
 			emoji.setBackground(Integer.parseInt(messages[2]));
 			final String username = messages[3];
 
-			// 收到消息就开始下载
-			ImageLoader loder = ImageCacheManager.instance().getImageLoader();
-			loder.get(emoji.getImageUrl(), new ImageListener() {
+			
+			String type = name.substring(name.indexOf(".") + 1, name.length());
+			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
+					+ File.separator + "emojis_download" + File.separator
+					+ System.currentTimeMillis() + "." + type;
+			GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
 				@Override
-				public void onErrorResponse(VolleyError arg0) {
-				}
-
-				@Override
-				public void onResponse(ImageContainer arg0, boolean arg1) {
-					String image = Environment.getExternalStorageDirectory().getAbsolutePath()
-							+ File.separator + "emojis_download" + File.separator
-							+ System.currentTimeMillis() + ".png";
-					try {
-						Bitmap bitmap = arg0.getBitmap();
-						if(bitmap != null){
-							Utility.File.saveBitmap(new File(image), bitmap);
-							emoji.setVoiceStatus(Emoji.STATUS_REMOTE);
-							emoji.setImage(image);
-							EmojiCenter.instance().pushUnread(username, emoji);
-							
-							unread_msg_number.setVisibility(View.VISIBLE);
-							unread_msg_number.setText("" + EmojiCenter.instance().getUnreadCount());
-							BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceIn.getAnimator()));
-							animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(unread_msg_number);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+				public void onResponse(int code, Object file, Throwable error) {
+					emoji.setVoiceStatus(Emoji.STATUS_REMOTE);
+					emoji.setImage((String)file);
+					EmojiCenter.instance().pushUnread(username, emoji);
+					
+					unread_msg_number.setVisibility(View.VISIBLE);
+					unread_msg_number.setText("" + EmojiCenter.instance().getUnreadCount());
+					BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceIn.getAnimator()));
+					animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(unread_msg_number);
 				}
 			});
 		}

@@ -21,11 +21,11 @@ import com.loopj.android.http.RequestParams;
 @SuppressWarnings("unchecked")
 public class GKHttpInterface {
 
-	public static String genFile(String key, String type, final GKJsonResponseHandler block){
+	public static String genFile(String key, String type, String file, final GKJsonResponseHandler block){
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		RequestParams params = new RequestParams(paramMap);
 		
-		return GKRestClient.instance().get(key, type, params, new MyAsyncHttpResponseHandler() {
+		return GKRestClient.instance().get(key, type, file, params, new MyAsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int code, String res) {
 				checkResponse(code, res, block);

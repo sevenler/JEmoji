@@ -48,6 +48,8 @@ public class FileRequest extends Request<File> {
 
     /** Decoding lock so that we don't decode more than one image at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
+    
+    private final String mFile;
 
     /**
      * Creates a new image request, decoding to a maximum specified width and
@@ -66,10 +68,11 @@ public class FileRequest extends Request<File> {
      * @param decodeConfig Format to decode the bitmap to
      * @param errorListener Error listener, or null to ignore errors
      */
-    public FileRequest(String url, Response.Listener<File> listener, Response.ErrorListener errorListener) {
+    public FileRequest(String url,  String file, Response.Listener<File> listener, Response.ErrorListener errorListener) {
         super(Method.GET, url, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
         mListener = listener;
+        mFile = file;
     }
 
     @Override
@@ -110,9 +113,7 @@ public class FileRequest extends Request<File> {
 	 */
 	private Response<File> doParse(NetworkResponse response) {
 		byte[] data = response.data;
-		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
-				+ "emojis/johnnyxyz20140808T194607.amr";
-		File file = saveFile(path, data);
+		File file = saveFile(mFile, data);
 
 		if (file == null) {
 			return Response.error(new ParseError(response));
