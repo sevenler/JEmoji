@@ -1,5 +1,6 @@
 package com.jemoji;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,18 +8,19 @@ import java.util.Map;
 
 import android.animation.ValueAnimator;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.MessageCenter;
@@ -77,7 +79,6 @@ public class EmojiActivity extends BaseActivity {
 				public void onPageSelected(int arg0) {
 					Map<?, ?> map = list.get(arg0);
 					mEmoji = (Emoji)map.get("emoji_object");
-					iv_voice_panel.setOnClickListener(new VoicePlayClickListener(EmojiActivity.this, mEmoji));
 				}
 
 				@Override
@@ -95,7 +96,7 @@ public class EmojiActivity extends BaseActivity {
 			iv_voice_panel = (View)rootView.findViewById(R.id.iv_voice_panel);
 			image = (ImageView)rootView.findViewById(R.id.iv_voice);
 			mEmoji = (Emoji)list.get(0).get("emoji_object");
-			iv_voice_panel.setOnClickListener(new VoicePlayClickListener(EmojiActivity.this, mEmoji));
+			iv_voice_panel.setOnClickListener(this);
 			rootView.findViewById(R.id.close).setOnClickListener(this);
 			
 			return rootView;
@@ -152,21 +153,21 @@ public class EmojiActivity extends BaseActivity {
 		public void onClick(View v) {
 			switch (v.getId()) {
 				case R.id.iv_voice_panel:
-					switch(mEmoji.getVoiceStatus()){
-						case Emoji.STATUS_LOCAL:
-							playOrStopVoice(mEmoji.getVoice());
-							break;
-						case Emoji.STATUS_MEMORY:
-						case Emoji.STATUS_REMOTE:
-							Toast.makeText(EmojiActivity.this, "正在下载", Toast.LENGTH_SHORT).show();
-							mEmoji.downloadVoice(new GKJsonResponseHandler() {
-								@Override
-								public void onResponse(int code, Object file, Throwable error) {
-									mEmoji.setVoice((String)file);
-									playOrStopVoice(mEmoji.getVoice());
-								}
-							});
-							break;
+					
+					String voicepath = mEmoji.getVoice();
+					if((voicepath !=null) && new File(voicepath).exists()){
+						playOrStopVoice(voicepath);
+					}else{
+						String voiceUrl = mEmoji.getVoiceUrl();
+						String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
+								+ "emojis" + File.separator + System.currentTimeMillis() +  ".amr";
+						GKHttpInterface.genFile(voiceUrl, "amr", path, new GKJsonResponseHandler() {
+							@Override
+							public void onResponse(int code, Object file, Throwable error) {
+								mEmoji.setVoice((String)file);
+								playOrStopVoice(mEmoji.getVoice());
+							}
+						});
 					}
 					
 					break;

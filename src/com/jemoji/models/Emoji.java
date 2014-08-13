@@ -1,14 +1,9 @@
 
 package com.jemoji.models;
 
-import java.io.File;
-
 import android.graphics.Bitmap;
-import android.os.Environment;
 
 import com.jemoji.FileUploader;
-import com.jemoji.http.GKHttpInterface;
-import com.jemoji.http.GKJsonResponseHandler;
 
 public class Emoji {
 	String image;
@@ -16,13 +11,7 @@ public class Emoji {
 	Bitmap imageBitmap;
 	String mVoice;
 	String mVoiceUrl;
-	int mVoiceStatus = STATUS_REMOTE;
 	int background = -1;
-	
-	public static final int STATUS_REMOTE = 0;
-	public static final int STATUS_DOWNLOADING = 1;
-	public static final int STATUS_LOCAL = 2;
-	public static final int STATUS_MEMORY = 3;
 
 	public Emoji() {
 		super();
@@ -87,28 +76,6 @@ public class Emoji {
 
 	public void setVoiceUrl(String voice) {
 		this.mVoiceUrl = voice;
-	}
-	
-	public int getVoiceStatus() {
-		return mVoiceStatus;
-	}
-	
-	public void setVoiceStatus(int status) {
-		this.mVoiceStatus = status;
-	}
-	
-	public void downloadVoice(final GKJsonResponseHandler handler){
-		setVoiceStatus(Emoji.STATUS_DOWNLOADING);
-		
-		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
-				+ "emojis" + File.separator + System.currentTimeMillis() +  ".amr";
-		GKHttpInterface.genFile(getVoiceUrl(), "amr", path, new GKJsonResponseHandler() {
-			@Override
-			public void onResponse(int code, Object file, Throwable error) {
-				setVoiceStatus(Emoji.STATUS_LOCAL);
-				handler.onResponse(code, file, error);
-			}
-		});
 	}
 	
 	public void send(final String toChatUser){

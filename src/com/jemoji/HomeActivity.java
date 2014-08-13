@@ -42,11 +42,12 @@ import com.jemoji.models.Emoji;
 import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
+import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity {
-	Emoji mEmoji;
+	Emoji mEmoji = new Emoji("", "", "");
 	User toChat;
 
 	WebPageFragment mWebPageFragment;
@@ -61,12 +62,6 @@ public class HomeActivity extends BaseActivity {
 		mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
-
-		String url = URLs.getAbsoluteUrl("/1407549723664.amr");
-		String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
-				+ File.separator
-				+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
-		mEmoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, url);
 
 		User me = UserCenter.instance().getMe();
 		setTag(me.getUsername());
@@ -109,16 +104,12 @@ public class HomeActivity extends BaseActivity {
 		public void onReceiveMessage(String values) {
 			String[] messages = values.split(",");
 			String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
-			String voice = Environment.getExternalStorageDirectory().getAbsolutePath()
-					+ File.separator
-					+ "Android/data/com.easemob.chatuidemo/easemob-demo#chatdemoui/johnnyxyzw1/voice/johnnyxyz20140808T194607.amr";
 			String name = messages[1];
-			final Emoji emoji = new Emoji("sdcard/emojis/IMG_0286.JPG", voice, voiceUrl);
+			final Emoji emoji = new Emoji("", "", voiceUrl);
 			emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", name));
 			emoji.setBackground(Integer.parseInt(messages[2]));
 			final String username = messages[3];
 
-			
 			String type = name.substring(name.indexOf(".") + 1, name.length());
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
 					+ File.separator + "emojis_download" + File.separator
@@ -126,7 +117,6 @@ public class HomeActivity extends BaseActivity {
 			GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
 				@Override
 				public void onResponse(int code, Object file, Throwable error) {
-					emoji.setVoiceStatus(Emoji.STATUS_REMOTE);
 					emoji.setImage((String)file);
 					MessageCenter.instance().pushUnread(username, emoji);
 					
@@ -152,8 +142,6 @@ public class HomeActivity extends BaseActivity {
 		private void showBigImage(){
 			if (mSpring.getEndValue() == 0) {
 				mSpring.setEndValue(1);
-				VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(HomeActivity.this, mEmoji);
-				emojiImage.setOnClickListener(mVoicePlayClickListener);
 			}
 		}
 		
@@ -209,6 +197,8 @@ public class HomeActivity extends BaseActivity {
 				public void onPageScrollStateChanged(int arg0) {
 				}
 			});
+			mEmoji.setImage(EmojiSelector.instance().getEmojiName(0));
+			mEmoji.setBackground(EmojiSelector.instance().getEmojiBackground(0));
 			// mViewPager.setScrollable(false);
 
 			// 初始化表情大图View
@@ -345,10 +335,13 @@ public class HomeActivity extends BaseActivity {
 					openActivity(SettingsActivity.class, null);
 					break;
 				case R.id.iv_voice_panel:
-					ImageView image = (ImageView)v.findViewById(R.id.iv_voice);
-					if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
-					else startVioceAnimation(image, 1000 * 4);
-					voicePlayHandler.playOrStop(mEmoji.getVoice());
+					String voice = mEmoji.getVoice();
+					if(!Utility.Strings.isEmptyString(voice)){
+						ImageView image = (ImageView)v.findViewById(R.id.iv_voice);
+						if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
+						else startVioceAnimation(image, 1000 * 4);
+						voicePlayHandler.playOrStop(voice);
+					}
 					break;
 				case R.id.unread_msg_number:
 					EmojiActivity.putValus("user", toChat);
