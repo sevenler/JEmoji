@@ -26,7 +26,10 @@ public class EmojiCenter {
 		message.add(emoji);
 		
 		emojis.put(user, message);
-		System.out.println(String.format(" =================== put [%s]================ ", user));
+	}
+	
+	public int getUnreadCount(){
+		return 1;
 	}
 	
 	public List<Emoji> pokeUnread(String user){
@@ -34,7 +37,6 @@ public class EmojiCenter {
 	}
 	
 	public List<Emoji> getUnread(String user, boolean delete){
-		System.out.println(String.format(" ===================get [%s]================ ", user));
 		List<Emoji> message = emojis.get(user);
 		if(delete) {
 			emojis.remove(user);

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,23 +89,15 @@ public class HomeActivity extends BaseActivity {
 	public void onReceiveMessage(String values) {
 		mWebPageFragment.onReceiveMessage(values);
 	}
-
-	public static class HeaderViewHolder{
-		public ImageView headerView;
-		public TextView unreadMessageView;
-		public HeaderViewHolder(ImageView headerView, TextView unreadMessageView) {
-			this.headerView = headerView;
-			this.unreadMessageView = unreadMessageView;
-		}
-	}
 	
 	class WebPageFragment extends Fragment implements OnClickListener {
 		private ImageView emojiImage;//表情大图
 		private CircleImageView to_chat_user_header;//对话的好友头像
 		private TextView notice_message;//提示文字
-		private Map<String, HeaderViewHolder> userHeaders = new LinkedHashMap<String, HeaderViewHolder>();//用户的头像列表
+		private TextView unread_msg_number;
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
+		
 		
 		private Spring mSpring;
 
@@ -153,8 +144,8 @@ public class HomeActivity extends BaseActivity {
 							emoji.setImage(image);
 							EmojiCenter.instance().pushUnread(username, emoji);
 							
-							HeaderViewHolder holder = userHeaders.get(username);
-							holder.unreadMessageView.setVisibility(View.VISIBLE);
+							unread_msg_number.setVisibility(View.VISIBLE);
+							unread_msg_number.setText("" + EmojiCenter.instance().getUnreadCount());
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -191,17 +182,7 @@ public class HomeActivity extends BaseActivity {
 				@Override
 				public void onClick(View v) {
 					User user = (User)v.getTag(R.id.tag_key_header_user);
-					
-					HeaderViewHolder holder = userHeaders.get(user.getUsername());
-					int visibility = holder.unreadMessageView.getVisibility();
-					if(visibility == View.VISIBLE){//读取消息
-						EmojiActivity.putValus("user", user);
-						openActivity(EmojiActivity.class, null);
-						
-						userHeaders.get(user.getUsername()).unreadMessageView.setVisibility(View.GONE);
-					}else{//选中头像发送消息
-						changeChatUser(user);
-					}
+					changeChatUser(user);
 				}
 			};
 			Collection<User> users = UserCenter.instance().getAll();
@@ -211,13 +192,10 @@ public class HomeActivity extends BaseActivity {
 				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1 + res);
 				View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
 				ImageView image = (ImageView)header.findViewById(R.id.header);
-				TextView message = (TextView)header.findViewById(R.id.header_unread_msg_number);
-				message.setVisibility(View.INVISIBLE);
 				image.setImageResource(user.getHeader());
 				header.setTag(R.id.tag_key_header_user, user);
 				header.setOnClickListener(listener);
 				layout1.addView(header);
-				userHeaders.put(user.getUsername(), new HeaderViewHolder(image, message));
 			}
 		}
 		
@@ -289,6 +267,9 @@ public class HomeActivity extends BaseActivity {
 			rootview.findViewById(R.id.iv_voice_panel).setOnClickListener(this);
 			to_chat_user_header = (CircleImageView)rootview.findViewById(R.id.to_chat_user_header);
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
+			unread_msg_number = (TextView)rootview.findViewById(R.id.unread_msg_number);
+			unread_msg_number.setVisibility(View.GONE);
+			unread_msg_number.setOnClickListener(this);
 		}
 		
 		private void changeChatUser(User toUser){
@@ -375,6 +356,10 @@ public class HomeActivity extends BaseActivity {
 					if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
 					else startVioceAnimation(image, 1000 * 4);
 					voicePlayHandler.playOrStop(mEmoji.getVoice());
+					break;
+				case R.id.unread_msg_number:
+					EmojiActivity.putValus("user", toChat);
+					openActivity(EmojiActivity.class, null);
 					break;
 			}
 		}
