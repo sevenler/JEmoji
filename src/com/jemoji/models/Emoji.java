@@ -97,11 +97,11 @@ public class Emoji {
 		this.mVoiceStatus = status;
 	}
 	
-	public void download(final GKJsonResponseHandler handler){
+	public void downloadVoice(final GKJsonResponseHandler handler){
 		setVoiceStatus(Emoji.STATUS_DOWNLOADING);
 		
 		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
-				+ "emojis/johnnyxyz20140808T194607.amr";
+				+ "emojis" + File.separator + System.currentTimeMillis() +  ".amr";
 		GKHttpInterface.genFile(getVoiceUrl(), "amr", path, new GKJsonResponseHandler() {
 			@Override
 			public void onResponse(int code, Object file, Throwable error) {
@@ -113,5 +113,14 @@ public class Emoji {
 	
 	public void send(final String toChatUser){
 		new FileUploader().send(this, toChatUser);
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append(String.format("%s:%s,", "image", image));
+		sb.append(String.format("%s:%s", "voice", mVoice));
+		sb.append("}");
+		return sb.toString();
 	}
 }

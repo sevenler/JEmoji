@@ -2,7 +2,6 @@
 package com.jemoji;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -30,10 +28,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.ImageLoader.ImageContainer;
-import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.daimajia.androidanimations.library.BaseViewAnimator;
 import com.daimajia.androidanimations.library.Techniques;
 import com.facebook.rebound.SimpleSpringListener;
@@ -44,12 +38,10 @@ import com.facebook.rebound.SpringUtil;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
-import com.jemoji.image.ImageCacheManager;
 import com.jemoji.models.Emoji;
-import com.jemoji.models.EmojiCenter;
+import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
-import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
@@ -96,7 +88,7 @@ public class HomeActivity extends BaseActivity {
 		private ImageView emojiImage;//表情大图
 		private CircleImageView to_chat_user_header;//对话的好友头像
 		private TextView notice_message;//提示文字
-		private TextView unread_msg_number;
+		private TextView unread_msg_number;//未读消息数量
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
 		
@@ -136,10 +128,10 @@ public class HomeActivity extends BaseActivity {
 				public void onResponse(int code, Object file, Throwable error) {
 					emoji.setVoiceStatus(Emoji.STATUS_REMOTE);
 					emoji.setImage((String)file);
-					EmojiCenter.instance().pushUnread(username, emoji);
+					MessageCenter.instance().pushUnread(username, emoji);
 					
 					unread_msg_number.setVisibility(View.VISIBLE);
-					unread_msg_number.setText("" + EmojiCenter.instance().getUnreadCount());
+					unread_msg_number.setText("" + MessageCenter.instance().getUnreadCount());
 					BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceIn.getAnimator()));
 					animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(unread_msg_number);
 				}
@@ -156,14 +148,14 @@ public class HomeActivity extends BaseActivity {
 			} else return false;
 		}
 		
-//		private void showBigImage(){
-//			if (mSpring.getEndValue() == 0) {
-//				mSpring.setEndValue(1);
-//				Emoji emoji = (Emoji)v.getTag();
-//				VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(HomeActivity.this, emoji);
-//				emojiImage.setOnClickListener(mVoicePlayClickListener);
-//			}
-//		}
+		//跳出大图动画
+		private void showBigImage(){
+			if (mSpring.getEndValue() == 0) {
+				mSpring.setEndValue(1);
+				VoicePlayClickListener mVoicePlayClickListener = new VoicePlayClickListener(HomeActivity.this, mEmoji);
+				emojiImage.setOnClickListener(mVoicePlayClickListener);
+			}
+		}
 		
 		//初始化联系人头像
 		private void initContactHeaders(View rootview){
@@ -324,6 +316,15 @@ public class HomeActivity extends BaseActivity {
 			initView(rootView);
 
 			return rootView;
+		}
+
+		@Override
+		public void onStart() {
+			super.onStart();
+			
+			int count = MessageCenter.instance().getUnreadCount();
+			unread_msg_number.setText("" + count);
+			if(count <=0 )unread_msg_number.setVisibility(View.GONE);
 		}
 
 		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {

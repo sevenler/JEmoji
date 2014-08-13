@@ -65,8 +65,6 @@ public class VoicePlayClickListener implements View.OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-
-		System.out.println(String.format(" ==========onClick  %s ========= ", emoji.getVoiceStatus()));
 		switch(emoji.getVoiceStatus()){
 			case Emoji.STATUS_LOCAL:
 				playVoice(emoji.getVoice());
@@ -74,7 +72,7 @@ public class VoicePlayClickListener implements View.OnClickListener {
 			case Emoji.STATUS_MEMORY:
 			case Emoji.STATUS_REMOTE:
 				Toast.makeText(activity, "正在下载", Toast.LENGTH_SHORT).show();
-				emoji.download(new GKJsonResponseHandler() {
+				emoji.downloadVoice(new GKJsonResponseHandler() {
 					@Override
 					public void onResponse(int code, Object file, Throwable error) {
 						emoji.setVoice((String)file);

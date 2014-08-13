@@ -6,17 +6,17 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EmojiCenter {
-	private static EmojiCenter intsance;
+public class MessageCenter {
+	private static MessageCenter intsance;
 
-	public static EmojiCenter instance() {
-		if (intsance == null) intsance = new EmojiCenter();
+	public static MessageCenter instance() {
+		if (intsance == null) intsance = new MessageCenter();
 		return intsance;
 	}
 
 	private HashMap<String, List<Emoji>> emojis;
 
-	private EmojiCenter() {
+	private MessageCenter() {
 		emojis = new LinkedHashMap<String, List<Emoji>>();
 	}
 

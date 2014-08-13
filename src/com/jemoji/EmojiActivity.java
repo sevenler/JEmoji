@@ -19,13 +19,14 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.jemoji.models.Emoji;
-import com.jemoji.models.EmojiCenter;
+import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class EmojiActivity extends BaseActivity {
-	User user;
+	User from;//消息来源用户
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,8 +38,7 @@ public class EmojiActivity extends BaseActivity {
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
 		
-		user = (User)pokeValus("user");
-		System.out.println(String.format(" %s ", user.getUsername()));
+		from = (User)pokeValus("user");
 	}
 
 	class WebPageFragment extends Fragment implements OnClickListener  {
@@ -59,6 +59,7 @@ public class EmojiActivity extends BaseActivity {
 		ValueAnimator voicePlayAnimation;
 		Emoji mEmoji;
 		View iv_voice_panel;
+		ImageView header;
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,7 +72,6 @@ public class EmojiActivity extends BaseActivity {
 			viewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
-					System.out.println(String.format(" ================ %s ", arg0));
 					Map<?, ?> map = list.get(arg0);
 					mEmoji = (Emoji)map.get("emoji_object");
 					iv_voice_panel.setOnClickListener(new VoicePlayClickListener(EmojiActivity.this, mEmoji));
@@ -87,17 +87,18 @@ public class EmojiActivity extends BaseActivity {
 			});
 			viewPager.setAdapter(emojiAdapter);
 			
+			header = (ImageView)rootView.findViewById(R.id.header);
+			header.setImageResource(from.getHeader());
 			iv_voice_panel = (View)rootView.findViewById(R.id.iv_voice_panel);
 			mEmoji = (Emoji)list.get(0).get("emoji_object");
 			iv_voice_panel.setOnClickListener(new VoicePlayClickListener(EmojiActivity.this, mEmoji));
-			
-			System.out.println(String.format(" voice %s  %s ", mEmoji.getVoiceUrl(), mEmoji.getVoice()));
+			rootView.findViewById(R.id.close).setOnClickListener(this);
 			
 			return rootView;
 		}
 		
 		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {
-			List<Emoji> emojis = EmojiCenter.instance().pokeUnread(user.getUsername());
+			List<Emoji> emojis = MessageCenter.instance().pokeUnread(from.getUsername());
 			System.out.println(String.format(" size:%s ", emojis.size()));
 			for(Emoji emoji : emojis){
 				Map<Object, Object> map = new HashMap<Object, Object>();
@@ -145,6 +146,9 @@ public class EmojiActivity extends BaseActivity {
 //					if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
 //					else startVioceAnimation(image, 1000 * 4);
 //					voicePlayHandler.playOrStop(mEmojiVoice);
+					break;
+				case R.id.close:
+					finish();
 					break;
 			}
 		}
