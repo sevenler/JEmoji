@@ -323,6 +323,7 @@ public class HomeActivity extends BaseActivity {
 			});
 			recevingMessageAnimation.start();
 			unread_msg_number.setVisibility(View.VISIBLE);
+			unread_msg_number.setClickable(false);
 			((TextView)view.findViewById(R.id.textview)).setText("");
 			((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle_little);
 		}
@@ -330,6 +331,7 @@ public class HomeActivity extends BaseActivity {
 		private void stopRecevingMessageAnimation(final View view){
 			if (recevingMessageAnimation != null) recevingMessageAnimation.cancel();
 			((ImageView)view.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle);
+			unread_msg_number.setClickable(true);
 		}
 		
 

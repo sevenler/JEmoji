@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
@@ -64,7 +65,6 @@ public class EmojiActivity extends BaseActivity {
 		Emoji mEmoji;
 		View iv_voice_panel;
 		ImageView image;
-		ImageView header;
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,8 +91,10 @@ public class EmojiActivity extends BaseActivity {
 			});
 			viewPager.setAdapter(emojiAdapter);
 			
-			header = (ImageView)rootView.findViewById(R.id.header);
+			ImageView header = (ImageView)rootView.findViewById(R.id.from_user_header);
+			TextView name = (TextView)rootView.findViewById(R.id.from_user_name);
 			header.setImageResource(from.getHeader());
+			name.setText(String.format("来自 %s", from.getNickname()));
 			iv_voice_panel = (View)rootView.findViewById(R.id.iv_voice_panel);
 			image = (ImageView)rootView.findViewById(R.id.iv_voice);
 			mEmoji = (Emoji)list.get(0).get("emoji_object");

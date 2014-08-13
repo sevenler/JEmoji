@@ -16,19 +16,26 @@
         android:layout_height="50dip"
         android:src="@drawable/icon_close" />
 
-    <RelativeLayout
-        android:layout_width="60dip"
-        android:layout_height="60dip"
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp" >
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical" >
 
         <com.jemoji.CircleImageView
-            android:id="@+id/header"
+            android:id="@+id/from_user_header"
+            android:layout_width="60dip"
+            android:layout_height="60dip" />
+
+        <TextView
+            android:id="@+id/from_user_name"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:src="@drawable/header1" />
-    </RelativeLayout>
+            android:layout_height="30dip"
+            android:gravity="center|left"
+            android:textSize="15dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/iv_voice_panel"
