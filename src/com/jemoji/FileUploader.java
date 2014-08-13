@@ -51,10 +51,14 @@ public  class FileUploader {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				String result = sendFile(emoji.getImage(), "jpg");
+				String imageName = emoji.getImage();
+				String type = imageName.substring(imageName.indexOf(".") + 1, imageName.length()); 
+				String result = sendFile(imageName, type);
 				emoji.setImageUrl(result);
 				String result1 = sendFile(emoji.getVoice(), "amr");
 				emoji.setVoiceUrl(result1);
+				
+				System.out.println(String.format(" ================ %s %s", emoji.getImage(), result));
 				
 				String voice = result1;
 				String img = result;

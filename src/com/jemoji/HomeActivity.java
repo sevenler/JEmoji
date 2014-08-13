@@ -98,7 +98,6 @@ public class HomeActivity extends BaseActivity {
 		ValueAnimator voicePlayAnimation;
 		VoiceHandler voicePlayHandler;
 		
-		
 		private Spring mSpring;
 
 		// 大图动画回调
@@ -146,6 +145,8 @@ public class HomeActivity extends BaseActivity {
 							
 							unread_msg_number.setVisibility(View.VISIBLE);
 							unread_msg_number.setText("" + EmojiCenter.instance().getUnreadCount());
+							BaseViewAnimator animator = ((BaseViewAnimator) (Techniques.BounceIn.getAnimator()));
+							animator.setDuration(1000).setInterpolator(new AccelerateInterpolator()).animate(unread_msg_number);
 						}
 					} catch (IOException e) {
 						e.printStackTrace();

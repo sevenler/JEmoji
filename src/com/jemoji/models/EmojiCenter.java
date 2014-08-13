@@ -29,7 +29,11 @@ public class EmojiCenter {
 	}
 	
 	public int getUnreadCount(){
-		return 1;
+		int count = 0;
+		for(List<Emoji> values : emojis.values()){
+			count += values.size();
+		}
+		return count;
 	}
 	
 	public List<Emoji> pokeUnread(String user){
