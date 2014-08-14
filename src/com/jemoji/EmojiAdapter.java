@@ -24,6 +24,7 @@ import com.jemoji.image.FileImageDecoder;
 import com.jemoji.image.ImageDecoder.ImageScaleType;
 import com.jemoji.image.ImageSize;
 import com.jemoji.models.Emoji;
+import com.jemoji.utils.Utility;
 
 public class EmojiAdapter extends PagerAdapter {
 
@@ -68,13 +69,12 @@ public class EmojiAdapter extends PagerAdapter {
 		String filename = (String)emoji.getImage();
 		System.out.println(String.format(" filename:%s ", filename));
 		
-		if(new File(filename).exists()){
+		if(!Utility.Strings.isEmptyString(filename) && new File(filename).exists()){
 			showFile(imageView, filename);
 			System.out.println(String.format(" =======exists========= "));
 		}else{
 			filename = (String)emoji.getImageUrl();
 			String type = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-			
 			System.out.println(String.format(" =======no no no  %s========= ", type));
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
 					+ File.separator + "emojis_download" + File.separator
@@ -95,7 +95,9 @@ public class EmojiAdapter extends PagerAdapter {
 	}
 	
 	private void showFile(ImageView imageView, String filename){
+		
 		if(filename.endsWith(".gif")){
+			System.out.println(String.format("GIF Image %s ", filename));
 			try {
 				GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);
 				little.setOneShot(false);
@@ -104,6 +106,7 @@ public class EmojiAdapter extends PagerAdapter {
 				e.printStackTrace();
 			}
 		}else{
+			System.out.println(String.format("Image %s ", filename));
 			try {
 				FileImageDecoder decoder = new FileImageDecoder(new File(filename));
 				Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);

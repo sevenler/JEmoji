@@ -205,7 +205,7 @@ public class VoiceHandler implements OnTouchListener{
 								if (mOnHandListener != null) mOnHandListener.onRecored(true, (int)recodeTime, recordFile);
 							}
 						}
-					}, 1000 * 2);
+					}, 1000 * 1);
 				}
 				break;
 		}

@@ -6,6 +6,7 @@ import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.UserCenter;
+import com.jemoji.utils.Utility;
 import com.upyun.api.Uploader;
 import com.upyun.api.utils.UpYunException;
 import com.upyun.api.utils.UpYunUtils;
@@ -53,15 +54,22 @@ public  class FileUploader {
 			public void run() {
 				String imageName = emoji.getImage();
 				String type = imageName.substring(imageName.lastIndexOf(".") + 1, imageName.length()); 
-				String result = sendFile(imageName, type);
-				emoji.setImageUrl(result);
-				String result1 = sendFile(emoji.getVoice(), "amr");
-				emoji.setVoiceUrl(result1);
 				
-				String voice = result1;
-				String img = result;
+				String imageUrlName = emoji.getImageUrl();
+				System.out.println(String.format(" imageUrlName:%s %s", imageUrlName, Utility.Strings.isEmptyString(imageUrlName)));
+				if(Utility.Strings.isEmptyString(imageUrlName)){
+					String result = sendFile(imageName, type);
+					emoji.setImageUrl(result);
+					imageUrlName = emoji.getImageUrl();
+				}else{
+					imageUrlName = imageUrlName.substring(imageUrlName.lastIndexOf("/") + 1, imageUrlName.length());
+				}
+				System.out.println(String.format(" imageUrlName:%s ", imageUrlName));
+				String voiceUrl = sendFile(emoji.getVoice(), "amr");
+				emoji.setVoiceUrl(voiceUrl);
+				
 				String me = UserCenter.instance().getMe().getUsername();
-				String content = String.format("{\"message\":\"%s,%s,%s,%s\"}", voice, img, emoji.getBackground(), me);
+				String content = String.format("{\"message\":\"%s,%s,%s,%s\"}", voiceUrl, imageUrlName, emoji.getBackground(), me);
 				GKHttpInterface.pushMessage(toChatUser, content, new GKJsonResponseHandler() {
 					@Override
 					public void onResponse(int code, Object json, Throwable error) {

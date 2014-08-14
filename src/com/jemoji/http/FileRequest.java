@@ -97,7 +97,11 @@ public class FileRequest extends Request<File> {
 		java.io.File file = new java.io.File(path);
 
 		try {
-			if (!file.exists()) file.createNewFile();
+			if (!file.exists()) {
+				java.io.File parent = file.getParentFile();
+				if(!parent.exists()) parent.mkdirs();
+				file.createNewFile();
+			}
 			FileOutputStream fos = new FileOutputStream(file);
 			fos.write(data);
 			fos.close();

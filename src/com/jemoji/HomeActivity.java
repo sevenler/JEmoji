@@ -50,7 +50,7 @@ import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity implements ErrorDelegate{
-	Emoji mEmoji = new Emoji("", "", "");
+	Emoji mEmoji;
 	User toChat;
 
 	WebPageFragment mWebPageFragment;
@@ -222,8 +222,9 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
-					mEmoji.setImage(EmojiSelector.instance().get(arg0).getImage());
-					mEmoji.setBackground(EmojiSelector.instance().getEmojiBackground(arg0));
+					mEmoji = EmojiSelector.instance().get(arg0);
+					
+					System.out.println(String.format(" selected emoji %s ", mEmoji));
 				}
 
 				@Override
@@ -234,8 +235,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				public void onPageScrollStateChanged(int arg0) {
 				}
 			});
-			mEmoji.setImage(EmojiSelector.instance().get(0).getImage());
-			mEmoji.setBackground(EmojiSelector.instance().getEmojiBackground(0));
+			mEmoji = EmojiSelector.instance().get(0);
 			// mViewPager.setScrollable(false);
 
 			// 初始化表情大图View
@@ -414,7 +414,8 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					}
 					break;
 				case R.id.unread_msg_number:
-					EmojiActivity.putValus("user", toChat);
+					String user = MessageCenter.instance().getTopUser();
+					EmojiActivity.putValus("user", UserCenter.instance().get(user));
 					openActivity(EmojiActivity.class, null);
 					break;
 			}

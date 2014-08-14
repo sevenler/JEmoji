@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class MessageCenter {
 	private static MessageCenter intsance;
@@ -48,6 +49,17 @@ public class MessageCenter {
 			return message.remove(emoji);
 		}
 		return false;
+	}
+	
+	public String getTopUser(){
+		Set<String> users = emojis.keySet();
+		for(String user : users){
+			List<Emoji> message = emojis.get(user);
+			if(message != null && message.size() > 0){
+				return user;
+			}
+		}
+		return null;
 	}
 	
 	public List<Emoji> getUnread(String user, boolean delete){

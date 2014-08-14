@@ -24,6 +24,7 @@ import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
+import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 import com.viewpagerindicator.LinePageIndicator;
@@ -115,6 +116,7 @@ public class EmojiActivity extends BaseActivity {
 		}
 
 		private List<Emoji> initEmojiData() {
+			Utility.Assert(from != null);
 			List<Emoji> emojis = MessageCenter.instance().getUnread(from.getUsername(), false);
 			List<Emoji> result = new LinkedList<Emoji>();
 			for(Emoji emoji : emojis){

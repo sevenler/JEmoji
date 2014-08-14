@@ -85,6 +85,7 @@ public class Emoji {
 	}
 	
 	public void send(final String toChatUser){
+		System.out.println(String.format(" send emoji %s ", this));
 		new FileUploader().send(this, toChatUser);
 	}
 	
@@ -92,6 +93,7 @@ public class Emoji {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append(String.format("%s:%s,", "image", image));
+		sb.append(String.format("%s:%s,", "imageurl", imageUrl));
 		sb.append(String.format("%s:%s", "voice", mVoice));
 		sb.append("}");
 		return sb.toString();
