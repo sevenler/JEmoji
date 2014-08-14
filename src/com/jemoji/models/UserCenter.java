@@ -17,13 +17,13 @@ public class UserCenter {
 		
 		users.put("18511557127", new User("18511557127", "林超", R.drawable.header1));
 		users.put("18511557126", new User("18511557126", "宋尉", R.drawable.header2));
-		users.put("18511557128", new User("18511557127", "林超", R.drawable.header1));
-		users.put("18511557129", new User("18511557126", "宋尉", R.drawable.header2));
-		users.put("185115571210", new User("18511557127", "林超", R.drawable.header1));
-		users.put("185115571211", new User("18511557126", "宋尉", R.drawable.header2));
-		users.put("185115571212", new User("18511557127", "林超", R.drawable.header1));
-		users.put("185115571213", new User("18511557126", "宋尉", R.drawable.header2));
-		users.put("185115571214", new User("18511557120", "宋尉", R.drawable.header2));
+//		users.put("18511557128", new User("18511557127", "林超", R.drawable.header1));
+//		users.put("18511557129", new User("18511557126", "宋尉", R.drawable.header2));
+//		users.put("185115571210", new User("18511557127", "林超", R.drawable.header1));
+//		users.put("185115571211", new User("18511557126", "宋尉", R.drawable.header2));
+//		users.put("185115571212", new User("18511557127", "林超", R.drawable.header1));
+//		users.put("185115571213", new User("18511557126", "宋尉", R.drawable.header2));
+//		users.put("185115571214", new User("18511557120", "宋尉", R.drawable.header2));
 	}
 	
 	private HashMap<String, User> users;

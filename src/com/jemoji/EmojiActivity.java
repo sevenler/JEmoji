@@ -74,7 +74,10 @@ public class EmojiActivity extends BaseActivity {
 			EmojiAdapter emojiAdapter = new EmojiAdapter(getActivity());
 			final List<Emoji> list = initEmojiData();
 			emojiAdapter.setData(list);
-			viewPager.setOnPageChangeListener(new OnPageChangeListener() {
+			viewPager.setAdapter(emojiAdapter);
+			LinePageIndicator mIndicator = (LinePageIndicator)rootView.findViewById(R.id.indicator);
+	        mIndicator.setViewPager(viewPager);
+	        mIndicator.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
 					mEmoji = list.get(arg0);
@@ -90,9 +93,6 @@ public class EmojiActivity extends BaseActivity {
 				public void onPageScrollStateChanged(int arg0) {
 				}
 			});
-			viewPager.setAdapter(emojiAdapter);
-			LinePageIndicator mIndicator = (LinePageIndicator)rootView.findViewById(R.id.indicator);
-	        mIndicator.setViewPager(viewPager);
 			
 			ImageView header = (ImageView)rootView.findViewById(R.id.from_user_header);
 			TextView name = (TextView)rootView.findViewById(R.id.from_user_name);

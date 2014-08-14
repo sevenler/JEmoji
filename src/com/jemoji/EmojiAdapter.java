@@ -102,6 +102,7 @@ public class EmojiAdapter extends PagerAdapter {
 				GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);
 				little.setOneShot(false);
 				imageView.setImageDrawable(little);
+				little.setVisible(true, true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
