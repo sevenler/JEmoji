@@ -160,7 +160,7 @@ public class VoiceHandler implements OnTouchListener{
 	};
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean onTouch(final View v, MotionEvent event) {
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				if (mediaPlayer != null && mediaPlayer.isPlaying()) {
@@ -187,20 +187,25 @@ public class VoiceHandler implements OnTouchListener{
 					if (dialog.isShowing()) {
 						dialog.dismiss();
 					}
-					try {
-						mr.stop();
-						voiceValue = 0.0;
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					
+					v.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								mr.stop();
+								voiceValue = 0.0;
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 
-					if (recodeTime < MIX_TIME) {
-						showWarnToast(v.getContext());
-//						record.setText("录音时间太短");
-						RECODE_STATE = RECORD_NO;
-					} else {
-						if (mOnHandListener != null) mOnHandListener.onRecored(true, (int)recodeTime, recordFile);
-					}
+							if (recodeTime < MIX_TIME) {
+								showWarnToast(v.getContext());
+								RECODE_STATE = RECORD_NO;
+							} else {
+								if (mOnHandListener != null) mOnHandListener.onRecored(true, (int)recodeTime, recordFile);
+							}
+						}
+					}, 1000 * 2);
 				}
 				break;
 		}

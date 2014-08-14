@@ -19,9 +19,9 @@ public class EmojiSelector {
 	public EmojiSelector() {
 		emojis.add(new Emoji(getFullName("001.png"), Color.parseColor("#ffffff")));
 		
-		emojis.add(new Emoji("", "http://emoji.b0.upaiyun.com/test/1407907183208.gif", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("", "http://emoji.b0.upaiyun.com/test/1407983737416.gif", Color.parseColor("#ffffff")));
-		emojis.add(new Emoji("", "http://emoji.b0.upaiyun.com/test/1407983767294.png", Color.parseColor("#ffffff")));
+//		emojis.add(new Emoji("", "http://emoji.b0.upaiyun.com/test/1407907183208.gif", Color.parseColor("#ffffff")));
+//		emojis.add(new Emoji("", "http://emoji.b0.upaiyun.com/test/1407983737416.gif", Color.parseColor("#ffffff")));
+//		emojis.add(new Emoji("", "http://emoji.b0.upaiyun.com/test/1407983767294.png", Color.parseColor("#ffffff")));
 		
 		emojis.add(new Emoji(getFullName("1002.gif"), Color.parseColor("#ffffff")));
 		emojis.add(new Emoji(getFullName("1001.gif"), Color.parseColor("#ffffff")));

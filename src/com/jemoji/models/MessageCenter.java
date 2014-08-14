@@ -42,6 +42,14 @@ public class MessageCenter {
 		return getUnread(user, true);
 	}
 	
+	public boolean pokeUnread(String user, Emoji emoji){
+		List<Emoji> message = emojis.get(user);
+		if(message != null){
+			return message.remove(emoji);
+		}
+		return false;
+	}
+	
 	public List<Emoji> getUnread(String user, boolean delete){
 		List<Emoji> message = emojis.get(user);
 		if(delete) {

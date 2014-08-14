@@ -1,6 +1,7 @@
 package com.jemoji;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.animation.ValueAnimator;
@@ -75,6 +76,8 @@ public class EmojiActivity extends BaseActivity {
 				@Override
 				public void onPageSelected(int arg0) {
 					mEmoji = list.get(arg0);
+					MessageCenter.instance().pokeUnread(from.getUsername(), mEmoji);
+					playVoice();
 				}
 
 				@Override
@@ -93,9 +96,11 @@ public class EmojiActivity extends BaseActivity {
 			name.setText(String.format("来自 %s", from.getNickname()));
 			iv_voice_panel = (View)rootView.findViewById(R.id.iv_voice_panel);
 			image = (ImageView)rootView.findViewById(R.id.iv_voice);
-			mEmoji = (Emoji)list.get(0);
 			iv_voice_panel.setOnClickListener(this);
 			rootView.findViewById(R.id.close).setOnClickListener(this);
+			
+			mEmoji = (Emoji)list.get(0);
+			MessageCenter.instance().pokeUnread(from.getUsername(), mEmoji);
 			
 			return rootView;
 		}
@@ -107,8 +112,12 @@ public class EmojiActivity extends BaseActivity {
 		}
 
 		private List<Emoji> initEmojiData() {
-			List<Emoji> emojis = MessageCenter.instance().pokeUnread(from.getUsername());
-			return emojis;
+			List<Emoji> emojis = MessageCenter.instance().getUnread(from.getUsername(), false);
+			List<Emoji> result = new LinkedList<Emoji>();
+			for(Emoji emoji : emojis){
+				result.add(emoji);
+			}
+			return result;
 		}
 
 		private void startVioceAnimation(final ImageView iv_voice, int length) {
@@ -162,7 +171,7 @@ public class EmojiActivity extends BaseActivity {
 				});
 			}
 		}
-		
+
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
