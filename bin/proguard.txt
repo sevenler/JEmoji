@@ -28,14 +28,14 @@
 # view AndroidManifest.xml #generated:68
 -keep class com.jemoji.EmojiActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:44
--keep class com.jemoji.ExampleApplication { <init>(...); }
-
 # view AndroidManifest.xml #generated:62
 -keep class com.jemoji.HomeActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:51
 -keep class com.jemoji.LoginActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:44
+-keep class com.jemoji.MyApplication { <init>(...); }
 
 # view AndroidManifest.xml #generated:137
 -keep class com.jemoji.MyReceiver { <init>(...); }

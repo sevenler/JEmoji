@@ -29,6 +29,12 @@ public class Emoji {
 		this.mVoice = voice;
 		this.mVoiceUrl = voiceUrl;
 	}
+	
+	public Emoji(String image, String imageUrl, int background) {
+		super();
+		this.image = image;
+		this.imageUrl = imageUrl;
+	}
 
 	public void setImage(String image) {
 		this.image = image;

@@ -52,7 +52,7 @@ public  class FileUploader {
 			@Override
 			public void run() {
 				String imageName = emoji.getImage();
-				String type = imageName.substring(imageName.indexOf(".") + 1, imageName.length()); 
+				String type = imageName.substring(imageName.lastIndexOf(".") + 1, imageName.length()); 
 				String result = sendFile(imageName, type);
 				emoji.setImageUrl(result);
 				String result1 = sendFile(emoji.getVoice(), "amr");

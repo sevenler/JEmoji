@@ -1,10 +1,7 @@
 package com.jemoji;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.animation.ValueAnimator;
 import android.os.Bundle;
@@ -72,13 +69,12 @@ public class EmojiActivity extends BaseActivity {
 			View rootView = inflater.inflate(R.layout.fragment_emoji, container, false);
 			ControlScrollViewPager viewPager = (ControlScrollViewPager)rootView.findViewById(R.id.face_pager);
 			EmojiAdapter emojiAdapter = new EmojiAdapter(getActivity());
-			final List<Map<?, ?>> list = initEmojiData(new ArrayList<Map<?, ?>>());
+			final List<Emoji> list = initEmojiData();
 			emojiAdapter.setData(list);
 			viewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
-					Map<?, ?> map = list.get(arg0);
-					mEmoji = (Emoji)map.get("emoji_object");
+					mEmoji = list.get(arg0);
 				}
 
 				@Override
@@ -97,7 +93,7 @@ public class EmojiActivity extends BaseActivity {
 			name.setText(String.format("来自 %s", from.getNickname()));
 			iv_voice_panel = (View)rootView.findViewById(R.id.iv_voice_panel);
 			image = (ImageView)rootView.findViewById(R.id.iv_voice);
-			mEmoji = (Emoji)list.get(0).get("emoji_object");
+			mEmoji = (Emoji)list.get(0);
 			iv_voice_panel.setOnClickListener(this);
 			rootView.findViewById(R.id.close).setOnClickListener(this);
 			
@@ -110,17 +106,9 @@ public class EmojiActivity extends BaseActivity {
 			playVoice();//自动播放声音
 		}
 
-		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {
+		private List<Emoji> initEmojiData() {
 			List<Emoji> emojis = MessageCenter.instance().pokeUnread(from.getUsername());
-			System.out.println(String.format(" size:%s ", emojis.size()));
-			for(Emoji emoji : emojis){
-				Map<Object, Object> map = new HashMap<Object, Object>();
-				map.put("emoji", emoji.getImage());
-				map.put("background", emoji.getBackground());
-				map.put("emoji_object", emoji);
-				list.add(map);
-			}
-			return list;
+			return emojis;
 		}
 
 		private void startVioceAnimation(final ImageView iv_voice, int length) {

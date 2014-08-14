@@ -3,11 +3,9 @@ package com.jemoji;
 
 import java.io.File;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -41,6 +39,7 @@ import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
 import com.jemoji.models.Emoji;
+import com.jemoji.models.EmojiSelector;
 import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
@@ -137,7 +136,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			final String username = messages[3];
 
 			startRecevingMessageAnimation(unread_msg_number);
-			String type = name.substring(name.indexOf(".") + 1, name.length());
+			String type = name.substring(name.lastIndexOf(".") + 1, name.length());
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
 					+ File.separator + "emojis_download" + File.separator
 					+ System.currentTimeMillis() + "." + type;
@@ -218,12 +217,12 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			ControlScrollViewPager mViewPager;
 			mViewPager = (ControlScrollViewPager)rootview.findViewById(R.id.face_pager);
 			EmojiAdapter emojiAdapter = new EmojiAdapter(getActivity());
-			emojiAdapter.setData(initEmojiData(new ArrayList<Map<?, ?>>()));
+			emojiAdapter.setData(initEmojiData());
 			mViewPager.setAdapter(emojiAdapter);
 			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
-					mEmoji.setImage(EmojiSelector.instance().getEmojiName(arg0));
+					mEmoji.setImage(EmojiSelector.instance().get(arg0).getImage());
 					mEmoji.setBackground(EmojiSelector.instance().getEmojiBackground(arg0));
 				}
 
@@ -235,7 +234,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				public void onPageScrollStateChanged(int arg0) {
 				}
 			});
-			mEmoji.setImage(EmojiSelector.instance().getEmojiName(0));
+			mEmoji.setImage(EmojiSelector.instance().get(0).getImage());
 			mEmoji.setBackground(EmojiSelector.instance().getEmojiBackground(0));
 			// mViewPager.setScrollable(false);
 
@@ -390,13 +389,11 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			}
 		}
 
-		private List<Map<?, ?>> initEmojiData(List<Map<?, ?>> list) {
+		private List<Emoji> initEmojiData() {
+			List<Emoji> list = new LinkedList<Emoji>(); 
 			EmojiSelector selector = EmojiSelector.instance();
 			for (int i = 0; i < selector.size(); i++) {
-				Map<Object, Object> map = new HashMap<Object, Object>();
-				map.put("emoji", selector.getEmojiName(i));
-				map.put("background", selector.getEmojiBackground(i));
-				list.add(map);
+				list.add(selector.get(i));
 			}
 			return list;
 		}

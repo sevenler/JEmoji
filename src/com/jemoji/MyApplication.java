@@ -9,12 +9,7 @@ import com.jemoji.image.ImageCacheManager;
 import com.jemoji.image.RequestManager;
 import com.jemoji.image.ImageCacheManager.CacheType;
 
-/**
- * For developer startup JPush SDK
- * 
- * 一般建议在自定义 Application 类里初始化。也可以在主 Activity 里。
- */
-public class ExampleApplication extends Application {
+public class MyApplication extends Application {
     private static final String TAG = "JPush";
 
     @Override

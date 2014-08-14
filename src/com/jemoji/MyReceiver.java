@@ -44,12 +44,6 @@ public class MyReceiver extends BroadcastReceiver {
             
             JPushInterface.reportNotificationOpened(context, bundle.getString(JPushInterface.EXTRA_MSG_ID));
             
-        	//打开自定义的Activity
-        	Intent i = new Intent(context, TestActivity.class);
-        	i.putExtras(bundle);
-        	i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        	context.startActivity(i);
-        	
         } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
             Log.d(TAG, "[MyReceiver] 用户收到到RICH PUSH CALLBACK: " + bundle.getString(JPushInterface.EXTRA_EXTRA));
             //在这里根据 JPushInterface.EXTRA_EXTRA 的内容处理代码，比如打开新的Activity， 打开一个网页等..
@@ -82,13 +76,13 @@ public class MyReceiver extends BroadcastReceiver {
 	private void processCustomMessage(Context context, Bundle bundle) {
 		String message = bundle.getString(JPushInterface.EXTRA_MESSAGE);
 		String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
-		Intent msgIntent = new Intent(MainActivity.MESSAGE_RECEIVED_ACTION);
-		msgIntent.putExtra(MainActivity.KEY_MESSAGE, message);
+		Intent msgIntent = new Intent(BaseActivity.MESSAGE_RECEIVED_ACTION);
+		msgIntent.putExtra(BaseActivity.KEY_MESSAGE, message);
 		if (!ExampleUtil.isEmpty(extras)) {
 			try {
 				JSONObject extraJson = new JSONObject(extras);
 				if (null != extraJson && extraJson.length() > 0) {
-					msgIntent.putExtra(MainActivity.KEY_EXTRAS, extras);
+					msgIntent.putExtra(BaseActivity.KEY_EXTRAS, extras);
 				}
 			} catch (JSONException e) {
 

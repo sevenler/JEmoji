@@ -42,7 +42,7 @@
         android:targetPackage="com.jemoji" />
 
     <application
-        android:name="com.jemoji.ExampleApplication"
+        android:name="com.jemoji.MyApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/appcation_name"
         android:theme="@style/AppTheme" >
