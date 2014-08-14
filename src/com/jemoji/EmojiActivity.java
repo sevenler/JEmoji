@@ -26,6 +26,7 @@ import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
+import com.viewpagerindicator.LinePageIndicator;
 
 public class EmojiActivity extends BaseActivity {
 	User from;//消息来源用户
@@ -89,6 +90,8 @@ public class EmojiActivity extends BaseActivity {
 				}
 			});
 			viewPager.setAdapter(emojiAdapter);
+			LinePageIndicator mIndicator = (LinePageIndicator)rootView.findViewById(R.id.indicator);
+	        mIndicator.setViewPager(viewPager);
 			
 			ImageView header = (ImageView)rootView.findViewById(R.id.from_user_header);
 			TextView name = (TextView)rootView.findViewById(R.id.from_user_name);

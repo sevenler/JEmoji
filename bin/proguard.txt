@@ -16,12 +16,12 @@
 # view AndroidManifest.xml #generated:81
 -keep class cn.jpush.android.ui.PushActivity { <init>(...); }
 
-# view res/layout/fragment_emoji.xml #generated:27
+# view res/layout/fragment_emoji.xml #generated:38
 # view res/layout/fragment_home.xml #generated:64
 # view res/layout/include_user_header.xml #generated:12
 -keep class com.jemoji.CircleImageView { <init>(...); }
 
-# view res/layout/fragment_emoji.xml #generated:8
+# view res/layout/fragment_emoji.xml #generated:9
 # view res/layout/fragment_home.xml #generated:21
 -keep class com.jemoji.ControlScrollViewPager { <init>(...); }
 
@@ -42,4 +42,7 @@
 
 # view AndroidManifest.xml #generated:73
 -keep class com.jemoji.SettingsActivity { <init>(...); }
+
+# view res/layout/fragment_emoji.xml #generated:14
+-keep class com.viewpagerindicator.LinePageIndicator { <init>(...); }
 
