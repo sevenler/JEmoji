@@ -266,12 +266,16 @@ public class EmojiSelector {
 				"163994cad1c8a786e14d22f46509c93d71cf508e.jpg.png"};
 		
 		for (String url : urls){
-			emojis.add(new Emoji("", getFullUrl(url), Color.parseColor("#ffffff")));
+			emojis.add(new Emoji(getFullPath(url), getFullUrl(url), Color.parseColor("#ffffff")));
 		}
 	}
 
 	private String getFullUrl(String name) {
 		return String.format("%s/%s", "http://emoji.b0.upaiyun.com/test", name);
+	}
+	
+	private String getFullPath(String name) {
+		return String.format("%s/%s", "/sdcard/Emoji_Image", name);
 	}
 
 	public int getEmojiBackground(int index) {
