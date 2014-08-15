@@ -2,40 +2,61 @@
 package com.jemoji.models;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import android.content.Context;
 import android.os.Environment;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
+import com.jemoji.utils.PreferManager;
+import com.jemoji.utils.Utility;
 
 public class MessageCenter {
 	private static MessageCenter intsance;
 
-	public static MessageCenter instance() {
-		if (intsance == null) intsance = new MessageCenter();
+	public static MessageCenter instance(Context context) {
+		if (intsance == null) intsance = new MessageCenter(context);
 		return intsance;
 	}
 
-	private HashMap<String, List<Emoji>> emojis;
+	private LinkedTreeMap<String, List<Emoji>> emojis;
 
-	private MessageCenter() {
-		emojis = new LinkedHashMap<String, List<Emoji>>();
+	private MessageCenter(Context context) {
+		String saved = PreferManager.instance().getStringFromPrefs(context, KEY_SAVED_MESSAGE, "");
+		GsonBuilder builder = new GsonBuilder();
+		Gson gson = builder.create();
+		if(Utility.Strings.isEmptyString(saved)){
+			emojis = new LinkedTreeMap<String, List<Emoji>>();
+		}else{
+			System.out.println(String.format(" %s ", saved));
+			emojis = gson.fromJson(saved, new TypeToken<LinkedTreeMap<String, List<Emoji>>>() {
+			}.getType());
+		}
+		Utility.Assert(emojis != null);
 	}
 
+	public static final String KEY_SAVED_MESSAGE = "KEY_SAVED_MESSAGE";
 	// 添加未读消息
-	private void pushUnread(String user, Emoji emoji) {
+	private void pushUnread(Context context , String user, Emoji emoji) {
 		System.out.println(String.format(" push message to %s ", user));
 		List<Emoji> message = emojis.get(user);
 		if (message == null) message = new LinkedList<Emoji>();
 		message.add(emoji);
-
 		emojis.put(user, message);
+		
+		GsonBuilder builder = new GsonBuilder();
+		Gson gson = builder.create();
+		String result = gson.toJson(emojis, new TypeToken<LinkedTreeMap<String, List<Emoji>>>() {
+		}.getType());
+		PreferManager.instance().setStringToPrefs(context, KEY_SAVED_MESSAGE, result);
 	}
 
 	// 获取未读消息数量
@@ -61,24 +82,27 @@ public class MessageCenter {
 	}
 
 	// 将消息标记为已读
-	public boolean pokeUnread(String user, Emoji emoji) {
+	public boolean pokeUnread(Context context, String user, Emoji emoji) {
 		List<Emoji> message = emojis.get(user);
 		if (message != null) {
-			return message.remove(emoji);
+			boolean remoed =  message.remove(emoji);
+			GsonBuilder builder = new GsonBuilder();
+			Gson gson = builder.create();
+			String result = gson.toJson(emojis, new TypeToken<LinkedTreeMap<String, List<Emoji>>>() {
+			}.getType());
+			PreferManager.instance().setStringToPrefs(context, KEY_SAVED_MESSAGE, result);
+			return remoed;
 		}
 		return false;
 	}
 
 	// 获取用户的未读表情
-	public List<Emoji> getUnread(String user, boolean delete) {
+	public List<Emoji> getUnread(String user) {
 		List<Emoji> message = emojis.get(user);
-		if (delete) {
-			emojis.remove(user);
-		}
 		return message;
 	}
 
-	public void onReceiveMessage(String cotent) {
+	public void onReceiveMessage(final Context context, String cotent) {
 		//处理接收到的消息
 		String[] messages = cotent.split(",");
 		String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
@@ -97,7 +121,7 @@ public class MessageCenter {
 			@Override
 			public void onResponse(int code, Object file, Throwable error) {
 				emoji.setImage((String)file);
-				pushUnread(username, emoji);
+				pushUnread(context, username, emoji);
 				
 				onDownload(emoji, (String)file);
 			}

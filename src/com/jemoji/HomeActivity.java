@@ -107,14 +107,10 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 		private Spring mSpring;
 
-		public WebPageFragment(){
-			MessageCenter.instance().regesterReceiveMessageDelegate(this);
-		}
-		
 		@Override
 		public void onDestroy() {
 			super.onDestroy();
-			MessageCenter.instance().unregesterReceiveMessageDelegate(this);
+			MessageCenter.instance(getActivity()).unregesterReceiveMessageDelegate(this);
 		}
 
 		// 大图动画回调
@@ -137,7 +133,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		public void onDownloadMessage(Emoji emoji, String file) {
 			unread_msg_number.setVisibility(View.VISIBLE);
 			((TextView)unread_msg_number.findViewById(R.id.textview)).setText(""
-					+ MessageCenter.instance().getUnreadCount());
+					+ MessageCenter.instance(getActivity()).getUnreadCount());
 			stopRecevingMessageAnimation(unread_msg_number);
 			
 			BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.BounceIn.getAnimator()));
@@ -373,6 +369,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 			initView(rootView);
+			MessageCenter.instance(getActivity()).regesterReceiveMessageDelegate(this);
 
 			return rootView;
 		}
@@ -381,11 +378,13 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		public void onStart() {
 			super.onStart();
 
-			int count = MessageCenter.instance().getUnreadCount();
-			((TextView)unread_msg_number.findViewById(R.id.textview)).setText("" + count);
+			int count = MessageCenter.instance(getActivity()).getUnreadCount();
 			if (count <= 0) {
 				unread_msg_number.setVisibility(View.GONE);
 				((TextView)unread_msg_number.findViewById(R.id.textview)).setText("");
+			}else{
+				((ImageView)unread_msg_number.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle);
+				((TextView)unread_msg_number.findViewById(R.id.textview)).setText("" + count);
 			}
 		}
 
@@ -414,7 +413,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					}
 					break;
 				case R.id.unread_msg_number:
-					String user = MessageCenter.instance().getTopUser();
+					String user = MessageCenter.instance(getActivity()).getTopUser();
 					EmojiActivity.putValus("user", UserCenter.instance().get(user));
 					openActivity(EmojiActivity.class, null);
 					break;

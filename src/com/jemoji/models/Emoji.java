@@ -1,14 +1,11 @@
 
 package com.jemoji.models;
 
-import android.graphics.Bitmap;
-
 import com.jemoji.FileUploader;
 
 public class Emoji {
 	String image;
 	String imageUrl;
-	Bitmap imageBitmap;
 	String mVoice;
 	String mVoiceUrl;
 	int background = -1;
@@ -36,32 +33,27 @@ public class Emoji {
 		this.imageUrl = imageUrl;
 	}
 
-	public void setImage(String image) {
+	public Emoji setImage(String image) {
 		this.image = image;
+		return this;
 	}
 
 	public String getImage() {
 		return image;
 	}
 	
-	public void setBitmap(Bitmap image) {
-		this.imageBitmap = image;
-	}
-	
 	public int getBackground() {
 		return background;
 	}
 	
-	public void setBackground(int background) {
+	public Emoji setBackground(int background) {
 		this.background = background;
-	}
-
-	public Bitmap getImageBitmap() {
-		return imageBitmap;
+		return this;
 	}
 	
-	public void setImageUrl(String image) {
+	public Emoji setImageUrl(String image) {
 		this.imageUrl = image;
+		return this;
 	}
 
 	public String getImageUrl() {
@@ -72,16 +64,18 @@ public class Emoji {
 		return mVoice;
 	}
 
-	public void setVoice(String voice) {
+	public Emoji setVoice(String voice) {
 		this.mVoice = voice;
+		return this;
 	}
 	
 	public String getVoiceUrl() {
 		return mVoiceUrl;
 	}
 
-	public void setVoiceUrl(String voice) {
+	public Emoji setVoiceUrl(String voice) {
 		this.mVoiceUrl = voice;
+		return this;
 	}
 	
 	public void send(final String toChatUser){
@@ -94,7 +88,8 @@ public class Emoji {
 		sb.append("{");
 		sb.append(String.format("%s:%s,", "image", image));
 		sb.append(String.format("%s:%s,", "imageurl", imageUrl));
-		sb.append(String.format("%s:%s", "voice", mVoice));
+		sb.append(String.format("%s:%s,", "voice", mVoice));
+		sb.append(String.format("%s:%s", "voiceUrl", mVoiceUrl));
 		sb.append("}");
 		return sb.toString();
 	}

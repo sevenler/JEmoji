@@ -75,6 +75,6 @@ public class MyReceiver extends BroadcastReceiver {
 	private void processCustomMessage(Context context, Bundle bundle) {
 		String message = bundle.getString(JPushInterface.EXTRA_MESSAGE);
 		String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
-		MessageCenter.instance().onReceiveMessage(message);
+		MessageCenter.instance(context).onReceiveMessage(context, message);
 	}
 }

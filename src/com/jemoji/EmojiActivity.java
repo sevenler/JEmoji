@@ -81,7 +81,7 @@ public class EmojiActivity extends BaseActivity {
 				@Override
 				public void onPageSelected(int arg0) {
 					mEmoji = list.get(arg0);
-					MessageCenter.instance().pokeUnread(from.getUsername(), mEmoji);
+					MessageCenter.instance(getActivity()).pokeUnread(getActivity(), from.getUsername(), mEmoji);
 					playVoice();
 				}
 
@@ -104,7 +104,7 @@ public class EmojiActivity extends BaseActivity {
 			rootView.findViewById(R.id.close).setOnClickListener(this);
 			
 			mEmoji = (Emoji)list.get(0);
-			MessageCenter.instance().pokeUnread(from.getUsername(), mEmoji);
+			MessageCenter.instance(getActivity()).pokeUnread(getActivity(), from.getUsername(), mEmoji);
 			
 			return rootView;
 		}
@@ -117,7 +117,7 @@ public class EmojiActivity extends BaseActivity {
 
 		private List<Emoji> initEmojiData() {
 			Utility.Assert(from != null);
-			List<Emoji> emojis = MessageCenter.instance().getUnread(from.getUsername(), false);
+			List<Emoji> emojis = MessageCenter.instance(getActivity()).getUnread(from.getUsername());
 			List<Emoji> result = new LinkedList<Emoji>();
 			for(Emoji emoji : emojis){
 				result.add(emoji);
