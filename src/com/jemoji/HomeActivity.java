@@ -12,12 +12,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
@@ -28,11 +26,6 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.BaseViewAnimator;
 import com.daimajia.androidanimations.library.Techniques;
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
-import com.facebook.rebound.SpringUtil;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.EmojiSelector;
 import com.jemoji.models.MessageCenter;
@@ -46,8 +39,6 @@ import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity implements ErrorDelegate{
-	WebPageFragment mWebPageFragment;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,7 +46,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		mWebPageFragment = new WebPageFragment();
+		WebPageFragment mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
 
@@ -82,27 +73,16 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		ErrorCenter.instance().unregesterErrorDelegate(this);
 	}
 
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (mWebPageFragment.interaptBack()) return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-
 	class WebPageFragment extends Fragment implements OnClickListener, OnReceiveMessageDelegate {
-		private ImageView emojiImage;// 表情大图
 		private CircleImageView to_chat_user_header;// 对话的好友头像
 		private TextView notice_message;// 提示文字
 		private View unread_msg_number;// 未读消息数量
 		private Button buttonPressToSpeak;//发送语音消息按钮
-
+		private ViewGroup previewSelectedUserHeader;//上次选中的头像
+		
 		ValueAnimator voicePlayAnimation;
 		ValueAnimator recevingMessageAnimation;
 		VoiceHandler voicePlayHandler;
-
-		private Spring mSpring;
 		
 		Emoji mEmoji;
 		User toChat;
@@ -111,17 +91,6 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		public void onDestroy() {
 			super.onDestroy();
 			MessageCenter.instance(getActivity()).unregesterReceiveMessageDelegate(this);
-		}
-
-		// 大图动画回调
-		private void render() {
-			double value = mSpring.getCurrentValue();
-
-			float selectedPhotoScale = (float)SpringUtil
-					.mapValueFromRangeToRange(value, 0, 1, 0, 1);
-			selectedPhotoScale = Math.max(selectedPhotoScale, 0);
-			emojiImage.setScaleX(selectedPhotoScale);
-			emojiImage.setScaleY(selectedPhotoScale);
 		}
 
 		@Override
@@ -141,25 +110,6 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					.animate(unread_msg_number);
 		}
 		
-		// 拦截back键
-		public boolean interaptBack() {
-			if (mSpring.getEndValue() == 1) {
-				mSpring.setEndValue(0);
-				emojiImage.setOnClickListener(null);
-				emojiImage.setClickable(false);
-				return true;
-			} else return false;
-		}
-
-		// 跳出大图动画
-		private void showBigImage() {
-			if (mSpring.getEndValue() == 0) {
-				mSpring.setEndValue(1);
-			}
-		}
-		
-		private ViewGroup previewSelectedUserHeader;
-
 		// 初始化联系人头像
 		private void initContactHeaders(View rootview) {
 			Context context = rootview.getContext();
@@ -229,26 +179,6 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			});
 			mEmoji = EmojiSelector.instance().get(0);
 			// mViewPager.setScrollable(false);
-
-			// 初始化表情大图View
-			emojiImage = (ImageView)rootview.findViewById(R.id.image);
-			final View panel_main = rootview.findViewById(R.id.panel_main);
-			mSpring = SpringSystem.create().createSpring()
-					.setSpringConfig(SpringConfig.fromOrigamiTensionAndFriction(200, 4.3))
-					.addListener(new SimpleSpringListener() {
-						@Override
-						public void onSpringUpdate(Spring spring) {
-							render();
-						}
-					});
-			panel_main.getViewTreeObserver().addOnGlobalLayoutListener(
-					new ViewTreeObserver.OnGlobalLayoutListener() {
-						@Override
-						public void onGlobalLayout() {
-							render();
-							panel_main.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-						}
-					});
 
 			// 初始化录音按钮
 			buttonPressToSpeak = (Button)rootview.findViewById(R.id.btn_press_to_speak);
