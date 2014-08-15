@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -106,7 +107,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		private CircleImageView to_chat_user_header;// 对话的好友头像
 		private TextView notice_message;// 提示文字
 		private View unread_msg_number;// 未读消息数量
-		private View buttonPressToSpeak;//发送语音消息按钮
+		private Button buttonPressToSpeak;//发送语音消息按钮
 
 		ValueAnimator voicePlayAnimation;
 		ValueAnimator recevingMessageAnimation;
@@ -272,7 +273,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					});
 
 			// 初始化录音按钮
-			buttonPressToSpeak = rootview.findViewById(R.id.btn_press_to_speak);
+			buttonPressToSpeak = (Button)rootview.findViewById(R.id.btn_press_to_speak);
 			voicePlayHandler = new VoiceHandler();
 			voicePlayHandler.setOnHandListener(new OnHandListener() {
 				@Override
@@ -304,6 +305,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			notice_message.setText(String.format("发送给 %s", toUser.getNickname()));
 			toChat = toUser;
 			buttonPressToSpeak.setEnabled(true);
+			buttonPressToSpeak.setText("长按发送语音");
 		}
 
 		// 发送消息

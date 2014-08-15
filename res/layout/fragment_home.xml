@@ -154,7 +154,7 @@
                     android:enabled="false"
                     android:layout_weight="1"
                     android:background="@drawable/rb__button_darken"
-                    android:text="长按发送语音"
+                    android:text="请选用户发送语音"
                     android:textColor="#717171" />
             </LinearLayout>
         </LinearLayout>
