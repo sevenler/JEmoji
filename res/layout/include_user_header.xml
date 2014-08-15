@@ -7,13 +7,14 @@
 
     <RelativeLayout
         android:layout_width="60dip"
-        android:layout_height="60dip" >
+        android:layout_height="60dip"
+        android:background="@drawable/gray_circle"
+        android:padding="3dp" >
 
         <com.jemoji.CircleImageView
             android:id="@+id/header"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/gray_circle" />
+            android:layout_height="fill_parent" />
 
         <TextView
             android:id="@+id/nickname"

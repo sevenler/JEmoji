@@ -106,6 +106,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		private CircleImageView to_chat_user_header;// 对话的好友头像
 		private TextView notice_message;// 提示文字
 		private View unread_msg_number;// 未读消息数量
+		private View buttonPressToSpeak;//发送语音消息按钮
 
 		ValueAnimator voicePlayAnimation;
 		ValueAnimator recevingMessageAnimation;
@@ -177,6 +178,8 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				mSpring.setEndValue(1);
 			}
 		}
+		
+		private ViewGroup previewSelectedUserHeader;
 
 		// 初始化联系人头像
 		private void initContactHeaders(View rootview) {
@@ -188,6 +191,11 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				public void onClick(View v) {
 					User user = (User)v.getTag(R.id.tag_key_header_user);
 					changeChatUser(user);
+					
+					if(previewSelectedUserHeader != null)previewSelectedUserHeader.getChildAt(0).setBackgroundResource(R.drawable.gray_circle);
+					ViewGroup vg = (ViewGroup)v;
+					vg.getChildAt(0).setBackgroundResource(R.drawable.gray_circle_selected);
+					previewSelectedUserHeader = vg;
 				}
 			};
 			User[] users = UserCenter.instance().getAll().toArray(new User[UserCenter.instance().getAll().size()]);
@@ -264,7 +272,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					});
 
 			// 初始化录音按钮
-			View buttonPressToSpeak = rootview.findViewById(R.id.btn_press_to_speak);
+			buttonPressToSpeak = rootview.findViewById(R.id.btn_press_to_speak);
 			voicePlayHandler = new VoiceHandler();
 			voicePlayHandler.setOnHandListener(new OnHandListener() {
 				@Override
@@ -295,6 +303,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			to_chat_user_header.setImageResource(toUser.getHeader());
 			notice_message.setText(String.format("发送给 %s", toUser.getNickname()));
 			toChat = toUser;
+			buttonPressToSpeak.setEnabled(true);
 		}
 
 		// 发送消息
