@@ -1,7 +1,6 @@
 
 package com.jemoji;
 
-import java.io.File;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.List;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -35,12 +33,10 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
-import com.jemoji.http.GKHttpInterface;
-import com.jemoji.http.GKJsonResponseHandler;
-import com.jemoji.http.URLs;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.EmojiSelector;
 import com.jemoji.models.MessageCenter;
+import com.jemoji.models.MessageCenter.OnReceiveMessageDelegate;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
 import com.jemoji.utils.ErrorCenter;
@@ -98,11 +94,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		return super.onKeyDown(keyCode, event);
 	}
 
-	public void onReceiveMessage(String values) {
-		mWebPageFragment.onReceiveMessage(values);
-	}
-
-	class WebPageFragment extends Fragment implements OnClickListener {
+	class WebPageFragment extends Fragment implements OnClickListener, OnReceiveMessageDelegate {
 		private ImageView emojiImage;// 表情大图
 		private CircleImageView to_chat_user_header;// 对话的好友头像
 		private TextView notice_message;// 提示文字
@@ -115,6 +107,16 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 		private Spring mSpring;
 
+		public WebPageFragment(){
+			MessageCenter.instance().regesterReceiveMessageDelegate(this);
+		}
+		
+		@Override
+		public void onDestroy() {
+			super.onDestroy();
+			MessageCenter.instance().unregesterReceiveMessageDelegate(this);
+		}
+
 		// 大图动画回调
 		private void render() {
 			double value = mSpring.getCurrentValue();
@@ -126,43 +128,23 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			emojiImage.setScaleY(selectedPhotoScale);
 		}
 
-		// 接收消息回调
-		public void onReceiveMessage(String values) {
-			String[] messages = values.split(",");
-			String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
-			String name = messages[1];
-			final Emoji emoji = new Emoji("", "", voiceUrl);
-			emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", name));
-			emoji.setBackground(Integer.parseInt(messages[2]));
-			final String username = messages[3];
-
+		@Override
+		public void onReceiveMessage(Emoji emoji) {
 			startRecevingMessageAnimation(unread_msg_number);
-			String type = name.substring(name.lastIndexOf(".") + 1, name.length());
-			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
-					+ File.separator + "emojis_download" + File.separator
-					+ System.currentTimeMillis() + "." + type;
-			System.out.println(String.format(" onReceiveMessage %s ", values));
-
-			GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
-				@Override
-				public void onResponse(int code, Object file, Throwable error) {
-					System.out.println(String.format(" onResponse %s ", file));
-					emoji.setImage((String)file);
-					MessageCenter.instance().pushUnread(username, emoji);
-
-					stopRecevingMessageAnimation(unread_msg_number);
-					unread_msg_number.setVisibility(View.VISIBLE);
-
-					((TextView)unread_msg_number.findViewById(R.id.textview)).setText(""
-							+ MessageCenter.instance().getUnreadCount());
-					BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.BounceIn
-							.getAnimator()));
-					animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
-							.animate(unread_msg_number);
-				}
-			});
 		}
 
+		@Override
+		public void onDownloadMessage(Emoji emoji, String file) {
+			unread_msg_number.setVisibility(View.VISIBLE);
+			((TextView)unread_msg_number.findViewById(R.id.textview)).setText(""
+					+ MessageCenter.instance().getUnreadCount());
+			stopRecevingMessageAnimation(unread_msg_number);
+			
+			BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.BounceIn.getAnimator()));
+			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
+					.animate(unread_msg_number);
+		}
+		
 		// 拦截back键
 		public boolean interaptBack() {
 			if (mSpring.getEndValue() == 1) {
@@ -354,6 +336,8 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		}
 
 		private void startRecevingMessageAnimation(final View view) {
+			if(recevingMessageAnimation != null && recevingMessageAnimation.isRunning()) return;
+			
 			recevingMessageAnimation = ValueAnimator.ofInt(1, 100 * 10000);
 			recevingMessageAnimation.setDuration(100 * 10000);
 			recevingMessageAnimation.setInterpolator(new AccelerateDecelerateInterpolator());

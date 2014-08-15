@@ -270,10 +270,6 @@ public class EmojiSelector {
 		}
 	}
 
-	private String getFullName(String name) {
-		return String.format("%s/%s", "/sdcard/emojis", name);
-	}
-	
 	private String getFullUrl(String name) {
 		return String.format("%s/%s", "http://emoji.b0.upaiyun.com/test", name);
 	}
