@@ -3,7 +3,6 @@ package com.jemoji;
 
 import java.io.File;
 import java.net.UnknownHostException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -191,20 +190,26 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					changeChatUser(user);
 				}
 			};
-			Collection<User> users = UserCenter.instance().getAll();
-			int i = 0;
-			for (User user : users) {
-				int res = i++ / 4;
+			User[] users = UserCenter.instance().getAll().toArray(new User[UserCenter.instance().getAll().size()]);
+			for(int i  = 0 ; i <12 ; i++){
+				int res = i / 4;
 				LinearLayout layout1 = (LinearLayout)rootview.findViewById(R.id.user_header_panel_1
 						+ res);
 				View header = LayoutInflater.inflate(R.layout.include_user_header, layout1, false);
 				ImageView image = (ImageView)header.findViewById(R.id.header);
 				TextView nickname = (TextView)header.findViewById(R.id.nickname);
-				nickname.setText(user.getNickname());
-				image.setImageResource(user.getHeader());
-				header.setTag(R.id.tag_key_header_user, user);
-				header.setOnClickListener(listener);
 				layout1.addView(header);
+				
+				if (i < users.length) {
+					User user = users[i];
+					nickname.setVisibility(View.VISIBLE);
+					nickname.setText(user.getNickname());
+					image.setImageResource(user.getHeader());
+					header.setTag(R.id.tag_key_header_user, user);
+					header.setOnClickListener(listener);
+				} else {
+					nickname.setVisibility(View.INVISIBLE);
+				}
 			}
 		}
 
