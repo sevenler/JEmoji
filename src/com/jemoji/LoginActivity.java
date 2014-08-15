@@ -42,6 +42,7 @@ public class LoginActivity extends BaseActivity {
 		User user = UserCenter.instance().get(name);
 		if (user != null) {
 			UserCenter.instance().setMe(user);
+			System.out.println(String.format(" user:%s ", user.getNickname()));
 			openActivity(HomeActivity.class, null);
 		}
 	}

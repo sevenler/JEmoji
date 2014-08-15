@@ -46,9 +46,6 @@ import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity implements ErrorDelegate{
-	Emoji mEmoji;
-	User toChat;
-
 	WebPageFragment mWebPageFragment;
 
 	@Override
@@ -106,6 +103,9 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		VoiceHandler voicePlayHandler;
 
 		private Spring mSpring;
+		
+		Emoji mEmoji;
+		User toChat;
 
 		@Override
 		public void onDestroy() {
