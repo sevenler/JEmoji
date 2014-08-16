@@ -50,7 +50,9 @@ public class EmojiAdapter extends PagerAdapter {
 	
 	@Override
 	public int getCount() {
-		return list.size() / mItemEveryPage + 1;
+		int more = list.size() % mItemEveryPage;
+		more = (more > 0 ? 1 : 0 );
+		return list.size() / mItemEveryPage + more;
 	}
 
 	@Override
@@ -82,8 +84,8 @@ public class EmojiAdapter extends PagerAdapter {
 			
 			int total = list.size();
 			for (int i = 0; i < mItemEveryPage; i++) {
-				if (arg1 + i < total) {
-					Emoji emoji = list.get(arg1 + i);
+				if (arg1 * mItemEveryPage  + i < total) {
+					Emoji emoji = list.get(arg1 * mItemEveryPage  + i);
 					final ImageView imageView = (ImageView)rootview.findViewById(R.id.imageView0 + i);
 					int background = (Integer)emoji.getBackground();
 					imageView.setTag(emoji);

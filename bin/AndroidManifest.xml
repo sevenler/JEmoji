@@ -62,7 +62,6 @@
         <activity
             android:name="com.jemoji.HomeActivity"
             android:label="@string/appcation_name"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
         <activity

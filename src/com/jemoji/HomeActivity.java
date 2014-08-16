@@ -2,12 +2,15 @@
 package com.jemoji;
 
 import java.net.UnknownHostException;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -39,6 +42,7 @@ import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
 
 public class HomeActivity extends BaseActivity implements ErrorDelegate{
+	WebPageFragment mWebPageFragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,7 +50,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		WebPageFragment mWebPageFragment = new WebPageFragment();
+		mWebPageFragment = new WebPageFragment();
 		fragmentTransaction.replace(R.id.fragment, mWebPageFragment, "fragmentTag");
 		fragmentTransaction.commit();
 
@@ -72,7 +76,21 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		super.onDestroy();
 		ErrorCenter.instance().unregesterErrorDelegate(this);
 	}
-
+	
+	private static final int PHOTO_PICKED_WITH_DATA = 1002;
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		System.out.println(String.format("====================== %s %s  ====== ", resultCode, requestCode));
+		if (resultCode != RESULT_OK) return;
+		switch (requestCode) {
+			case PHOTO_PICKED_WITH_DATA: // 从本地选择图片
+				break;
+			default:
+				mWebPageFragment.onSelectImageSuccess(data);
+				break;
+		}
+	}
+	
 	class WebPageFragment extends Fragment implements OnClickListener, OnReceiveMessageDelegate {
 		private CircleImageView to_chat_user_header;// 对话的好友头像
 		private TextView notice_message;// 提示文字
@@ -331,6 +349,33 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			}
 		}
 
+		//添加表情后的回调
+		public void onSelectImageSuccess(Intent data){
+			Uri image = data.getData();
+			if (image != null) {
+				String path = getRealPathFromURI(getActivity(), image);
+				if(path != null){
+					EmojiSelector.instance().addCollect(new Emoji(path, null, -1));
+					emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_COLLECT), 6);
+				}
+			}
+		}
+		
+		public String getRealPathFromURI(Context context, Uri contentUri) {
+			Cursor cursor = null;
+			try {
+				String[] proj = { MediaStore.Images.Media.DATA };
+				cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+				int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+				cursor.moveToFirst();
+				return cursor.getString(column_index);
+			} finally {
+				if (cursor != null) {
+					cursor.close();
+				}
+			}
+		}
+		 
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
@@ -352,14 +397,15 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					openActivity(EmojiActivity.class, null);
 					break;
 				case R.id.btn_press_to_add_emoji:
+					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+					intent.setType("image/*");
+					startActivityForResult(intent, PHOTO_PICKED_WITH_DATA);
 					break;
 				case R.id.btn_press_to_choose_offical:
-					System.out.println(String.format(" ==============btn_press_to_choose_offical=================== "));
 					emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_OFFICAL), 6);
 					break;
 				case R.id.btn_press_to_choose_collect:
 					List<Emoji> list = EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_COLLECT);
-					System.out.println(String.format(" ==============btn_press_to_choose_collect======  %s ============= ", list.size()));
 					emojiAdapter.setData(list, 6);
 					break;
 			}

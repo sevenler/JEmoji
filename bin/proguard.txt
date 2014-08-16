@@ -1,19 +1,19 @@
 # view AndroidManifest.xml #generated:39
 -keep class android.test.InstrumentationTestRunner { <init>(...); }
 
-# view AndroidManifest.xml #generated:134
+# view AndroidManifest.xml #generated:133
 -keep class cn.jpush.android.service.AlarmReceiver { <init>(...); }
 
-# view AndroidManifest.xml #generated:93
+# view AndroidManifest.xml #generated:92
 -keep class cn.jpush.android.service.DownloadService { <init>(...); }
 
-# view AndroidManifest.xml #generated:113
+# view AndroidManifest.xml #generated:112
 -keep class cn.jpush.android.service.PushReceiver { <init>(...); }
 
-# view AndroidManifest.xml #generated:100
+# view AndroidManifest.xml #generated:99
 -keep class cn.jpush.android.service.PushService { <init>(...); }
 
-# view AndroidManifest.xml #generated:81
+# view AndroidManifest.xml #generated:80
 -keep class cn.jpush.android.ui.PushActivity { <init>(...); }
 
 # view res/layout/fragment_emoji.xml #generated:46
@@ -25,7 +25,7 @@
 # view res/layout/fragment_home.xml #generated:189
 -keep class com.jemoji.ControlScrollViewPager { <init>(...); }
 
-# view AndroidManifest.xml #generated:68
+# view AndroidManifest.xml #generated:67
 -keep class com.jemoji.EmojiActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:62
@@ -37,10 +37,10 @@
 # view AndroidManifest.xml #generated:44
 -keep class com.jemoji.MyApplication { <init>(...); }
 
-# view AndroidManifest.xml #generated:137
+# view AndroidManifest.xml #generated:136
 -keep class com.jemoji.MyReceiver { <init>(...); }
 
-# view AndroidManifest.xml #generated:73
+# view AndroidManifest.xml #generated:72
 -keep class com.jemoji.SettingsActivity { <init>(...); }
 
 # view res/layout/fragment_home.xml #generated:1
