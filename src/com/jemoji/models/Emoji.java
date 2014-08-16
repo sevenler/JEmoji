@@ -1,7 +1,21 @@
 
 package com.jemoji.models;
 
+import java.io.File;
+import java.io.IOException;
+
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.widget.ImageView;
+
+import com.hipmob.gifanimationdrawable.GifAnimationDrawable;
 import com.jemoji.FileUploader;
+import com.jemoji.http.GKHttpInterface;
+import com.jemoji.http.GKJsonResponseHandler;
+import com.jemoji.image.FileImageDecoder;
+import com.jemoji.image.ImageSize;
+import com.jemoji.image.ImageDecoder.ImageScaleType;
+import com.jemoji.utils.Utility;
 
 public class Emoji {
 	String image;
@@ -92,5 +106,52 @@ public class Emoji {
 		sb.append(String.format("%s:%s", "voiceUrl", mVoiceUrl));
 		sb.append("}");
 		return sb.toString();
+	}
+	
+	
+	public void showEmoji(final ImageView imageView){
+		String filename = (String)getImage();
+		System.out.println(String.format(" filename:%s ", filename));
+		if(!Utility.Strings.isEmptyString(filename) && new File(filename).exists()){
+			showFile(imageView, filename);
+			System.out.println(String.format(" =======exists========= "));
+		}else{
+			filename = (String)getImageUrl();
+			String type = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+			System.out.println(String.format(" =======no no no  %s========= ", type));
+			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
+					+ File.separator + "emojis_download" + File.separator
+					+ System.currentTimeMillis() + "." + type;
+			GKHttpInterface.genFile(getImageUrl(), type, image, new GKJsonResponseHandler() {
+				@Override
+				public void onResponse(int code, Object file, Throwable error) {
+					System.out.println(String.format(" file:%s ", file));
+					showFile(imageView, (String)file);
+				}
+			});
+		}
+	}
+	
+	private static void showFile(ImageView imageView, String filename){
+		if(filename.endsWith(".gif")){
+			System.out.println(String.format("GIF Image %s ", filename));
+			try {
+				GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);
+				little.setOneShot(false);
+				imageView.setImageDrawable(little);
+				little.setVisible(true, true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else{
+			System.out.println(String.format("Image %s ", filename));
+			try {
+				FileImageDecoder decoder = new FileImageDecoder(new File(filename));
+				Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);
+				imageView.setImageBitmap(bitmap);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

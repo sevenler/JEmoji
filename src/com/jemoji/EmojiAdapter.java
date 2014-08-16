@@ -66,55 +66,10 @@ public class EmojiAdapter extends PagerAdapter {
 		int background = (Integer)emoji.getBackground();
 		rootview.setBackgroundColor(background);
 		
-		String filename = (String)emoji.getImage();
-		System.out.println(String.format(" filename:%s ", filename));
-		
-		if(!Utility.Strings.isEmptyString(filename) && new File(filename).exists()){
-			showFile(imageView, filename);
-			System.out.println(String.format(" =======exists========= "));
-		}else{
-			filename = (String)emoji.getImageUrl();
-			String type = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-			System.out.println(String.format(" =======no no no  %s========= ", type));
-			String image = Environment.getExternalStorageDirectory().getAbsolutePath()
-					+ File.separator + "emojis_download" + File.separator
-					+ System.currentTimeMillis() + "." + type;
-			GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
-				@Override
-				public void onResponse(int code, Object file, Throwable error) {
-					System.out.println(String.format(" file:%s ", file));
-					showFile(imageView, (String)file);
-				}
-			});
-		}
-		
+		emoji.showEmoji(imageView);
 		
 		arg0.addView(rootview);
 
 		return rootview;
-	}
-	
-	private void showFile(ImageView imageView, String filename){
-		
-		if(filename.endsWith(".gif")){
-			System.out.println(String.format("GIF Image %s ", filename));
-			try {
-				GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);
-				little.setOneShot(false);
-				imageView.setImageDrawable(little);
-				little.setVisible(true, true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}else{
-			System.out.println(String.format("Image %s ", filename));
-			try {
-				FileImageDecoder decoder = new FileImageDecoder(new File(filename));
-				Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);
-				imageView.setImageBitmap(bitmap);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }

@@ -79,6 +79,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		private View unread_msg_number;// 未读消息数量
 		private Button buttonPressToSpeak;//发送语音消息按钮
 		private ViewGroup previewSelectedUserHeader;//上次选中的头像
+		private ImageView previewEmojiImage;
 		
 		ValueAnimator voicePlayAnimation;
 		ValueAnimator recevingMessageAnimation;
@@ -165,6 +166,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				@Override
 				public void onPageSelected(int arg0) {
 					mEmoji = EmojiSelector.instance().get(arg0);
+					mEmoji.showEmoji(previewEmojiImage);
 					
 					System.out.println(String.format(" selected emoji %s ", mEmoji));
 				}
@@ -202,6 +204,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
 			unread_msg_number = rootview.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setOnClickListener(this);
+			previewEmojiImage = (ImageView)rootview.findViewById(R.id.preview_emoji_image);
 		}
 
 		private void changeChatUser(User toUser) {

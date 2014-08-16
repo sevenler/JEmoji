@@ -1,11 +1,18 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    sothree:anchorPoint="0.5"
+    sothree:dragView="@+id/btn_press_to_emoji"
+    sothree:panelHeight="50dp"
+    sothree:paralaxOffset="0dp"
+    sothree:shadowHeight="4dp" >
 
     <LinearLayout
-        android:id="@+id/panel_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -17,10 +24,10 @@
             android:layout_weight="1"
             android:orientation="vertical" >
 
-            <com.jemoji.ControlScrollViewPager
-                android:id="@+id/face_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <ImageView
+                android:id="@+id/preview_emoji_image"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
 
             <Button
                 android:id="@+id/settings"
@@ -131,33 +138,52 @@
                     android:padding="5dp" >
                 </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp" >
-
-                <ImageView
-                    android:id="@+id/btn_press_to_keyboard"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="5dp"
-                    android:src="@drawable/keyboard" />
-
-                <Button
-                    android:id="@+id/btn_press_to_speak"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rb__button_darken"
-                    android:enabled="false"
-                    android:text="请选用户发送语音"
-                    android:textColor="#717171" />
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/gray"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" >
+
+            <ImageView
+                android:id="@+id/btn_press_to_keyboard"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/keyboard" />
+
+            <Button
+                android:id="@+id/btn_press_to_speak"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/rb__button_darken"
+                android:enabled="false"
+                android:text="请选用户发送语音"
+                android:textColor="#717171" />
+
+            <ImageView
+                android:id="@+id/btn_press_to_emoji"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/emoji" />
+        </LinearLayout>
+
+        <com.jemoji.ControlScrollViewPager
+            android:id="@+id/face_pager"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+    </LinearLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
