@@ -108,12 +108,15 @@ public class Emoji {
 		return sb.toString();
 	}
 	
-	
 	public void showEmoji(final ImageView imageView){
+		showEmoji(imageView, true);
+	}
+	
+	public void showEmoji(final ImageView imageView, final boolean showGif){
 		String filename = (String)getImage();
 		System.out.println(String.format(" filename:%s ", filename));
 		if(!Utility.Strings.isEmptyString(filename) && new File(filename).exists()){
-			showFile(imageView, filename);
+			showFile(imageView, filename, showGif);
 			System.out.println(String.format(" =======exists========= "));
 		}else{
 			filename = (String)getImageUrl();
@@ -126,22 +129,33 @@ public class Emoji {
 				@Override
 				public void onResponse(int code, Object file, Throwable error) {
 					System.out.println(String.format(" file:%s ", file));
-					showFile(imageView, (String)file);
+					showFile(imageView, (String)file, showGif);
 				}
 			});
 		}
 	}
 	
-	private static void showFile(ImageView imageView, String filename){
+	private static void showFile(ImageView imageView, String filename, boolean showGif){
 		if(filename.endsWith(".gif")){
 			System.out.println(String.format("GIF Image %s ", filename));
-			try {
-				GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);
-				little.setOneShot(false);
-				imageView.setImageDrawable(little);
-				little.setVisible(true, true);
-			} catch (IOException e) {
-				e.printStackTrace();
+			
+			if(showGif){
+				try {
+					GifAnimationDrawable little = new GifAnimationDrawable(new File(filename), false);
+					little.setOneShot(false);
+					imageView.setImageDrawable(little);
+					little.setVisible(true, true);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{
+				try {
+					FileImageDecoder decoder = new FileImageDecoder(new File(filename));
+					Bitmap bitmap = decoder.decode(new ImageSize(510, 510), ImageScaleType.POWER_OF_2);
+					imageView.setImageBitmap(bitmap);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}else{
 			System.out.println(String.format("Image %s ", filename));

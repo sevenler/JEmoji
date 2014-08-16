@@ -159,14 +159,20 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			rootview.findViewById(R.id.settings).setOnClickListener(this);
 			ControlScrollViewPager mViewPager;
 			mViewPager = (ControlScrollViewPager)rootview.findViewById(R.id.face_pager);
-			EmojiAdapter emojiAdapter = new EmojiAdapter(getActivity());
+			EmojiAdapter emojiAdapter = new EmojiAdapter(getActivity(), 6);
+			emojiAdapter.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					Emoji emoji = (Emoji)arg0.getTag();
+					emoji.showEmoji(previewEmojiImage);
+				}
+			});
 			emojiAdapter.setData(initEmojiData());
 			mViewPager.setAdapter(emojiAdapter);
 			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
 					mEmoji = EmojiSelector.instance().get(arg0);
-					mEmoji.showEmoji(previewEmojiImage);
 					
 					System.out.println(String.format(" selected emoji %s ", mEmoji));
 				}
