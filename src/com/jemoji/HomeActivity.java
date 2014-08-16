@@ -83,6 +83,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		System.out.println(String.format("====================== %s %s  ====== ", resultCode, requestCode));
 		if (resultCode != RESULT_OK) return;
 		switch (requestCode) {
+			//TODO 返回code居然不是这个
 			case PHOTO_PICKED_WITH_DATA: // 从本地选择图片
 				break;
 			default:
@@ -185,25 +186,11 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				public void onClick(View arg0) {
 					Emoji emoji = (Emoji)arg0.getTag();
 					emoji.showEmoji(previewEmojiImage);
+					mEmoji = emoji;
 				}
 			});
 			emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_OFFICAL), 6);
 			mViewPager.setAdapter(emojiAdapter);
-			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-				@Override
-				public void onPageSelected(int arg0) {
-					mEmoji = EmojiSelector.instance().getOfficial(arg0);
-				}
-
-				@Override
-				public void onPageScrolled(int arg0, float arg1, int arg2) {
-				}
-
-				@Override
-				public void onPageScrollStateChanged(int arg0) {
-				}
-			});
-			mEmoji = EmojiSelector.instance().getOfficial(0);
 			// mViewPager.setScrollable(false);
 
 			// 初始化录音按钮
