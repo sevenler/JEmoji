@@ -47,7 +47,20 @@ class HUser {
 
 
 public class TestCase extends AndroidTestCase{
-	public void testObj() {
+	public void testDB(){
+		DataBaseWrapper db_wrapper = new DataBaseWrapper(getContext());
+		
+		Emoji emoji = new Emoji(0, "image", "imageUrl", "mVoice", "mVoiceUrl", -1);
+		emoji = db_wrapper.insertEmoji(emoji);
+		
+		List<Emoji> list = db_wrapper.getAllTransactions();
+		for(Emoji em : list){
+			System.out.println(String.format("em:%s", em));
+		}
+		db_wrapper.dropTable();
+	}
+	
+	public void htestObj() {
 //		HUser user1 = new HUser();
 //		  user1.setId(1001L);
 //		  user1.setName("zhengling");

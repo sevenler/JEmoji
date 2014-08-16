@@ -18,11 +18,21 @@ import com.jemoji.image.ImageDecoder.ImageScaleType;
 import com.jemoji.utils.Utility;
 
 public class Emoji {
+	long id;
 	String image;
 	String imageUrl;
 	String mVoice;
 	String mVoiceUrl;
 	int background = -1;
+	
+	public long getId() {
+		return id;
+	}
+
+	public Emoji setId(long id) {
+		this.id = id;
+		return this;
+	}
 
 	public Emoji() {
 		super();
@@ -45,6 +55,17 @@ public class Emoji {
 		super();
 		this.image = image;
 		this.imageUrl = imageUrl;
+	}
+
+	public Emoji(long id, String image, String imageUrl, String mVoice, String mVoiceUrl,
+			int background) {
+		super();
+		this.id = id;
+		this.image = image;
+		this.imageUrl = imageUrl;
+		this.mVoice = mVoice;
+		this.mVoiceUrl = mVoiceUrl;
+		this.background = background;
 	}
 
 	public Emoji setImage(String image) {
