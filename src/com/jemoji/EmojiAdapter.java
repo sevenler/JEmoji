@@ -19,25 +19,29 @@ import com.jemoji.models.Emoji;
 public class EmojiAdapter extends PagerAdapter {
 
 	private List<Emoji> list = new ArrayList<Emoji>();
+	private int mItemEveryPage;
 
 	private Activity mContext;
-	private final int mItemSize;
 	
 	private OnClickListener mOnClickListener;
-	
-	public EmojiAdapter(Context context) {
-		this(context, 1);
-	}
 
-	public EmojiAdapter(Context context, int size) {
+	public EmojiAdapter(Context context) {
 		mContext = (Activity)context;
-		mItemSize = size;
 	}
 
 	public void setData(List<Emoji> list) {
+		setData(list, 1);
+	}
+	
+	public void setData(List<Emoji> list, int itemEveryPage) {
 		this.list.clear();
 		this.list.addAll(list);
+		mItemEveryPage = itemEveryPage;
 		notifyDataSetChanged();
+	}
+	
+	public int getItemPosition(Object object) {
+	    return POSITION_NONE;
 	}
 
 	public void setOnClickListener(OnClickListener listener){
@@ -46,7 +50,7 @@ public class EmojiAdapter extends PagerAdapter {
 	
 	@Override
 	public int getCount() {
-		return list.size() / mItemSize;
+		return list.size() / mItemEveryPage + 1;
 	}
 
 	@Override
@@ -61,7 +65,7 @@ public class EmojiAdapter extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(ViewGroup arg0, int arg1) {
-		if(mItemSize == 1){
+		if(mItemEveryPage == 1){
 			View rootview = LayoutInflater.from(mContext).inflate(R.layout.image_item, null, true);
 			arg0.addView(rootview);
 			
@@ -76,14 +80,17 @@ public class EmojiAdapter extends PagerAdapter {
 			View rootview = LayoutInflater.from(mContext).inflate(R.layout.image_item_six, null, true);
 			arg0.addView(rootview);
 			
-			for (int i = 0; i < mItemSize; i++) {
-				Emoji emoji = list.get(arg1 + i);
-				final ImageView imageView = (ImageView)rootview.findViewById(R.id.imageView0 + i);
-				int background = (Integer)emoji.getBackground();
-				imageView.setTag(emoji);
-				rootview.setBackgroundColor(background);
-				emoji.showEmoji(imageView, false);
-				imageView.setOnClickListener(mOnClickListener);
+			int total = list.size();
+			for (int i = 0; i < mItemEveryPage; i++) {
+				if (arg1 + i < total) {
+					Emoji emoji = list.get(arg1 + i);
+					final ImageView imageView = (ImageView)rootview.findViewById(R.id.imageView0 + i);
+					int background = (Integer)emoji.getBackground();
+					imageView.setTag(emoji);
+					rootview.setBackgroundColor(background);
+					emoji.showEmoji(imageView, false);
+					imageView.setOnClickListener(mOnClickListener);
+				}
 			}
 			
 			return rootview;

@@ -87,6 +87,9 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		
 		Emoji mEmoji;
 		User toChat;
+		
+		ControlScrollViewPager mViewPager;
+		EmojiAdapter emojiAdapter;
 
 		@Override
 		public void onDestroy() {
@@ -157,9 +160,8 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 			// 初始化表情列表
 			rootview.findViewById(R.id.settings).setOnClickListener(this);
-			ControlScrollViewPager mViewPager;
 			mViewPager = (ControlScrollViewPager)rootview.findViewById(R.id.face_pager);
-			EmojiAdapter emojiAdapter = new EmojiAdapter(getActivity(), 6);
+			emojiAdapter = new EmojiAdapter(getActivity());
 			emojiAdapter.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -167,14 +169,12 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					emoji.showEmoji(previewEmojiImage);
 				}
 			});
-			emojiAdapter.setData(initEmojiData());
+			emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_OFFICAL), 6);
 			mViewPager.setAdapter(emojiAdapter);
 			mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 				@Override
 				public void onPageSelected(int arg0) {
-					mEmoji = EmojiSelector.instance().get(arg0);
-					
-					System.out.println(String.format(" selected emoji %s ", mEmoji));
+					mEmoji = EmojiSelector.instance().getOfficial(arg0);
 				}
 
 				@Override
@@ -185,7 +185,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				public void onPageScrollStateChanged(int arg0) {
 				}
 			});
-			mEmoji = EmojiSelector.instance().get(0);
+			mEmoji = EmojiSelector.instance().getOfficial(0);
 			// mViewPager.setScrollable(false);
 
 			// 初始化录音按钮
@@ -211,6 +211,10 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			unread_msg_number = rootview.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setOnClickListener(this);
 			previewEmojiImage = (ImageView)rootview.findViewById(R.id.preview_emoji_image);
+			
+			rootview.findViewById(R.id.btn_press_to_choose_collect).setOnClickListener(this);
+			rootview.findViewById(R.id.btn_press_to_choose_offical).setOnClickListener(this);
+			rootview.findViewById(R.id.btn_press_to_add_emoji).setOnClickListener(this);
 		}
 
 		private void changeChatUser(User toUser) {
@@ -327,15 +331,6 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			}
 		}
 
-		private List<Emoji> initEmojiData() {
-			List<Emoji> list = new LinkedList<Emoji>(); 
-			EmojiSelector selector = EmojiSelector.instance();
-			for (int i = 0; i < selector.size(); i++) {
-				list.add(selector.get(i));
-			}
-			return list;
-		}
-
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
@@ -355,6 +350,17 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					String user = MessageCenter.instance(getActivity()).getTopUser();
 					EmojiActivity.putValus("user", UserCenter.instance().get(user));
 					openActivity(EmojiActivity.class, null);
+					break;
+				case R.id.btn_press_to_add_emoji:
+					break;
+				case R.id.btn_press_to_choose_offical:
+					System.out.println(String.format(" ==============btn_press_to_choose_offical=================== "));
+					emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_OFFICAL), 6);
+					break;
+				case R.id.btn_press_to_choose_collect:
+					List<Emoji> list = EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_COLLECT);
+					System.out.println(String.format(" ==============btn_press_to_choose_collect======  %s ============= ", list.size()));
+					emojiAdapter.setData(list, 6);
 					break;
 			}
 		}
