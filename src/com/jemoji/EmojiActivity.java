@@ -97,6 +97,7 @@ public class EmojiActivity extends BaseActivity {
 			ImageView header = (ImageView)rootView.findViewById(R.id.from_user_header);
 			TextView name = (TextView)rootView.findViewById(R.id.from_user_name);
 			header.setImageResource(from.getHeader());
+			header.setOnClickListener(this);
 			name.setText(String.format("来自 %s", from.getNickname()));
 			iv_voice_panel = (View)rootView.findViewById(R.id.iv_voice_panel);
 			image = (ImageView)rootView.findViewById(R.id.iv_voice);
@@ -184,6 +185,10 @@ public class EmojiActivity extends BaseActivity {
 					playVoice();
 					break;
 				case R.id.close:
+					finish();
+					break;
+				case R.id.from_user_header:
+					HomeActivity.putValus("select_user", from);
 					finish();
 					break;
 			}

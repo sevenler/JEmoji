@@ -14,7 +14,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,6 +39,7 @@ import com.jemoji.utils.ErrorCenter.ErrorDelegate;
 import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 public class HomeActivity extends BaseActivity implements ErrorDelegate{
 	WebPageFragment mWebPageFragment;
@@ -99,6 +99,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		private Button buttonPressToSpeak;//发送语音消息按钮
 		private ViewGroup previewSelectedUserHeader;//上次选中的头像
 		private ImageView previewEmojiImage;
+		private SlidingUpPanelLayout mDrawer;
 		
 		ValueAnimator voicePlayAnimation;
 		ValueAnimator recevingMessageAnimation;
@@ -178,6 +179,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			initContactHeaders(rootview);
 
 			// 初始化表情列表
+			mDrawer = (SlidingUpPanelLayout)rootview.findViewById(R.id.sliding_layout);
 			rootview.findViewById(R.id.settings).setOnClickListener(this);
 			mViewPager = (ControlScrollViewPager)rootview.findViewById(R.id.face_pager);
 			emojiAdapter = new EmojiAdapter(getActivity());
@@ -191,7 +193,6 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			});
 			emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_OFFICAL), 6);
 			mViewPager.setAdapter(emojiAdapter);
-			// mViewPager.setScrollable(false);
 
 			// 初始化录音按钮
 			buttonPressToSpeak = (Button)rootview.findViewById(R.id.btn_press_to_speak);
@@ -333,6 +334,12 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			}else{
 				((ImageView)unread_msg_number.findViewById(R.id.imageview)).setImageResource(R.drawable.red_circle);
 				((TextView)unread_msg_number.findViewById(R.id.textview)).setText("" + count);
+			}
+			
+			//在EmojiActivity会修改会话用户
+			User user = (User)pokeValus("select_user");
+			if(user != null){
+				changeChatUser(user);
 			}
 		}
 
