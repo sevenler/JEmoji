@@ -205,8 +205,13 @@ public class DataBaseWrapper {
 	}
 	
 	public long deleteMessageWithEmoji(Emoji emoji) {
-		Message message = getAllMessage(emoji.getId()).get(0);
-		return deleteMessage(message.getId());
+		List<Message> list = getAllMessage(emoji.getId());
+		long result = -1;
+		if (list.size() >= 1) {
+			Message message = list.get(0);
+			result = deleteMessage(message.getId());
+		}
+		return result;
 	}
 	//////////////////////////////////////////////////////Message End//////////////////////////////////////////////////////////////////
 }
