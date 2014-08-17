@@ -191,7 +191,11 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					mEmoji = emoji;
 				}
 			});
-			emojiAdapter.setData(EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL), 6);
+			previewEmojiImage = (ImageView)rootview.findViewById(R.id.preview_emoji_image);
+			List<Emoji> emojis = EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL);
+			mEmoji = emojis.get(0);
+			mEmoji.showEmoji(previewEmojiImage);
+			emojiAdapter.setData(emojis, 6);
 			mViewPager.setAdapter(emojiAdapter);
 
 			// 初始化录音按钮
@@ -216,7 +220,6 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
 			unread_msg_number = rootview.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setOnClickListener(this);
-			previewEmojiImage = (ImageView)rootview.findViewById(R.id.preview_emoji_image);
 			
 			rootview.findViewById(R.id.btn_press_to_choose_collect).setOnClickListener(this);
 			rootview.findViewById(R.id.btn_press_to_choose_offical).setOnClickListener(this);

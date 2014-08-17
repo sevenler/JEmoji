@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.jemoji.models.Emoji;
 import com.jemoji.models.EmojiSelector;
@@ -55,6 +56,8 @@ public class LoginActivity extends BaseActivity {
 			UserCenter.instance().setMe(user);
 			System.out.println(String.format(" user:%s ", user.getNickname()));
 			openActivity(HomeActivity.class, null);
+		}else{
+			Toast.makeText(this, "用户不存在", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -96,6 +99,7 @@ public class LoginActivity extends BaseActivity {
 			final EmojiSelector emojiSelector = EmojiSelector.instance(getActivity());
 			File path = new File(emojiSelector.getEmojiCachePath());
 			System.out.println(String.format("path.list():%s ", path.list()));
+			
 			if((path.list() != null) && (path.list().length > 0)){
 				progressbar.setVisibility(View.GONE);
 			}else{
