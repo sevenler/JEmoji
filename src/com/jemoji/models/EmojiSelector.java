@@ -4,13 +4,14 @@ package com.jemoji.models;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.Context;
 import android.graphics.Color;
 
 public class EmojiSelector {
 	private static EmojiSelector instance;
 
-	public static EmojiSelector instance() {
-		if (instance == null) instance = new EmojiSelector();
+	public static EmojiSelector instance(Context mContext) {
+		if (instance == null) instance = new EmojiSelector(mContext);
 		return instance;
 	}
 	
@@ -22,13 +23,11 @@ public class EmojiSelector {
 		return String.format("%s/%s", "/sdcard/Emoji_Image", name);
 	}
 
-	public List<Emoji> officialEmojis = new LinkedList<Emoji>();//官方的表情
-	public List<Emoji> collectEmojis = new LinkedList<Emoji>();//收集的表情
+	DataBaseWrapper db_wrapper;
 	
-	public static final int EMOJI_TYPE_OFFICAL  = 0;
-	public static final int EMOJI_TYPE_COLLECT  = 1;
-
-	public EmojiSelector() {
+	public EmojiSelector(Context mContext) {
+		db_wrapper = new DataBaseWrapper(mContext);
+		
 		String[] urls = {"640a10dfa9ec8a13611191fff503918fa0ecc048.jpg.gif",
 				"8f175d6034a85edfc2ded2994b540923dc5475db.jpg.gif",
 				"e27ecdbf6c81800abc476efab03533fa838b474e.jpg.gif",
@@ -277,8 +276,12 @@ public class EmojiSelector {
 				"e9924bed2e738bd4f42f1303a28b87d6277ff998.jpg",
 				"163994cad1c8a786e14d22f46509c93d71cf508e.jpg.png"};
 		
-		for (String url : urls){
-			officialEmojis.add(new Emoji(getFullPath(url), getFullUrl(url), Color.parseColor("#ffffff")));
+		
+		if (db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_OFFICAL).size() == 0) {
+			for (String url : urls) {
+				db_wrapper.insertEmoji(new Emoji(getFullPath(url), getFullUrl(url), Color
+						.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_OFFICAL));
+			}
 		}
 		
 		String[] collect = {"e23572f082025aafad03f932f9edab64034f1a3f.jpg",
@@ -287,45 +290,45 @@ public class EmojiSelector {
 		"e9924bed2e738bd4f42f1303a28b87d6277ff998.jpg",
 		"163994cad1c8a786e14d22f46509c93d71cf508e.jpg.png"};
 		
-		for (String url : collect){
-			collectEmojis.add(new Emoji(getFullPath(url), getFullUrl(url), Color.parseColor("#ffffff")));
+		if (db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_COLLECT).size() == 0) {
+			for (String url : collect) {
+				db_wrapper.insertEmoji(new Emoji(getFullPath(url), getFullUrl(url), Color
+						.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_COLLECT));
+			}
 		}
 	}
 
-	public Emoji getOfficial(int index){
-		return officialEmojis.get(index);
+	public Emoji getOfficial(long id){
+		return db_wrapper.getEmoji(id);
 	}
 
 	public int officialSize() {
-		return officialEmojis.size();
+		return db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_OFFICAL).size();
 	}
 	
-	public Emoji getCollect(int index){
-		return collectEmojis.get(index);
+	public Emoji getCollect(long id){
+		return db_wrapper.getEmoji(id);
 	}
 
 	public int collectSize() {
-		return collectEmojis.size();
+		return db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_COLLECT).size();
 	}
 	
 	public boolean addCollect(Emoji emoji){
-		return collectEmojis.add(emoji);
+		db_wrapper.insertEmoji(emoji);
+		return true;
 	}
 	
 	public List<Emoji> getEmojiData(int type) {
 		List<Emoji> list = new LinkedList<Emoji>();
 
 		switch (type) {
-			case EMOJI_TYPE_COLLECT:
-				for (int i = 0; i < collectSize(); i++) {
-					list.add(getCollect(i));
-				}
+			case Emoji.EMOJI_TYPE_COLLECT:
+				list.addAll(db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_COLLECT));
 				break;
 
 			default:
-				for (int i = 0; i < officialSize(); i++) {
-					list.add(getOfficial(i));
-				}
+				list.addAll(db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_OFFICAL));
 				break;
 		}
 		return list;

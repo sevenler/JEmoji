@@ -17,7 +17,8 @@ public class DataBaseWrapper {
 			SQLiteDataBaseHelper.COL_IMAGE_URL, 
 			SQLiteDataBaseHelper.COL_VOICE, 
 			SQLiteDataBaseHelper.COL_VOICE_URL,
-			SQLiteDataBaseHelper.COL_BACKGROUND};
+			SQLiteDataBaseHelper.COL_BACKGROUND, 
+			SQLiteDataBaseHelper.COL_TYPE};
 	
 	public DataBaseWrapper(Context context) {
 		sql_database_helper = new SQLiteDataBaseHelper(context);
@@ -41,6 +42,7 @@ public class DataBaseWrapper {
 		values.put(SQLiteDataBaseHelper.COL_VOICE, emoji.getVoice());
 		values.put(SQLiteDataBaseHelper.COL_VOICE_URL, emoji.getVoiceUrl());
 		values.put(SQLiteDataBaseHelper.COL_BACKGROUND, emoji.getBackground());
+		values.put(SQLiteDataBaseHelper.COL_TYPE, emoji.getType());
 		
 		long insert_id = sql_database.insert(SQLiteDataBaseHelper.TABLE_TRANS, null,
 				values);
@@ -61,11 +63,12 @@ public class DataBaseWrapper {
 		return deleteEmoji(row_id); 
 	}
 	
-	public List<Emoji> getAllTransactions() {
+	public List<Emoji> getAllEmoji(int type) {
 		List<Emoji> emoji_list = new ArrayList<Emoji>();
 
+		String selection = String.format("%s = %s", SQLiteDataBaseHelper.COL_TYPE, type);
 		Cursor cursor = sql_database.query(sql_database_helper.TABLE_TRANS,
-				all_columns, null, null, null, null, null);
+				all_columns, selection, null, null, null, null);
 
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
@@ -77,9 +80,26 @@ public class DataBaseWrapper {
 		cursor.close();
 		return emoji_list;
 	}
+	
+	public Emoji getEmoji(long id) {
+		List<Emoji> emoji_list = new ArrayList<Emoji>();
+
+		String selection = String.format("%s = %s", SQLiteDataBaseHelper.COLUMN_ID, id);
+		Cursor cursor = sql_database.query(sql_database_helper.TABLE_TRANS, all_columns, selection, null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			Emoji emoji = cursorToComment(cursor);
+			emoji_list.add(emoji);
+			cursor.moveToNext();
+		}
+		
+		cursor.close();
+		return emoji_list.get(0);
+	}
 		
 	private Emoji cursorToComment(Cursor cursor) {
-		Emoji emoji = new Emoji(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5));
+		Emoji emoji = new Emoji(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6));
 		return emoji;
 	}
 	

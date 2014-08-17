@@ -50,13 +50,16 @@ public class TestCase extends AndroidTestCase{
 	public void testDB(){
 		DataBaseWrapper db_wrapper = new DataBaseWrapper(getContext());
 		
-		Emoji emoji = new Emoji(0, "image", "imageUrl", "mVoice", "mVoiceUrl", -1);
-		emoji = db_wrapper.insertEmoji(emoji);
+		db_wrapper.insertEmoji(new Emoji(0, "is right", null, null, null, -1, Emoji.EMOJI_TYPE_COLLECT));
+		db_wrapper.insertEmoji(new Emoji(0, "is wrong", null, null, null, -1, Emoji.EMOJI_TYPE_OFFICAL));
 		
-		List<Emoji> list = db_wrapper.getAllTransactions();
+		List<Emoji> list = db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_COLLECT);
 		for(Emoji em : list){
 			System.out.println(String.format("em:%s", em));
 		}
+		
+		System.out.println(String.format("em:%s", db_wrapper.getEmoji(2)));
+		
 		db_wrapper.dropTable();
 	}
 	

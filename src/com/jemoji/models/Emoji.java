@@ -18,15 +18,28 @@ import com.jemoji.image.ImageDecoder.ImageScaleType;
 import com.jemoji.utils.Utility;
 
 public class Emoji {
+	public static final int EMOJI_TYPE_OFFICAL  = 0;
+	public static final int EMOJI_TYPE_COLLECT  = 1;
+	
 	long id;
 	String image;
 	String imageUrl;
 	String mVoice;
 	String mVoiceUrl;
+	int mType;
 	int background = -1;
 	
 	public long getId() {
 		return id;
+	}
+
+	public int getType() {
+		return mType;
+	}
+
+	public Emoji setType(int mType) {
+		this.mType = mType;
+		return this;
 	}
 
 	public Emoji setId(long id) {
@@ -58,7 +71,7 @@ public class Emoji {
 	}
 
 	public Emoji(long id, String image, String imageUrl, String mVoice, String mVoiceUrl,
-			int background) {
+			int background, int type) {
 		super();
 		this.id = id;
 		this.image = image;
@@ -66,6 +79,7 @@ public class Emoji {
 		this.mVoice = mVoice;
 		this.mVoiceUrl = mVoiceUrl;
 		this.background = background;
+		this.mType = type;
 	}
 
 	public Emoji setImage(String image) {

@@ -191,7 +191,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					mEmoji = emoji;
 				}
 			});
-			emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_OFFICAL), 6);
+			emojiAdapter.setData(EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL), 6);
 			mViewPager.setAdapter(emojiAdapter);
 
 			// 初始化录音按钮
@@ -349,8 +349,8 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			if (image != null) {
 				String path = getRealPathFromURI(getActivity(), image);
 				if(path != null){
-					EmojiSelector.instance().addCollect(new Emoji(path, null, -1));
-					emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_COLLECT), 6);
+					EmojiSelector.instance(getActivity()).addCollect(new Emoji(path, null, -1).setType(Emoji.EMOJI_TYPE_COLLECT));
+					emojiAdapter.setData(EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_COLLECT), 6);
 				}
 			}
 		}
@@ -396,10 +396,10 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					startActivityForResult(intent, PHOTO_PICKED_WITH_DATA);
 					break;
 				case R.id.btn_press_to_choose_offical:
-					emojiAdapter.setData(EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_OFFICAL), 6);
+					emojiAdapter.setData(EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL), 6);
 					break;
 				case R.id.btn_press_to_choose_collect:
-					List<Emoji> list = EmojiSelector.instance().getEmojiData(EmojiSelector.EMOJI_TYPE_COLLECT);
+					List<Emoji> list = EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_COLLECT);
 					emojiAdapter.setData(list, 6);
 					break;
 			}
