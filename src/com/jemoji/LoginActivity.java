@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.jemoji.models.Emoji;
 import com.jemoji.models.EmojiSelector;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
@@ -76,23 +78,7 @@ public class LoginActivity extends BaseActivity {
 		@Override
 		public void onStart() {
 			super.onStart();
-			
-			if(!EmojiSelector.instance(getActivity()).isOfficialEmojiExsit()){
-				progressbar.setVisibility(View.VISIBLE);
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						saveEmojiFromAssert(getAssets());
-						runOnUiThread(new Runnable() {
-							public void run() {
-								progressbar.setVisibility(View.GONE);
-							}
-						});
-					}
-				}).start();;
-			}else{
-				progressbar.setVisibility(View.GONE);
-			}
+			saveEmojiFromAssertIfNeed();
 		}
 
 		@Override
@@ -106,15 +92,39 @@ public class LoginActivity extends BaseActivity {
 			}
 		}
 		
-		public void saveEmojiFromAssert(AssetManager assetManager){
-			try {
-				String[] list = assetManager.list("emojis");
-				for(String str : list){
-					String targetfile = String.format("/sdcard/test_image/%s", str);
-					save2File(str, new File(targetfile), assetManager);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+		public void saveEmojiFromAssertIfNeed(){
+			final EmojiSelector emojiSelector = EmojiSelector.instance(getActivity());
+			File path = new File(emojiSelector.getEmojiCachePath());
+			System.out.println(String.format("path.list():%s ", path.list()));
+			if((path.list() != null) && (path.list().length > 0)){
+				progressbar.setVisibility(View.GONE);
+			}else{
+				final AssetManager assetManager = getAssets();
+				progressbar.setVisibility(View.VISIBLE);
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							String targetfile = null;
+							String[] list = assetManager.list("emojis");
+							for(String str : list){
+								targetfile = emojiSelector.getFullEmojiPath(str);
+								System.out.println(String.format(" targetfile:%s ", targetfile));
+								save2File(str, new File(targetfile), assetManager);
+								EmojiSelector.instance(getActivity()).addCollect(new Emoji(targetfile, EmojiSelector.getFullUrl(str), Color.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_OFFICAL));
+							}
+							EmojiSelector.instance(getActivity()).addCollect(new Emoji(targetfile, null, Color.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_COLLECT));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						runOnUiThread(new Runnable() {
+							public void run() {
+								progressbar.setVisibility(View.GONE);
+							}
+						});
+					}
+				}).start();
 			}
 		}
 		
