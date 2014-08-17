@@ -5,9 +5,15 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 
+import com.jemoji.HomeActivity;
+import com.jemoji.R;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
@@ -73,7 +79,7 @@ public class MessageCenter {
 		String image = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
 				+ "emojis_download" + File.separator + System.currentTimeMillis() + "." + type;
 
-		onReceiving(emoji);
+		onReceiving(context, emoji);
 		GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
 			@Override
 			public void onResponse(int code, Object file, Throwable error) {
@@ -85,6 +91,25 @@ public class MessageCenter {
 		});
 	}
 	
+	//发送通知栏提示 消息
+	public void notificationMessage(Context context, int count) {
+		context = context.getApplicationContext();
+
+		Intent intent = new Intent(context, HomeActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context, 0, intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+
+		Notification notification = new Notification(R.drawable.ic_launcher, "收到新消息", System.currentTimeMillis());
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notification.setLatestEventInfo(context, String.format("你收到 %s 条消息", count),
+				"点击查看消息", pendingNotificationIntent);
+
+		NotificationManager mManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+		mManager.notify(1009, notification);
+	}
+	
+	
 	public List<OnReceiveMessageDelegate> messageDelegate = new LinkedList<MessageCenter.OnReceiveMessageDelegate>();
 	public void regesterReceiveMessageDelegate(OnReceiveMessageDelegate delegate){
 		messageDelegate.add(delegate);
@@ -94,7 +119,11 @@ public class MessageCenter {
 		return messageDelegate.remove(delegate);
 	}
 	
-	private void onReceiving(Emoji emoji){
+	private void onReceiving(Context context, Emoji emoji){
+		System.out.println(String.format(" messageDelegate.size(): %s ", messageDelegate.size()));
+		if(messageDelegate.size() == 0){
+			notificationMessage(context, 1);
+		}
 		for(OnReceiveMessageDelegate delegate : messageDelegate){
 			delegate.onReceiveMessage(emoji);
 		}
