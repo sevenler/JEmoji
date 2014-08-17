@@ -14,7 +14,7 @@
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/app_launcher" />
 
         <ProgressBar
             android:id="@+id/progressbar"
@@ -38,9 +38,9 @@
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:hint="用户名"
             android:layout_weight="1"
-            android:ems="10"
-            android:text="18511557126" >
+            android:ems="10" >
 
             <requestFocus />
         </EditText>
@@ -60,6 +60,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:hint="密码"
             android:layout_weight="1"
             android:ems="10" >
 

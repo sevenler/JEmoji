@@ -43,7 +43,7 @@
 
     <application
         android:name="com.jemoji.MyApplication"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/app_launcher"
         android:label="@string/appcation_name"
         android:theme="@style/AppTheme" >
         <uses-library android:name="android.test.runner" />

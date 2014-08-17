@@ -100,7 +100,9 @@ public class LoginActivity extends BaseActivity {
 			File path = new File(emojiSelector.getEmojiCachePath());
 			System.out.println(String.format("path.list():%s ", path.list()));
 			
-			if((path.list() != null) && (path.list().length > 0)){
+			
+			int size = emojiSelector.getEmojiData(Emoji.EMOJI_TYPE_OFFICAL).size();
+			if(size > 0){
 				progressbar.setVisibility(View.GONE);
 			}else{
 				final AssetManager assetManager = getAssets();
