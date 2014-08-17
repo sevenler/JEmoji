@@ -277,18 +277,14 @@ public class EmojiSelector {
 				"163994cad1c8a786e14d22f46509c93d71cf508e.jpg.png"};
 		
 		
-		if (db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_OFFICAL).size() == 0) {
+		if (!isOfficialEmojiExsit()) {
 			for (String url : urls) {
 				db_wrapper.insertEmoji(new Emoji(getFullPath(url), getFullUrl(url), Color
 						.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_OFFICAL));
 			}
 		}
 		
-		String[] collect = {"e23572f082025aafad03f932f9edab64034f1a3f.jpg",
-		"IMG_0277.JPG",
-		"2d318b82b9014a90a8380038a9773912b21beed3.jpg",
-		"e9924bed2e738bd4f42f1303a28b87d6277ff998.jpg",
-		"163994cad1c8a786e14d22f46509c93d71cf508e.jpg.png"};
+		String[] collect = {"e23572f082025aafad03f932f9edab64034f1a3f.jpg"};
 		
 		if (db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_COLLECT).size() == 0) {
 			for (String url : collect) {
@@ -296,6 +292,10 @@ public class EmojiSelector {
 						.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_COLLECT));
 			}
 		}
+	}
+	
+	public boolean isOfficialEmojiExsit(){
+		return (db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_OFFICAL).size() != 0);
 	}
 
 	public Emoji getOfficial(long id){
