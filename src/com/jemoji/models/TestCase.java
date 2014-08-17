@@ -12,40 +12,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.jemoji.utils.PreferManager;
 
-class HUser {
-	private Long id;
-	
-	private String name;
-	
-	private User next;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public User getNext() {
-		return next;
-	}
-
-	public void setNext(User next) {
-		this.next = next;
-	}
-}
-
-
-
 public class TestCase extends AndroidTestCase{
 	public void testDB(){
 		DataBaseWrapper db_wrapper = new DataBaseWrapper(getContext());
@@ -53,27 +19,19 @@ public class TestCase extends AndroidTestCase{
 		db_wrapper.insertEmoji(new Emoji(0, "is right", null, null, null, -1, Emoji.EMOJI_TYPE_COLLECT));
 		db_wrapper.insertEmoji(new Emoji(0, "is wrong", null, null, null, -1, Emoji.EMOJI_TYPE_OFFICAL));
 		
-		List<Emoji> list = db_wrapper.getAllEmoji(Emoji.EMOJI_TYPE_COLLECT);
-		for(Emoji em : list){
-			System.out.println(String.format("em:%s", em));
-		}
+		db_wrapper.insertMessage(new Message(0, "18511557126", "18511557126", new Emoji(0, "this is a meeesgae emoji", null, null, null, -1, Emoji.EMOJI_TYPE_COLLECT)));
+		db_wrapper.insertMessage(new Message(0, "18511557126", "18511557127", new Emoji(0, "this is a meeesgae emoji", null, null, null, -1, Emoji.EMOJI_TYPE_COLLECT)));
+		db_wrapper.insertMessage(new Message(0, "18511557126", "18511557128", new Emoji(0, "this is a meeesgae emoji", null, null, null, -1, Emoji.EMOJI_TYPE_COLLECT)));
 		
-		System.out.println(String.format("em:%s", db_wrapper.getEmoji(2)));
+		List<String> list = db_wrapper.getAllFromUser();
+		for(String me : list){
+			System.out.println(String.format("%s", me));
+		}
 		
 		db_wrapper.dropTable();
 	}
 	
 	public void htestObj() {
-//		HUser user1 = new HUser();
-//		  user1.setId(1001L);
-//		  user1.setName("zhengling");
-//		  HUser user2 = new HUser();
-//		  user2.setId(1002L);
-//		  user2.setName("yangyang");
-//		  Map<String, HUser> userMap = new HashMap<String,HUser>();
-//		  userMap.put("user1", user1);
-//		  userMap.put("user2", user2);
-		  
 		Map<String, Emoji> map = new HashMap<String, Emoji>();
 		map.put("18511557126",
 				new Emoji("/storage/emulated/0/emojis_download/1408101207553.gif", "",

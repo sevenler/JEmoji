@@ -18,8 +18,9 @@ import com.jemoji.image.ImageDecoder.ImageScaleType;
 import com.jemoji.utils.Utility;
 
 public class Emoji {
-	public static final int EMOJI_TYPE_OFFICAL  = 0;
-	public static final int EMOJI_TYPE_COLLECT  = 1;
+	public static final int EMOJI_TYPE_OFFICAL  = 0;//官方表情
+	public static final int EMOJI_TYPE_COLLECT  = 1;//个人收藏表情
+	public static final int EMOJI_TYPE_MESSAGE  = 2;//接收到的表情
 	
 	long id;
 	String image;

@@ -5,9 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteDataBaseHelper extends SQLiteOpenHelper {
-	private static final String DATABASE_NAME = "emoji.db";
+	private static final String DATABASE_NAME = "jemoji.db";
 	public static final int DATABASE_VERSION = 1;
-	public static final String TABLE_TRANS = "emoji_table";
+	public static final String TABLE_EMOJI = "emoji_table";
+	public static final String TABLE_MESSAGE = "message_table";
 	
 	public static final String COL_IMAGE = "image";
 	public static final String COL_IMAGE_URL = "image_url";
@@ -17,14 +18,24 @@ public class SQLiteDataBaseHelper extends SQLiteOpenHelper {
 	public static final String COL_TYPE = "type";
 	public static final String COLUMN_ID = "_id";
 	
-	private static final String DATABASE_CREATE = "create table "
-			+ TABLE_TRANS + "( " + COLUMN_ID + " integer primary key autoincrement, " 
+	public static final String COL_FROM_USER = "from_user";
+	public static final String COL_TO_USER = "to_user";
+	public static final String COL_EMOJI_ID = "emoji_id";
+	
+	private static final String CREATE_EMOJI_TABLE = "create table "
+			+ TABLE_EMOJI + "( " + COLUMN_ID + " integer primary key autoincrement, " 
 			+ COL_IMAGE + " text , "
 			+ COL_IMAGE_URL + " text, " 
 			+ COL_VOICE + " text , "
 			+ COL_VOICE_URL + " text , "
 			+ COL_TYPE +  " real,"
 			+ COL_BACKGROUND +  " real);";
+	
+	private static final String CREATE_MESSAGE_TABLE = "create table "
+			+ TABLE_MESSAGE + "( " + COLUMN_ID + " integer primary key autoincrement, " 
+			+ COL_FROM_USER + " text , "
+			+ COL_TO_USER + " text, " 
+			+ COL_EMOJI_ID +  " real);";
 
 
 	public SQLiteDataBaseHelper(Context context) {
@@ -32,19 +43,26 @@ public class SQLiteDataBaseHelper extends SQLiteOpenHelper {
 	}
 	
 	public void dropTable(SQLiteDatabase db) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANS);
-		db.execSQL(DATABASE_CREATE);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EMOJI);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
+		
+		db.execSQL(CREATE_EMOJI_TABLE);
+		db.execSQL(CREATE_MESSAGE_TABLE);
 	}
 	
 	@Override
 	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(DATABASE_CREATE);
+		database.execSQL(CREATE_EMOJI_TABLE);
+		database.execSQL(CREATE_MESSAGE_TABLE);
 	}
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		//TODO 保存旧数据
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANS);
+		
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EMOJI);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE);
+		
 		onCreate(db);
 	}
 	

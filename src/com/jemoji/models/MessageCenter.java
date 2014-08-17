@@ -4,20 +4,13 @@ package com.jemoji.models;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import android.content.Context;
 import android.os.Environment;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
-import com.jemoji.utils.PreferManager;
-import com.jemoji.utils.Utility;
 
 public class MessageCenter {
 	private static MessageCenter intsance;
@@ -27,78 +20,42 @@ public class MessageCenter {
 		return intsance;
 	}
 
-	private LinkedTreeMap<String, List<Emoji>> emojis;
+	DataBaseWrapper db_wrapper;
 
 	private MessageCenter(Context context) {
-		String saved = PreferManager.instance().getStringFromPrefs(context, KEY_SAVED_MESSAGE, "");
-		GsonBuilder builder = new GsonBuilder();
-		Gson gson = builder.create();
-		if(Utility.Strings.isEmptyString(saved)){
-			emojis = new LinkedTreeMap<String, List<Emoji>>();
-		}else{
-			System.out.println(String.format(" %s ", saved));
-			emojis = gson.fromJson(saved, new TypeToken<LinkedTreeMap<String, List<Emoji>>>() {
-			}.getType());
-		}
-		Utility.Assert(emojis != null);
+		db_wrapper = new DataBaseWrapper(context);
 	}
 
-	public static final String KEY_SAVED_MESSAGE = "KEY_SAVED_MESSAGE";
 	// 添加未读消息
 	private void pushUnread(Context context , String user, Emoji emoji) {
-		System.out.println(String.format(" push message to %s ", user));
-		List<Emoji> message = emojis.get(user);
-		if (message == null) message = new LinkedList<Emoji>();
-		message.add(emoji);
-		emojis.put(user, message);
-		
-		GsonBuilder builder = new GsonBuilder();
-		Gson gson = builder.create();
-		String result = gson.toJson(emojis, new TypeToken<LinkedTreeMap<String, List<Emoji>>>() {
-		}.getType());
-		PreferManager.instance().setStringToPrefs(context, KEY_SAVED_MESSAGE, result);
+		db_wrapper.insertMessage(new Message(0, null, user, emoji));
 	}
 
 	// 获取未读消息数量
 	public int getUnreadCount() {
-		int count = 0;
-		for (List<Emoji> values : emojis.values()) {
-			count += values.size();
-		}
-		System.out.println(String.format(" unread message count: %s ", count));
+		int count = db_wrapper.getAllMessage(null).size();
 		return count;
 	}
 
 	// 获取有未读消息的用户
 	public String getTopUser() {
-		Set<String> users = emojis.keySet();
-		for (String user : users) {
-			List<Emoji> message = emojis.get(user);
-			if (message != null && message.size() > 0) {
-				return user;
-			}
-		}
-		return null;
+		List<String> list = db_wrapper.getAllFromUser();
+		return list.get(0);
 	}
 
 	// 将消息标记为已读
 	public boolean pokeUnread(Context context, String user, Emoji emoji) {
-		List<Emoji> message = emojis.get(user);
-		if (message != null) {
-			boolean remoed =  message.remove(emoji);
-			GsonBuilder builder = new GsonBuilder();
-			Gson gson = builder.create();
-			String result = gson.toJson(emojis, new TypeToken<LinkedTreeMap<String, List<Emoji>>>() {
-			}.getType());
-			PreferManager.instance().setStringToPrefs(context, KEY_SAVED_MESSAGE, result);
-			return remoed;
-		}
+		db_wrapper.deleteMessageWithEmoji(emoji);
 		return false;
 	}
 
 	// 获取用户的未读表情
-	public List<Emoji> getUnread(String user) {
-		List<Emoji> message = emojis.get(user);
+	public List<Emoji> getUnread(String from_user) {
+		List<Emoji> message = new LinkedList<Emoji>();
+		List<Message> list = db_wrapper.getAllMessage(from_user);
+		for(Message me : list){
+			message.add(me.getEmoji());
+		}
 		return message;
 	}
 
