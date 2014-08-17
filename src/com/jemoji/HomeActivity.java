@@ -383,9 +383,13 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					String voice = mEmoji.getVoice();
 					if (!Utility.Strings.isEmptyString(voice)) {
 						ImageView image = (ImageView)v.findViewById(R.id.iv_voice);
-						if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
-						else startVioceAnimation(image, 1000 * 4);
-						voicePlayHandler.playOrStop(voice);
+						if (voicePlayHandler.isVoicePlaying()) {
+							stopVioceAnimation(image);
+							voicePlayHandler.stop();
+						} else {
+							startVioceAnimation(image, 1000 * 4);
+							voicePlayHandler.play(voice);
+						}
 					}
 					break;
 				case R.id.unread_msg_number:

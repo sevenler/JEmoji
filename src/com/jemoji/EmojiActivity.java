@@ -82,7 +82,7 @@ public class EmojiActivity extends BaseActivity {
 				public void onPageSelected(int arg0) {
 					mEmoji = list.get(arg0);
 					MessageCenter.instance(getActivity()).pokeUnread(getActivity(), from.getUsername(), mEmoji);
-					playVoice();
+					playVoice(true);
 				}
 
 				@Override
@@ -113,7 +113,7 @@ public class EmojiActivity extends BaseActivity {
 		@Override
 		public void onStart() {
 			super.onStart();
-			playVoice();//自动播放声音
+			playVoice(false);//自动播放声音
 		}
 
 		private List<Emoji> initEmojiData() {
@@ -154,16 +154,25 @@ public class EmojiActivity extends BaseActivity {
 			iv_voice.setImageResource(R.drawable.chatfrom_voice_playing);
 		}
 		
-		private void playOrStopVoice(String voicePath){
-			if (voicePlayHandler.isVoicePlaying()) stopVioceAnimation(image);
-			else startVioceAnimation(image, 1000 * 4);
-			voicePlayHandler.playOrStop(voicePath);
+		private void playOrStopVoice(String voicePath, boolean playNew){
+			if (voicePlayHandler.isVoicePlaying()) {
+				stopVioceAnimation(image);
+				voicePlayHandler.stop();
+				
+				if(playNew){
+					startVioceAnimation(image, 1000 * 4);
+					voicePlayHandler.play(voicePath);
+				}
+			} else {
+				startVioceAnimation(image, 1000 * 4);
+				voicePlayHandler.play(voicePath);
+			}
 		}
 		
-		private void playVoice(){
+		private void playVoice(final boolean playNew){
 			String voicepath = mEmoji.getVoice();
 			if((voicepath !=null) && new File(voicepath).exists()){
-				playOrStopVoice(voicepath);
+				playOrStopVoice(voicepath, playNew);
 			}else{
 				String voiceUrl = mEmoji.getVoiceUrl();
 				String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
@@ -172,7 +181,7 @@ public class EmojiActivity extends BaseActivity {
 					@Override
 					public void onResponse(int code, Object file, Throwable error) {
 						mEmoji.setVoice((String)file);
-						playOrStopVoice(mEmoji.getVoice());
+						playOrStopVoice(mEmoji.getVoice(), playNew);
 					}
 				});
 			}
@@ -182,7 +191,7 @@ public class EmojiActivity extends BaseActivity {
 		public void onClick(View v) {
 			switch (v.getId()) {
 				case R.id.iv_voice_panel:
-					playVoice();
+					playVoice(false);
 					break;
 				case R.id.close:
 					finish();

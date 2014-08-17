@@ -212,32 +212,40 @@ public class VoiceHandler implements OnTouchListener{
 		return false;
 	}
 	
-	public void playOrStop(String voice){
-		if (!playState) {
-			try {
-				mediaPlayer = new MediaPlayer();
-				mediaPlayer.setDataSource(voice);
-				mediaPlayer.prepare();
-				mediaPlayer.start();
-				if (mOnHandListener != null) mOnHandListener.onPlay(false);
-				playState = true;
-				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-					@Override
-					public void onCompletion(MediaPlayer mp) {
-						if (playState) {
-							if (mOnHandListener != null) mOnHandListener.onPlay(true);
-							playState = false;
-						}
+	
+	
+	public void play(String voice) {
+		if (playState) {
+			stop();
+		}
+
+		try {
+			mediaPlayer = new MediaPlayer();
+			mediaPlayer.setDataSource(voice);
+			mediaPlayer.prepare();
+			mediaPlayer.start();
+			if (mOnHandListener != null) mOnHandListener.onPlay(false);
+			playState = true;
+			mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+				@Override
+				public void onCompletion(MediaPlayer mp) {
+					if (playState) {
+						if (mOnHandListener != null) mOnHandListener.onPlay(true);
+						playState = false;
 					}
-				});
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
+				}
+			});
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void stop(){
+		if(playState){
 			if (mediaPlayer.isPlaying()) {
 				mediaPlayer.stop();
 				playState = false;
