@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import android.content.res.AssetManager;
@@ -127,10 +129,13 @@ public class LoginActivity extends BaseActivity {
 								randomList.add(emojisList.remove(value));
 							}
 							
+							String color;
 							for(String str : randomList){
 								targetfile = emojiSelector.getFullEmojiPath(str);
 								save2File(str, new File(targetfile), assetManager);
-								EmojiSelector.instance(getActivity()).addCollect(new Emoji(targetfile, EmojiSelector.getFullUrl(str), Color.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_OFFICAL));
+								
+								color = (checkColor(str) == null ? "#ffffff" : checkColor(str));
+								EmojiSelector.instance(getActivity()).addCollect(new Emoji(targetfile, EmojiSelector.getFullUrl(str), Color.parseColor(color)).setType(Emoji.EMOJI_TYPE_OFFICAL));
 							}
 							EmojiSelector.instance(getActivity()).addCollect(new Emoji(targetfile, null, Color.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_COLLECT));
 						} catch (IOException e) {
@@ -144,6 +149,28 @@ public class LoginActivity extends BaseActivity {
 					}
 				}).start();
 			}
+		}
+		
+		private String checkColor(String name){
+			
+			Map<String, String> colors = new LinkedHashMap<String, String>();
+			colors.put("me002.gif", "#BCC7CE");
+			colors.put("me003.gif", "#BCC7CE");
+			colors.put("me004.gif", "#BCC7CE");
+			colors.put("me005.gif", "#BCC7CE");
+			colors.put("me006.gif", "#BCC7CE");
+			colors.put("me007.gif", "#BCC7CE");
+			
+			colors.put("mg001.gif", "#D0C5CB");
+			colors.put("mg002.gif", "#66CEFF");
+			colors.put("mg003.gif", "#F87D64");
+			colors.put("mg004.gif", "#97CB97");
+			colors.put("mg005.gif", "#364A5B");
+			colors.put("mg006.gif", "#DADADA");
+			colors.put("mg007.gif", "#E19A2E");
+			colors.put("mg008.gif", "#58A5A3");
+			
+			return colors.get(name);
 		}
 		
 		public void save2File(String assertfile, File targetfile, AssetManager assetManager)

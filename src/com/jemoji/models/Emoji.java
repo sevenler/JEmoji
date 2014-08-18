@@ -13,8 +13,8 @@ import com.jemoji.FileUploader;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.image.FileImageDecoder;
-import com.jemoji.image.ImageSize;
 import com.jemoji.image.ImageDecoder.ImageScaleType;
+import com.jemoji.image.ImageSize;
 import com.jemoji.utils.ErrorCenter;
 import com.jemoji.utils.Utility;
 

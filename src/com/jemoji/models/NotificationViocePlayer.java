@@ -24,7 +24,7 @@ public class NotificationViocePlayer {
 
 	public void play() {
 		try {
-			InputStream input = mContent.getAssets().open("ding.wav");
+			InputStream input = mContent.getAssets().open("ding_old.wav");
 			buffer = new byte[1024 * 1024 * 2];// 2M
 			int len = input.read(buffer);
 			pcmlen = 0;
