@@ -29,13 +29,19 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent" />
 
-            <Button
+            <LinearLayout
                 android:id="@+id/settings"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:background="@drawable/icon_settings" />
+                android:gravity="center" >
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/icon_settings" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/notice_message"
@@ -157,8 +163,8 @@
 
             <ImageView
                 android:id="@+id/btn_press_to_keyboard"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginRight="5dp"
                 android:src="@drawable/keyboard" />
 
@@ -174,8 +180,8 @@
 
             <ImageView
                 android:id="@+id/btn_press_to_emoji"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="5dp"
                 android:src="@drawable/emoji" />
         </LinearLayout>
@@ -194,44 +200,69 @@
 
             <View
                 android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <View
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/gray" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="30dp"
                 android:orientation="horizontal" >
 
-                <ImageView
+                <LinearLayout
                     android:id="@+id/btn_press_to_choose_collect"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_like" />
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_like_pressed" />
+                </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="@color/gray" />
 
-                <ImageView
+                <LinearLayout
                     android:id="@+id/btn_press_to_choose_offical"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_official" />
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_official" />
+                </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="@color/gray" />
 
-                <ImageView
+                <LinearLayout
                     android:id="@+id/btn_press_to_add_emoji"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_add" />
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_add" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -239,9 +270,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@color/gray"
             android:gravity="center"
-            android:text="Hi, This is a bug"
-            android:background="@color/gray" />
+            android:text="Hi, This is a bug" />
     </LinearLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

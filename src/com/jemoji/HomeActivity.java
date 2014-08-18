@@ -228,8 +228,10 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			unread_msg_number.setOnClickListener(this);
 			
 			rootview.findViewById(R.id.btn_press_to_choose_collect).setOnClickListener(this);
-			rootview.findViewById(R.id.btn_press_to_choose_offical).setOnClickListener(this);
 			rootview.findViewById(R.id.btn_press_to_add_emoji).setOnClickListener(this);
+			View offical = rootview.findViewById(R.id.btn_press_to_choose_offical);
+			offical.setOnClickListener(this);
+			changeBackgroundColor(offical);
 		}
 
 		private void changeChatUser(User toUser) {
@@ -407,15 +409,25 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 					intent.setType("image/*");
 					startActivityForResult(intent, PHOTO_PICKED_WITH_DATA);
+					changeBackgroundColor(v);
 					break;
 				case R.id.btn_press_to_choose_offical:
 					emojiAdapter.setData(EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL), 6);
+					changeBackgroundColor(v);
 					break;
 				case R.id.btn_press_to_choose_collect:
 					List<Emoji> list = EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_COLLECT);
 					emojiAdapter.setData(list, 6);
+					changeBackgroundColor(v);
 					break;
 			}
+		}
+		
+		private View previewEmojiSelectorView = null;
+		private void changeBackgroundColor(View v){
+			if(previewEmojiSelectorView != null) previewEmojiSelectorView.setBackgroundColor(v.getResources().getColor(R.color.white));
+			v.setBackgroundColor(v.getResources().getColor(R.color.gray));
+			previewEmojiSelectorView = v;
 		}
 	}
 }

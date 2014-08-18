@@ -17,12 +17,12 @@
 -keep class cn.jpush.android.ui.PushActivity { <init>(...); }
 
 # view res/layout/fragment_emoji.xml #generated:46
-# view res/layout/fragment_home.xml #generated:71
+# view res/layout/fragment_home.xml #generated:77
 # view res/layout/include_user_header.xml #generated:14
 -keep class com.jemoji.CircleImageView { <init>(...); }
 
 # view res/layout/fragment_emoji.xml #generated:8
-# view res/layout/fragment_home.xml #generated:189
+# view res/layout/fragment_home.xml #generated:195
 -keep class com.jemoji.ControlScrollViewPager { <init>(...); }
 
 # view AndroidManifest.xml #generated:67
