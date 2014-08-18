@@ -120,7 +120,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		@Override
 		public void onDestroy() {
 			super.onDestroy();
-			MessageCenter.instance(getActivity()).unregesterReceiveMessageDelegate(this);
+			MessageCenter.instance(getApplicationContext()).unregesterReceiveMessageDelegate(this);
 		}
 
 		@Override
@@ -132,7 +132,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		public void onDownloadMessage(Emoji emoji, String file) {
 			unread_msg_number.setVisibility(View.VISIBLE);
 			((TextView)unread_msg_number.findViewById(R.id.textview)).setText(""
-					+ MessageCenter.instance(getActivity()).getUnreadCount());
+					+ MessageCenter.instance(getApplicationContext()).getUnreadCount());
 			stopRecevingMessageAnimation(unread_msg_number);
 			
 			BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.BounceIn.getAnimator()));
@@ -327,7 +327,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 			initView(rootView);
-			MessageCenter.instance(getActivity()).regesterReceiveMessageDelegate(this);
+			MessageCenter.instance(getApplicationContext()).regesterReceiveMessageDelegate(this);
 
 			return rootView;
 		}
@@ -336,7 +336,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		public void onStart() {
 			super.onStart();
 
-			int count = MessageCenter.instance(getActivity()).getUnreadCount();
+			int count = MessageCenter.instance(getApplicationContext()).getUnreadCount();
 			if (count <= 0) {
 				unread_msg_number.setVisibility(View.GONE);
 				((TextView)unread_msg_number.findViewById(R.id.textview)).setText("");
@@ -399,7 +399,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					}
 					break;
 				case R.id.unread_msg_number:
-					String user = MessageCenter.instance(getActivity()).getTopUser();
+					String user = MessageCenter.instance(getApplicationContext()).getTopUser();
 					EmojiActivity.putValus("user", UserCenter.instance().get(user));
 					openActivity(EmojiActivity.class, null);
 					break;
