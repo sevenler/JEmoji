@@ -1,7 +1,6 @@
 
 package com.jemoji;
 
-import java.net.UnknownHostException;
 import java.util.List;
 
 import android.animation.ValueAnimator;
@@ -26,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NoConnectionError;
 import com.daimajia.androidanimations.library.BaseViewAnimator;
 import com.daimajia.androidanimations.library.Techniques;
 import com.jemoji.models.Emoji;
@@ -61,14 +61,20 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 	}
 
 	@Override
-	public void onError(Exception ex) {
-			if(ex instanceof UnknownHostException){
-				runOnUiThread(new Runnable() {
-					public void run() {
-						Toast.makeText(HomeActivity.this, "发送失败，请先检查网络", Toast.LENGTH_LONG).show();
-					}
-				});
+	public void onError(Throwable ex) {
+		String mess = null;
+		if (ex instanceof NoConnectionError) {
+			mess = "链接失败，请先检查网络";
+		} else {
+			mess = ex.getMessage();
+		}
+
+		final String message = mess;
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Toast.makeText(HomeActivity.this, message, Toast.LENGTH_LONG).show();
 			}
+		});
 	}
 	
 	@Override

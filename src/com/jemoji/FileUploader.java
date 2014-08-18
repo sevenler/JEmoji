@@ -6,6 +6,7 @@ import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.UserCenter;
+import com.jemoji.utils.ErrorCenter;
 import com.jemoji.utils.Utility;
 import com.upyun.api.Uploader;
 import com.upyun.api.utils.UpYunException;
@@ -73,7 +74,11 @@ public  class FileUploader {
 				GKHttpInterface.pushMessage(toChatUser, content, new GKJsonResponseHandler() {
 					@Override
 					public void onResponse(int code, Object json, Throwable error) {
-						System.out.println(String.format(" onResponse json %s   user:[%s] ", json, toChatUser));
+						if(error == null){
+							System.out.println(String.format(" onResponse json %s   user:[%s] ", json, toChatUser));
+						}else{
+							ErrorCenter.instance().onError(error);
+						}
 					}
 				});
 			}

@@ -18,6 +18,7 @@ import com.jemoji.R;
 import com.jemoji.http.GKHttpInterface;
 import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.http.URLs;
+import com.jemoji.utils.ErrorCenter;
 
 public class MessageCenter {
 	private static MessageCenter intsance;
@@ -86,10 +87,13 @@ public class MessageCenter {
 		GKHttpInterface.genFile(emoji.getImageUrl(), type, image, new GKJsonResponseHandler() {
 			@Override
 			public void onResponse(int code, Object file, Throwable error) {
-				emoji.setImage((String)file);
-				pushUnread(context, username, emoji);
-				
-				onDownload(emoji, (String)file);
+				if(error == null){
+					emoji.setImage((String)file);
+					pushUnread(context, username, emoji);
+					onDownload(emoji, (String)file);
+				}else{
+					ErrorCenter.instance().onError(error);
+				}
 			}
 		});
 	}

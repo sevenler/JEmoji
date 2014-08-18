@@ -24,13 +24,13 @@ public class ErrorCenter {
 		delegates.remove(delegate);
 	}
 	
-	public void onError(Exception ex){
+	public void onError(Throwable ex){
 		for (ErrorDelegate delegate : delegates) {
 			delegate.onError(ex);
 		}
 	}
 	
 	public static interface ErrorDelegate{
-		public void onError(Exception ex);
+		public void onError(Throwable ex);
 	}
 }

@@ -15,6 +15,7 @@ import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.image.FileImageDecoder;
 import com.jemoji.image.ImageSize;
 import com.jemoji.image.ImageDecoder.ImageScaleType;
+import com.jemoji.utils.ErrorCenter;
 import com.jemoji.utils.Utility;
 
 public class Emoji {
@@ -164,8 +165,12 @@ public class Emoji {
 			GKHttpInterface.genFile(getImageUrl(), type, image, new GKJsonResponseHandler() {
 				@Override
 				public void onResponse(int code, Object file, Throwable error) {
-					System.out.println(String.format(" file:%s ", file));
-					showFile(imageView, (String)file, showGif);
+					if(error == null){
+						System.out.println(String.format(" file:%s ", file));
+						showFile(imageView, (String)file, showGif);
+					}else{
+						ErrorCenter.instance().onError(error);
+					}
 				}
 			});
 		}

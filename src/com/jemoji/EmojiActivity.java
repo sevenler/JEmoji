@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jemoji.http.GKHttpInterface;
@@ -24,6 +25,7 @@ import com.jemoji.http.GKJsonResponseHandler;
 import com.jemoji.models.Emoji;
 import com.jemoji.models.MessageCenter;
 import com.jemoji.models.User;
+import com.jemoji.utils.ErrorCenter;
 import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;
@@ -65,6 +67,7 @@ public class EmojiActivity extends BaseActivity {
 		Emoji mEmoji;
 		View iv_voice_panel;
 		ImageView image;
+		ProgressBar progressbar;
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -103,6 +106,7 @@ public class EmojiActivity extends BaseActivity {
 			image = (ImageView)rootView.findViewById(R.id.iv_voice);
 			iv_voice_panel.setOnClickListener(this);
 			rootView.findViewById(R.id.close).setOnClickListener(this);
+			progressbar = (ProgressBar)rootView.findViewById(R.id.progressbar); 
 			
 			mEmoji = (Emoji)list.get(0);
 			MessageCenter.instance(getActivity()).pokeUnread(getActivity(), from.getUsername(), mEmoji);
@@ -177,11 +181,22 @@ public class EmojiActivity extends BaseActivity {
 				String voiceUrl = mEmoji.getVoiceUrl();
 				String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
 						+ "emojis" + File.separator + System.currentTimeMillis() +  ".amr";
+				progressbar.setVisibility(View.VISIBLE);
 				GKHttpInterface.genFile(voiceUrl, "amr", path, new GKJsonResponseHandler() {
 					@Override
 					public void onResponse(int code, Object file, Throwable error) {
-						mEmoji.setVoice((String)file);
-						playOrStopVoice(mEmoji.getVoice(), playNew);
+						if(error == null){
+							mEmoji.setVoice((String)file);
+							playOrStopVoice(mEmoji.getVoice(), playNew);
+						}else{
+							ErrorCenter.instance().onError(error);
+						}
+						
+						runOnUiThread(new Runnable() {
+							public void run() {
+								progressbar.setVisibility(View.GONE);
+							}
+						});
 					}
 				});
 			}
