@@ -100,7 +100,7 @@ public class MessageCenter {
 		PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
-		Notification notification = new Notification(R.drawable.ic_launcher, "收到新消息", System.currentTimeMillis());
+		Notification notification = new Notification(R.drawable.app_launcher, "收到新消息", System.currentTimeMillis());
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.setLatestEventInfo(context, String.format("你收到 %s 条消息", count),
 				"点击查看消息", pendingNotificationIntent);
