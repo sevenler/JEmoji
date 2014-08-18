@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import android.content.res.AssetManager;
 import android.graphics.Color;
@@ -97,10 +100,6 @@ public class LoginActivity extends BaseActivity {
 		
 		public void saveEmojiFromAssertIfNeed(){
 			final EmojiSelector emojiSelector = EmojiSelector.instance(getActivity());
-			File path = new File(emojiSelector.getEmojiCachePath());
-			System.out.println(String.format("path.list():%s ", path.list()));
-			
-			
 			int size = emojiSelector.getEmojiData(Emoji.EMOJI_TYPE_OFFICAL).size();
 			if(size > 0){
 				progressbar.setVisibility(View.GONE);
@@ -114,9 +113,22 @@ public class LoginActivity extends BaseActivity {
 						try {
 							String targetfile = null;
 							String[] list = assetManager.list("emojis");
-							for(String str : list){
+							
+							List<String> emojisList = new LinkedList<String>();
+							for (int i = 0; i < list.length; i++) {
+								emojisList.add(list[i]);
+							}
+							List<String> randomList = new LinkedList<String>();
+							Random ran = new Random();
+							int value;
+							for (int i = 0; i < list.length; i++) {
+								value = emojisList.size();
+								value = ran.nextInt(value);
+								randomList.add(emojisList.remove(value));
+							}
+							
+							for(String str : randomList){
 								targetfile = emojiSelector.getFullEmojiPath(str);
-								System.out.println(String.format(" targetfile:%s ", targetfile));
 								save2File(str, new File(targetfile), assetManager);
 								EmojiSelector.instance(getActivity()).addCollect(new Emoji(targetfile, EmojiSelector.getFullUrl(str), Color.parseColor("#ffffff")).setType(Emoji.EMOJI_TYPE_OFFICAL));
 							}
