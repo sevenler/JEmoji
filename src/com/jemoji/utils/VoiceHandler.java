@@ -246,7 +246,7 @@ public class VoiceHandler implements OnTouchListener{
 	
 	public void stop(){
 		if(playState){
-			if (mediaPlayer.isPlaying()) {
+			if ((mediaPlayer != null) && mediaPlayer.isPlaying()) {
 				mediaPlayer.stop();
 				playState = false;
 			} else {

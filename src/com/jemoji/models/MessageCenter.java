@@ -10,6 +10,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 
 import com.jemoji.HomeActivity;
@@ -27,9 +28,11 @@ public class MessageCenter {
 	}
 
 	DataBaseWrapper db_wrapper;
-
+	NotificationViocePlayer mNotificationViocePlayer;
+	
 	private MessageCenter(Context context) {
 		db_wrapper = new DataBaseWrapper(context);
+		mNotificationViocePlayer = new NotificationViocePlayer(context);
 	}
 
 	// 添加未读消息
@@ -95,8 +98,8 @@ public class MessageCenter {
 	public void notificationMessage(Context context, int count) {
 		context = context.getApplicationContext();
 
-		Intent intent = new Intent(context, HomeActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		Intent intent = context.getPackageManager().getLaunchIntentForPackage("com.jemoji");
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -120,7 +123,7 @@ public class MessageCenter {
 	}
 	
 	private void onReceiving(Context context, Emoji emoji){
-		System.out.println(String.format(" messageDelegate.size(): %s ", messageDelegate.size()));
+		mNotificationViocePlayer.play();
 		if(messageDelegate.size() == 0){
 			notificationMessage(context, 1);
 		}
