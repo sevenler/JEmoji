@@ -5,6 +5,9 @@ import java.io.StringWriter;
 
 import android.util.Log;
 
+import com.jemoji.MyApplication;
+import com.umeng.analytics.MobclickAgent;
+
 public class LOG {
 	private static final String PREFIX_FORMAT = "<%s>%s";
 	public static int mLogLevel = Log.DEBUG;
@@ -70,6 +73,7 @@ public class LOG {
 		
 		if(ex != null){
 			String message = convertThrowable(ex);
+			MobclickAgent.onError(MyApplication.getAppContext(), message);
 			ex.printStackTrace();
 		}
 	}
@@ -80,6 +84,7 @@ public class LOG {
 		
 		if(ex != null){
 			String message = convertThrowable(ex);
+			MobclickAgent.onError(MyApplication.getAppContext(), message);
 			ex.printStackTrace();
 		}
 	}
@@ -88,22 +93,6 @@ public class LOG {
 		StringWriter errors = new StringWriter();
 		ex.printStackTrace(new PrintWriter(errors));
 		return errors.toString();
-	}
-	
-	public static void e(Object o, String msg) {
-		e(o, msg, null);
-	}
-
-	public static void e(String tag, String msg) {
-		e(tag, msg, null);
-	}
-	
-	public static void e(Object o, Throwable ex) {
-		e(o, null, ex);
-	}
-
-	public static void e(String tag, Throwable ex) {
-		e(tag, null, ex);
 	}
 	
 	/**

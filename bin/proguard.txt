@@ -1,3 +1,6 @@
+# view res/layout/umeng_example_analytics_fragment_tabs.xml #generated:1
+-keep class android.support.v4.app.FragmentTabHost { <init>(...); }
+
 # view AndroidManifest.xml #generated:39
 -keep class android.test.InstrumentationTestRunner { <init>(...); }
 
@@ -43,8 +46,28 @@
 # view AndroidManifest.xml #generated:72
 -keep class com.jemoji.SettingsActivity { <init>(...); }
 
+# view res/layout/activity_singlepane_empty.xml #generated:23
+-keep class com.markupartist.android.widget.ActionBar { <init>(...); }
+
+# view res/layout/actionbar.xml #generated:100
+-keep class com.markupartist.android.widget.ScrollingTextView { <init>(...); }
+
 # view res/layout/fragment_home.xml #generated:1
 -keep class com.sothree.slidinguppanel.SlidingUpPanelLayout { <init>(...); }
+
+# view res/layout/umeng_xp_large_gallery.xml #generated:12
+-keep class com.umeng.newxp.view.UGallery { <init>(...); }
+
+# view res/layout/umeng_xp_handler_gallery.xml #generated:6
+-keep class com.umeng.newxp.view.widget.SwipeView { <init>(...); }
+
+# view res/layout/umeng_xp_handler_gallery.xml #generated:12
+-keep class com.umeng.newxp.view.widget.SwipeViewPointer { <init>(...); }
+
+# view res/layout/umeng_example_fb_home.xml #generated:2
+# view res/layout/umeng_example_home_dashboard_fragment.xml #generated:1
+# view res/layout/umeng_example_xp_home.xml #generated:1
+-keep class com.umeng.ui.widget.DashboardLayout { <init>(...); }
 
 # view res/layout/fragment_emoji.xml #generated:13
 -keep class com.viewpagerindicator.LinePageIndicator { <init>(...); }

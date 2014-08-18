@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jemoji"
-    android:versionCode="163"
-    android:versionName="1.6.3" >
+    android:versionCode="1"
+    android:versionName="0.1" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -156,6 +156,17 @@
             android:name="JPUSH_APPKEY"
             android:value="ed958eeb9ae8245862f41aff" /> <!-- </>值来自开发者平台取得的AppKey -->
         <!-- ==================================================================================================== -->
+        
+        
+        <!-- 友盟配置 -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="53f1ec91fd98c53803002b76" >
+        </meta-data>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="me" >
+        </meta-data>
 
     </application>
 

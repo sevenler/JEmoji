@@ -1,21 +1,30 @@
 package com.jemoji;
 
 import android.app.Application;
+import android.content.Context;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 import cn.jpush.android.api.JPushInterface;
 
 import com.jemoji.image.ImageCacheManager;
-import com.jemoji.image.RequestManager;
 import com.jemoji.image.ImageCacheManager.CacheType;
+import com.jemoji.image.RequestManager;
 
 public class MyApplication extends Application {
     private static final String TAG = "JPush";
+    
+    private static Context context;
+    
+    public synchronized static Context getAppContext() {
+        return MyApplication.context;
+    }
 
     @Override
     public void onCreate() {    	     
     	 Log.d(TAG, "[ExampleApplication] onCreate");
          super.onCreate();
+         
+         MyApplication.context = getApplicationContext();
          
          JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
          JPushInterface.init(this);     		// 初始化 JPush

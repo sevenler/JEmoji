@@ -38,7 +38,6 @@ public class TestCast3 extends AndroidTestCase {
 				break;
 
 			default:
-				LOG.e(LOG.TAG_API, error);
 				wrong = error;
 				break;
 		}

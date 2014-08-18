@@ -36,6 +36,7 @@ import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
 import com.jemoji.utils.ErrorCenter;
 import com.jemoji.utils.ErrorCenter.ErrorDelegate;
+import com.jemoji.utils.LOG;
 import com.jemoji.utils.Utility;
 import com.jemoji.utils.VoiceHandler;
 import com.jemoji.utils.VoiceHandler.OnHandListener;

@@ -11,16 +11,20 @@ import android.support.v4.app.FragmentActivity;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
+import com.umeng.analytics.MobclickAgent;
+
 public class BaseActivity extends FragmentActivity{
 	@Override
 	protected void onResume() {
 		super.onResume();
+		MobclickAgent.onResume(this);
 		JPushInterface.onResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		MobclickAgent.onResume(this);
 		JPushInterface.onPause(this);
 	}
 

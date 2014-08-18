@@ -30,6 +30,8 @@ import com.jemoji.models.EmojiSelector;
 import com.jemoji.models.User;
 import com.jemoji.models.UserCenter;
 import com.jemoji.utils.PreferManager;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 public class LoginActivity extends BaseActivity {
 	@Override
@@ -37,6 +39,8 @@ public class LoginActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_fragment_container);
 
+		MobclickAgent.onError(this);
+		UmengUpdateAgent.update(this);
 		checkLogin();
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
