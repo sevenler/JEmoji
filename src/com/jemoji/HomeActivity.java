@@ -140,6 +140,11 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					.animate(unread_msg_number);
 		}
 		
+		@Override
+		public void onDownloadError(Throwable error) {
+			stopRecevingMessageAnimation(unread_msg_number);
+		}
+
 		// 初始化联系人头像
 		private void initContactHeaders(View rootview) {
 			Context context = rootview.getContext();

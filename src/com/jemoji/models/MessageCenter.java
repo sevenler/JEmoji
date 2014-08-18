@@ -90,6 +90,7 @@ public class MessageCenter {
 					pushUnread(context, username, emoji);
 					onDownload(emoji, (String)file);
 				}else{
+					onDownloadError(error);
 					ErrorCenter.instance().onError(error);
 				}
 			}
@@ -140,8 +141,15 @@ public class MessageCenter {
 		}
 	}
 	
+	private void onDownloadError(Throwable error){
+		for(OnReceiveMessageDelegate delegate : messageDelegate){
+			delegate.onDownloadError(error);
+		}
+	}
+	
 	public static interface OnReceiveMessageDelegate{
 		public void onReceiveMessage(Emoji emoji);
 		public void onDownloadMessage(Emoji emoji, String file);
+		public void onDownloadError(Throwable error);
 	}
 }
