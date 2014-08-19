@@ -81,7 +81,8 @@ public class EmojiAdapter extends PagerAdapter {
 			
 			return rootview;
 		}else{
-			View rootview = LayoutInflater.from(mContext).inflate(R.layout.image_item_six, null, true);
+			int res = (mItemEveryPage == 6 ? R.layout.image_item_six : R.layout.image_item_twelve);
+			View rootview = LayoutInflater.from(mContext).inflate(res, null, true);
 			arg0.addView(rootview);
 			
 			int total = list.size();
@@ -116,7 +117,7 @@ public class EmojiAdapter extends PagerAdapter {
 		}else{
 			for (int i = 0; i < mItemEveryPage; i++) {
 				ImageView imageView = (ImageView)view.findViewById(R.id.imageView0 + i);
-				BitmapDrawable drawable = ((BitmapDrawable)imageView.getDrawable());
+				BitmapDrawable drawable = (imageView == null ? null : ((BitmapDrawable)imageView.getDrawable()));
 				if(drawable != null){
 					Bitmap bitmap = drawable.getBitmap();
 					System.out.println(String.format(" recycle bitmap %s ", bitmap));

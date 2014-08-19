@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:anchorPoint="0.5"
+    sothree:anchorPoint="0.4"
     sothree:dragView="@+id/btn_press_to_emoji"
     sothree:panelHeight="50dp"
     sothree:paralaxOffset="0dp"
@@ -21,7 +21,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:orientation="vertical" >
 
             <ImageView
@@ -107,7 +107,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:background="@drawable/gray_shade"
             android:orientation="vertical" >
 
@@ -189,7 +189,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:orientation="vertical" >
 
             <com.jemoji.ControlScrollViewPager
@@ -269,7 +269,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:background="@color/gray"
             android:gravity="center"
             android:text="Hi, This is a bug" />

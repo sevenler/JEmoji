@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="fill_parent"
+    android:layout_weight="1"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="60dip"
+        android:layout_height="60dip"
+        android:background="@drawable/gray_circle"
+        android:padding="3dp" >
+
+        <com.jemoji.CircleImageView
+            android:id="@+id/header"
+            android:layout_width="60dip"
+            android:layout_height="60dip" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/white_circle"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="johnny" />
+
+</LinearLayout>

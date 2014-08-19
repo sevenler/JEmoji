@@ -206,7 +206,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			List<Emoji> emojis = EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL);
 			mEmoji = emojis.get(0);
 			mEmoji.showEmoji(previewEmojiImage);
-			emojiAdapter.setData(emojis, 6);
+			emojiAdapter.setData(emojis, 12);
 			mViewPager.setAdapter(emojiAdapter);
 
 			// 初始化录音按钮
@@ -417,12 +417,12 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					changeBackgroundColor(v);
 					break;
 				case R.id.btn_press_to_choose_offical:
-					emojiAdapter.setData(EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL), 6);
+					emojiAdapter.setData(EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_OFFICAL), 12);
 					changeBackgroundColor(v);
 					break;
 				case R.id.btn_press_to_choose_collect:
 					List<Emoji> list = EmojiSelector.instance(getActivity()).getEmojiData(Emoji.EMOJI_TYPE_COLLECT);
-					emojiAdapter.setData(list, 6);
+					emojiAdapter.setData(list, 12);
 					changeBackgroundColor(v);
 					break;
 			}
