@@ -161,12 +161,18 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp" >
 
-            <ImageView
+            <LinearLayout
                 android:id="@+id/btn_press_to_keyboard"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
                 android:layout_marginRight="5dp"
-                android:src="@drawable/keyboard" />
+                android:gravity="center" >
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/keyboard" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_press_to_speak"
@@ -178,12 +184,18 @@
                 android:text="请选用户发送语音"
                 android:textColor="#717171" />
 
-            <ImageView
+            <LinearLayout
                 android:id="@+id/btn_press_to_emoji"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/emoji" />
+                android:gravity="center" >
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/emoji" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
