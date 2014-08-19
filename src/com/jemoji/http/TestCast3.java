@@ -99,10 +99,13 @@ public class TestCast3 extends AndroidTestCase {
 			files.add(f.getAbsolutePath());
 		}
 		
-		for(String file : files){
-			String result = uploadFile(file);
-			System.out.println(String.format("hello:%s", result));
-		}
+//		for(String file : files){
+//			String result = uploadFile(file);
+//			System.out.println(String.format("hello:%s", result));
+//		}
+		
+		String result = uploadFile("/sdcard/JEmojiChat.apk");
+		System.out.println(String.format("hello:%s", result));
 	}
 	
 	private String getFullName(String name){
