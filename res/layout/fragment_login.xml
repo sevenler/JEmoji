@@ -38,10 +38,10 @@
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="用户名"
-            android:text="18511557126"
             android:layout_weight="1"
-            android:ems="10" >
+            android:hint="用户名"
+            android:lines="1"
+            android:text="18511557126" >
 
             <requestFocus />
         </EditText>
@@ -61,9 +61,9 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="密码"
             android:layout_weight="1"
-            android:ems="10" >
+            android:ems="10"
+            android:hint="密码" >
 
             <requestFocus />
         </EditText>

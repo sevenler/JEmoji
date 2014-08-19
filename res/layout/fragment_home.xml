@@ -86,7 +86,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentBottom="true" />
-                
+
                 <com.jemoji.CircleImageView
                     android:id="@+id/to_chat_user_header_image_keeping"
                     android:layout_width="30dp"
@@ -115,6 +115,11 @@
                     android:src="@drawable/chatfrom_voice_playing" />
             </LinearLayout>
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/gray_shade_dow" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -209,6 +214,11 @@
                     android:src="@drawable/emoji" />
             </LinearLayout>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/gray_shade" />
 
         <LinearLayout
             android:layout_width="match_parent"

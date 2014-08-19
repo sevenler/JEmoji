@@ -27,7 +27,7 @@
 -keep class com.jemoji.CircleImageView { <init>(...); }
 
 # view res/layout/fragment_emoji.xml #generated:8
-# view res/layout/fragment_home.xml #generated:219
+# view res/layout/fragment_home.xml #generated:223
 -keep class com.jemoji.ControlScrollViewPager { <init>(...); }
 
 # view AndroidManifest.xml #generated:67

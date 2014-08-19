@@ -241,7 +241,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 		private void changeChatUser(User toUser) {
 			BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.BounceInUp.getAnimator()));
-			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
+			animator.setDuration(1200).setInterpolator(new AccelerateInterpolator())
 					.animate(to_chat_user_header);
 
 			((ImageView)to_chat_user_header.findViewById(R.id.to_chat_user_header_image)).setImageResource(toUser.getHeader());
