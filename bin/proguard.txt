@@ -55,6 +55,9 @@
 # view res/layout/fragment_home.xml #generated:1
 -keep class com.sothree.slidinguppanel.SlidingUpPanelLayout { <init>(...); }
 
+# view AndroidManifest.xml #generated:162
+-keep class com.umeng.common.net.DownloadingService { <init>(...); }
+
 # view res/layout/umeng_xp_large_gallery.xml #generated:12
 -keep class com.umeng.newxp.view.UGallery { <init>(...); }
 

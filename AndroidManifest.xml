@@ -159,6 +159,9 @@
         
         
         <!-- 友盟配置 -->
+        <service android:exported="true" android:name="com.umeng.common.net.DownloadingService" android:process=":DownloadingService">
+        </service>
+        
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="53f1ec91fd98c53803002b76" >

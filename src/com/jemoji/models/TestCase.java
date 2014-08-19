@@ -58,7 +58,7 @@ public class TestCase extends AndroidTestCase {
 	
 	public void testFile() throws IOException{
 		String path = "/sdcard/test_image";
-		int[] resources = {R.drawable.ic_launcher};
+		int[] resources = {R.drawable.app_launcher};
 		for(int res : resources){
 			saveFile(path, getContext(), res);
 		}
