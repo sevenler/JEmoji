@@ -54,6 +54,9 @@ public class MessageCenter {
 	// 将消息标记为已读
 	public boolean pokeUnread(Context context, String user, Emoji emoji) {
 		db_wrapper.deleteMessageWithEmoji(emoji);
+		
+		cancalNotification(context);
+		
 		return false;
 	}
 
@@ -88,7 +91,7 @@ public class MessageCenter {
 				if(error == null){
 					emoji.setImage((String)file);
 					pushUnread(context, username, emoji);
-					onDownload(emoji, (String)file);
+					onDownload(context, emoji, (String)file);
 				}else{
 					onDownloadError(error);
 					ErrorCenter.instance().onError(error);
@@ -96,6 +99,8 @@ public class MessageCenter {
 			}
 		});
 	}
+	
+	private static final int NOTIFICATION_INDEX = 1009;
 	
 	//发送通知栏提示 消息
 	public void notificationMessage(Context context, int count) {
@@ -112,7 +117,12 @@ public class MessageCenter {
 				"点击查看消息", pendingNotificationIntent);
 
 		NotificationManager mManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
-		mManager.notify(1009, notification);
+		mManager.notify(NOTIFICATION_INDEX, notification);
+	}
+	
+	public void cancalNotification(Context context){
+		NotificationManager mManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+		mManager.cancel(NOTIFICATION_INDEX);
 	}
 	
 	
@@ -127,15 +137,16 @@ public class MessageCenter {
 	
 	private void onReceiving(Context context, Emoji emoji){
 		mNotificationViocePlayer.play();
-		if(messageDelegate.size() == 0){
-			notificationMessage(context, 1);
-		}
+		
 		for(OnReceiveMessageDelegate delegate : messageDelegate){
 			delegate.onReceiveMessage(emoji);
 		}
 	}
 	
-	private void onDownload(Emoji emoji, String file){
+	private void onDownload(Context context, Emoji emoji, String file){
+		int unread = getUnreadCount();
+		notificationMessage(context, unread);
+		
 		for(OnReceiveMessageDelegate delegate : messageDelegate){
 			delegate.onDownloadMessage(emoji, file);
 		}
