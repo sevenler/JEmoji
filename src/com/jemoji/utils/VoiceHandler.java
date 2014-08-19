@@ -92,11 +92,6 @@ public class VoiceHandler implements OnTouchListener{
 		toast.show();
 	}
 	
-	void mythread() {
-		Thread recordThread = new Thread(ImgThread);
-		recordThread.start();
-	}
-	
 	void setDialogImage() {
 		if (voiceValue < 200.0) {
 			dialog_img.setImageResource(R.drawable.record_animate_01);
@@ -169,7 +164,7 @@ public class VoiceHandler implements OnTouchListener{
 					if (mOnHandListener != null) mOnHandListener.onPlay(true);
 				}
 				
-				if (RECODE_STATE != RECORD_ING) {
+				if (RECODE_STATE == RECORD_NO) {
 					RECODE_STATE = RECORD_ING;
 					showVoiceDialog(v.getContext());
 					try {
@@ -177,7 +172,9 @@ public class VoiceHandler implements OnTouchListener{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					mythread();
+					
+					Thread recordThread = new Thread(ImgThread);
+					recordThread.start();
 				}
 				break;
 				
@@ -198,9 +195,9 @@ public class VoiceHandler implements OnTouchListener{
 								e.printStackTrace();
 							}
 
+							RECODE_STATE = RECORD_NO;
 							if (recodeTime < MIX_TIME) {
 								showWarnToast(v.getContext());
-								RECODE_STATE = RECORD_NO;
 							} else {
 								if (mOnHandListener != null) mOnHandListener.onRecored(true, (int)recodeTime, recordFile);
 							}
