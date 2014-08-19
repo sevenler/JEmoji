@@ -6,8 +6,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -99,31 +97,6 @@ public class EmojiAdapter extends PagerAdapter {
 			}
 			
 			return rootview;
-		}
-	}
-
-	@Override
-	public void destroyItem(ViewGroup container, int position, Object object) {
-		super.destroyItem(container, position, object);
-		View view = (View)object;
-		((ViewPager)container).removeView(view);
-		if(mItemEveryPage == 1){
-			ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-			BitmapDrawable drawable = ((BitmapDrawable)imageView.getDrawable());
-			if(drawable != null){
-				Bitmap bitmap = drawable.getBitmap();
-				if(bitmap != null) bitmap.recycle();
-			}
-		}else{
-			for (int i = 0; i < mItemEveryPage; i++) {
-				ImageView imageView = (ImageView)view.findViewById(R.id.imageView0 + i);
-				BitmapDrawable drawable = (imageView == null ? null : ((BitmapDrawable)imageView.getDrawable()));
-				if(drawable != null){
-					Bitmap bitmap = drawable.getBitmap();
-					System.out.println(String.format(" recycle bitmap %s ", bitmap));
-					if(bitmap != null) bitmap.recycle();
-				}
-			}
 		}
 	}
 }

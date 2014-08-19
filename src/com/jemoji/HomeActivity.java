@@ -99,7 +99,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 	}
 	
 	class WebPageFragment extends Fragment implements OnClickListener, OnReceiveMessageDelegate {
-		private CircleImageView to_chat_user_header;// 对话的好友头像
+		private View to_chat_user_header;// 对话的好友头像
 		private TextView notice_message;// 提示文字
 		private View unread_msg_number;// 未读消息数量
 		private Button buttonPressToSpeak;//发送语音消息按钮
@@ -227,7 +227,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 			// 初始化播放按钮
 			rootview.findViewById(R.id.iv_voice_panel).setOnClickListener(this);
-			to_chat_user_header = (CircleImageView)rootview.findViewById(R.id.to_chat_user_header);
+			to_chat_user_header = rootview.findViewById(R.id.to_chat_user_header);
 			notice_message = (TextView)rootview.findViewById(R.id.notice_message);
 			unread_msg_number = rootview.findViewById(R.id.unread_msg_number);
 			unread_msg_number.setOnClickListener(this);
@@ -244,7 +244,8 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
 					.animate(to_chat_user_header);
 
-			to_chat_user_header.setImageResource(toUser.getHeader());
+			((ImageView)to_chat_user_header.findViewById(R.id.to_chat_user_header_image)).setImageResource(toUser.getHeader());
+			((ImageView)to_chat_user_header.findViewById(R.id.to_chat_user_header_image_keeping)).setImageResource(toUser.getHeader());
 			notice_message.setText(String.format("发送给 %s", toUser.getNickname()));
 			toChat = toUser;
 			buttonPressToSpeak.setEnabled(true);
@@ -257,7 +258,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 
 			BaseViewAnimator animator = ((BaseViewAnimator)(Techniques.SlideOutUp.getAnimator()));
 			animator.setDuration(1000).setInterpolator(new AccelerateInterpolator())
-					.animate(to_chat_user_header);
+					.animate((ImageView)to_chat_user_header.findViewById(R.id.to_chat_user_header_image));
 
 			notice_message.setText(String.format("已经发送给 %s", toChat.getNickname()));
 			notice_message.postDelayed(new Runnable() {

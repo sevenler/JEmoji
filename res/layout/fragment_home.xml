@@ -74,13 +74,25 @@
                     android:textSize="20dp" />
             </RelativeLayout>
 
-            <com.jemoji.CircleImageView
+            <RelativeLayout
                 android:id="@+id/to_chat_user_header"
                 android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentBottom="true"
+                android:layout_height="fill_parent"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp" >
+
+                <com.jemoji.CircleImageView
+                    android:id="@+id/to_chat_user_header_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true" />
+                
+                <com.jemoji.CircleImageView
+                    android:id="@+id/to_chat_user_header_image_keeping"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/iv_voice_panel"
