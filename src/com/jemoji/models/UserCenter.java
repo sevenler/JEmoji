@@ -20,6 +20,7 @@ public class UserCenter {
 		users.put("18600753802", new User("18600753802", "窝窝", R.drawable.wow));
 		users.put("15160686608", new User("15160686608", "lishili", R.drawable.lishili));
 		users.put("18666096095", new User("18666096095", "cindyc", R.drawable.cindyc));
+		users.put("13126694493", new User("13126694493", "方述龙", R.drawable.fang));
 	}
 	
 	private HashMap<String, User> users;
