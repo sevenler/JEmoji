@@ -28,9 +28,19 @@ public class Emoji {
 	String imageUrl;
 	String mVoice;
 	String mVoiceUrl;
+	String mText;
 	int mType;
 	int background = -1;
 	
+	
+	public String getText() {
+		return mText;
+	}
+
+	public void setText(String mText) {
+		this.mText = mText;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -140,7 +150,8 @@ public class Emoji {
 		sb.append(String.format("%s:%s,", "image", image));
 		sb.append(String.format("%s:%s,", "imageurl", imageUrl));
 		sb.append(String.format("%s:%s,", "voice", mVoice));
-		sb.append(String.format("%s:%s", "voiceUrl", mVoiceUrl));
+		sb.append(String.format("%s:%s,", "voiceUrl", mVoiceUrl));
+		sb.append(String.format("%s:%s", "text", mText));
 		sb.append("}");
 		return sb.toString();
 	}

@@ -53,6 +53,8 @@ public  class FileUploader {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				
+				//生成表情url链接
 				String imageUrlName = emoji.getImageUrl();
 				System.out.println(String.format(" imageUrlName:%s %s", imageUrlName, Utility.Strings.isEmptyString(imageUrlName)));
 				if(Utility.Strings.isEmptyString(imageUrlName)){
@@ -64,12 +66,20 @@ public  class FileUploader {
 				}else{
 					imageUrlName = imageUrlName.substring(imageUrlName.lastIndexOf("/") + 1, imageUrlName.length());
 				}
-				System.out.println(String.format(" imageUrlName:%s ", imageUrlName));
-				String voiceUrl = sendFile(emoji.getVoice(), "amr");
-				emoji.setVoiceUrl(voiceUrl);
+				
+				String cotent = emoji.getText();
+				if(Utility.Strings.isEmptyString(cotent)){
+					//生成并标记语音消息
+					String voiceUrl = sendFile(emoji.getVoice(), "amr");
+					emoji.setVoiceUrl(voiceUrl);
+					cotent = String.format("voice:%s", voiceUrl);
+				}else{
+					//标记文字消息
+					cotent = String.format("text:%s", cotent);
+				}
 				
 				String me = UserCenter.instance().getMe().getUsername();
-				String content = String.format("{\"message\":\"%s,%s,%s,%s\"}", voiceUrl, imageUrlName, emoji.getBackground(), me);
+				String content = String.format("{\"message\":\"%s,%s,%s,%s\"}", cotent, imageUrlName, emoji.getBackground(), me);
 				GKHttpInterface.pushMessage(toChatUser, content, new GKJsonResponseHandler() {
 					@Override
 					public void onResponse(int code, Object json, Throwable error) {

@@ -105,7 +105,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		private View unread_msg_number;// 未读消息数量
 		private Button buttonPressToSpeak;//发送语音消息按钮
 		private EditText text_input;//输入文本框
-		private View btn_press_to_send;
+		private View btn_press_to_send;//发送按钮，发送文字会用到这个按钮
 		private ViewGroup previewSelectedUserHeader;//上次选中的头像
 		private ImageView previewEmojiImage;
 		private SlidingUpPanelLayout mDrawer;
@@ -215,6 +215,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			// 初始化录音按钮
 			buttonPressToSpeak = (Button)rootview.findViewById(R.id.btn_press_to_speak);
 			voicePlayHandler = new VoiceHandler();
+			//录音完成后就发送语音消息
 			voicePlayHandler.setOnHandListener(new OnHandListener() {
 				@Override
 				public void onRecored(boolean isFinish, int time, String file) {
@@ -242,6 +243,7 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			rootview.findViewById(R.id.btn_press_to_add_emoji).setOnClickListener(this);
 			text_input = (EditText)rootview.findViewById(R.id.text_input); 
 			btn_press_to_send = rootview.findViewById(R.id.btn_press_to_send);
+			btn_press_to_send.setOnClickListener(this);
 			View offical = rootview.findViewById(R.id.btn_press_to_choose_offical);
 			offical.setOnClickListener(this);
 			changeBackgroundColor(offical);
@@ -436,6 +438,10 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					break;
 				case R.id.btn_press_to_keyboard:
 					changeTextInput();
+					break;
+				case R.id.btn_press_to_send://发送按钮，发送文字的时候会用到这个按钮
+					mEmoji.setText(text_input.getText().toString());
+					sendMessage(toChat, mEmoji);
 					break;
 			}
 		}

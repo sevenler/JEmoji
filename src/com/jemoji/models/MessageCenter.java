@@ -73,10 +73,19 @@ public class MessageCenter {
 	public void onReceiveMessage(final Context context, String cotent) {
 		//处理接收到的消息
 		String[] messages = cotent.split(",");
-		String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messages[0]));
+		String messageCotent = messages[0];
+		
+		final Emoji emoji = new Emoji("", "", "");
+		if(messageCotent.startsWith("voice:")){
+			String voiceUrl = URLs.getAbsoluteUrl(String.format("/%s", messageCotent.substring(messageCotent.indexOf("voice:") + 6, messageCotent.length())));
+			emoji.setVoiceUrl(voiceUrl);
+		}else{
+			String text = messageCotent.substring(messageCotent.indexOf("text:") + 5, messageCotent.length());
+			emoji.setText(text);
+		}
+		
 		String name = messages[1];
-		final Emoji emoji = new Emoji("", "", voiceUrl);
-		emoji.setImageUrl(String.format("http://emoji.b0.upaiyun.com/test/%s", name));
+		emoji.setImageUrl(URLs.getAbsoluteUrl(String.format("/%s", name)));
 		emoji.setBackground(Integer.parseInt(messages[2]));
 		final String username = messages[3];
 
@@ -91,7 +100,7 @@ public class MessageCenter {
 				if(error == null){
 					emoji.setImage((String)file);
 					pushUnread(context, username, emoji);
-					onDownload(context, emoji, (String)file);
+					onDownloadFinish(context, emoji, (String)file);
 				}else{
 					onDownloadError(error);
 					ErrorCenter.instance().onError(error);
@@ -113,8 +122,7 @@ public class MessageCenter {
 
 		Notification notification = new Notification(R.drawable.app_launcher, "收到新消息", System.currentTimeMillis());
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		notification.setLatestEventInfo(context, String.format("你收到 %s 条消息", count),
-				"点击查看消息", pendingNotificationIntent);
+		notification.setLatestEventInfo(context, String.format("你收到 %s 条消息", count), "点击查看消息", pendingNotificationIntent);
 
 		NotificationManager mManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
 		mManager.notify(NOTIFICATION_INDEX, notification);
@@ -136,16 +144,15 @@ public class MessageCenter {
 	}
 	
 	private void onReceiving(Context context, Emoji emoji){
-		mNotificationViocePlayer.play();
-		
 		for(OnReceiveMessageDelegate delegate : messageDelegate){
 			delegate.onReceiveMessage(emoji);
 		}
 	}
 	
-	private void onDownload(Context context, Emoji emoji, String file){
+	private void onDownloadFinish(Context context, Emoji emoji, String file){
 		int unread = getUnreadCount();
 		notificationMessage(context, unread);
+		mNotificationViocePlayer.play();
 		
 		for(OnReceiveMessageDelegate delegate : messageDelegate){
 			delegate.onDownloadMessage(emoji, file);
