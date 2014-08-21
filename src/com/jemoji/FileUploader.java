@@ -53,12 +53,11 @@ public  class FileUploader {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				String imageName = emoji.getImage();
-				String type = imageName.substring(imageName.lastIndexOf(".") + 1, imageName.length()); 
-				
 				String imageUrlName = emoji.getImageUrl();
 				System.out.println(String.format(" imageUrlName:%s %s", imageUrlName, Utility.Strings.isEmptyString(imageUrlName)));
 				if(Utility.Strings.isEmptyString(imageUrlName)){
+					String imageName = emoji.getImage();
+					String type = imageName.substring(imageName.lastIndexOf(".") + 1, imageName.length()); 
 					String result = sendFile(imageName, type);
 					emoji.setImageUrl(result);
 					imageUrlName = emoji.getImageUrl();

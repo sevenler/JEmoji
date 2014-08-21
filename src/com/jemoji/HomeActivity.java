@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -103,6 +104,8 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 		private TextView notice_message;// 提示文字
 		private View unread_msg_number;// 未读消息数量
 		private Button buttonPressToSpeak;//发送语音消息按钮
+		private EditText text_input;//输入文本框
+		private View btn_press_to_send;
 		private ViewGroup previewSelectedUserHeader;//上次选中的头像
 		private ImageView previewEmojiImage;
 		private SlidingUpPanelLayout mDrawer;
@@ -215,8 +218,10 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			voicePlayHandler.setOnHandListener(new OnHandListener() {
 				@Override
 				public void onRecored(boolean isFinish, int time, String file) {
-					mEmoji.setVoice(file);
-					sendMessage(toChat, mEmoji);
+					if (isFinish) {
+						mEmoji.setVoice(file);
+						sendMessage(toChat, mEmoji);
+					}
 				}
 
 				@Override
@@ -233,7 +238,10 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 			unread_msg_number.setOnClickListener(this);
 			
 			rootview.findViewById(R.id.btn_press_to_choose_collect).setOnClickListener(this);
+			rootview.findViewById(R.id.btn_press_to_keyboard).setOnClickListener(this);
 			rootview.findViewById(R.id.btn_press_to_add_emoji).setOnClickListener(this);
+			text_input = (EditText)rootview.findViewById(R.id.text_input); 
+			btn_press_to_send = rootview.findViewById(R.id.btn_press_to_send);
 			View offical = rootview.findViewById(R.id.btn_press_to_choose_offical);
 			offical.setOnClickListener(this);
 			changeBackgroundColor(offical);
@@ -426,6 +434,21 @@ public class HomeActivity extends BaseActivity implements ErrorDelegate{
 					emojiAdapter.setData(list, 12);
 					changeBackgroundColor(v);
 					break;
+				case R.id.btn_press_to_keyboard:
+					changeTextInput();
+					break;
+			}
+		}
+		
+		private void changeTextInput(){
+			if (text_input.getVisibility() == View.VISIBLE) {
+				text_input.setVisibility(View.GONE);
+				buttonPressToSpeak.setVisibility(View.VISIBLE);
+				btn_press_to_send.setVisibility(View.GONE);
+			} else {
+				buttonPressToSpeak.setVisibility(View.GONE);
+				text_input.setVisibility(View.VISIBLE);
+				btn_press_to_send.setVisibility(View.VISIBLE);
 			}
 		}
 		
